@@ -1,9 +1,9 @@
 <?php
 // Require files
-require_once 'jwt.php';
-require_once 'res.php';
-require_once 'db.php';
-require_once 'auth.php';
+require_once 'utils/res.php';
+require_once 'utils/jwt.php';
+require_once 'utils/db.php';
+require_once 'api/auth.php';
 
 // Set HTTP headers
 header('Content-Type: application/json; charset=utf-8');

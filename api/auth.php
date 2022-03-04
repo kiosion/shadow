@@ -1,14 +1,16 @@
 <?php
+$cwd = getcwd().'/';
 // Require files
-require_once 'jwt.php';
-require_once 'res.php';
-require_once 'db.php';
+require_once $cwd.'utils/res.php';
+require_once $cwd.'utils/jwt.php';
+require_once $cwd.'utils/db.php';
 
 // Set HTTP headers
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
+// To be turned POST-based eventually
 class Auth {
 	// Function to generate token from username and password
 	public static function generate_token($conn, $username, $password) {
