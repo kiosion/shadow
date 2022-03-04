@@ -1,0 +1,4 @@
+# Imgs dir
+imgs/*
+# db file
+db.php
