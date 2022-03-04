@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		switch ($action) {
 			// Generate token
 			case 'generate_token':
-				echo Auth::generate_token($conn, $_POST['username'], $_POST['password']);
+				echo Auth::generate_token($conn, $_POST['username'], $_POST['password'], $_POST['type']);
 				break;
 			// Check token
 			case 'check_token':
@@ -50,6 +50,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				break;
 			// Check user credentials on login
 			case 'check_credentials':
+				if (!isset($_POST['username']) || !isset($_POST['password'])) {
+					echo Res::fail(401, 'Username or password not provided');
+					break;
+				}
+				if (Auth::check_credentials($conn, $_POST['username'], $_POST['password'])) {
+					echo Res::success(200, 'Credentials valid', null);
+				}
+				else {
+					echo Res::success(200, 'Credentials invalid', null);
+				}
 				break;
 			// Not a valid action
 			default:

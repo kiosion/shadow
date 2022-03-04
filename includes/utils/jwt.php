@@ -6,7 +6,7 @@ require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'dotenv.php';
 class JWT {
 	// Get JWT secret from .env file
 	private static function get_secret() :string {
-		$env = new DotEnv(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.env');
+		$env = new DotEnv(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.env');
 		$env->load();
 		return getenv('JWT_SECRET');
 	}
@@ -24,12 +24,15 @@ class JWT {
 		return $jwt;
 	}
 	// Check if JWT is valid
-	public static function is_jwt_valid($jwt) {
+	public static function is_jwt_valid($jwt, $type) {
 		// Split the token
 		$tokenParts = explode('.', $jwt);
 		$header = base64_decode($tokenParts[0]);
 		$payload = base64_decode($tokenParts[1]);
 		$signature_provided = $tokenParts[2];
+		
+		// Check the provided type against the type in the payload
+		if (json_decode($payload)->type != $type) return false;
 
 		// Check the expiration time
 		$expiration = json_decode($payload)->exp;

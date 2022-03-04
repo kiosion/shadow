@@ -4,7 +4,7 @@
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'dotenv.php';
 
 // Load .env file
-$env = new DotEnv(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.env');
+$env = new DotEnv(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.env');
 $env->load();
 
 // Set vars for db
