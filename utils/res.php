@@ -1,5 +1,5 @@
 <?php
-// Class to return error on success/failure
+
 class Res {
 	public static function success($code, $msg, $data) {
 		$res = array(

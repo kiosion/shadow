@@ -2,6 +2,7 @@
 
 // Include files
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'utils/res.php';
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'utils/auth.php';
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'utils/jwt.php';
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'utils/db.php';
 
@@ -10,55 +11,20 @@ header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
-class Auth {
-	// Function to generate token from username and password
-	public static function generate_token($conn, $username, $password) {
-		// If username or password is not set, return false
-		if (!isset($username) || !isset($password)) echo Res::fail(401, 'Username or password not provided');
-		// Check if username and password are valid
-		$sql = "SELECT * FROM user WHERE username = '".mysqli_real_escape_string($conn, $_POST['username'])."' AND password = '".mysqli_real_escape_string($conn, $_POST['password'])."' LIMIT 1";
-		// Run query
-		$result = runQuery($sql);
-		if (numRows($result) < 1) {
-			echo Res::fail(403, 'Username or password is incorrect');
-		}
-		else {
-			$row = fetchAssoc($result);
-			$username = $row['username'];
-			$issuedAt = new DateTimeImmutable();
-			$expiration = $issuedAt->modify('+2 minutes')->getTimestamp();
-			$serverName = "cdn.kio.dev";
-			$payload = array(
-				'iat' => $issuedAt->getTimestamp(), // Issued at: time
-				'iss' => $serverName, // Issuer
-				'nbf' => $issuedAt->getTimestamp(), // Not before
-				'exp' => $expiration, // Expire after: (2 minutes)
-				'username' => $username // Username
-			);
-			$headers = array(
-				'alg' => 'HS256', 
-				'typ' => 'JWT'
-			);
-			$jwt = JWT::generate_jwt($headers, $payload);
-			echo Res::success(200, 'Success', $jwt);
-		}
-	}
-	// Function to check if token is valid
-	public static function check_token($token) {
-		if (!isset($token)) return false;
-		if (JWT::is_jwt_valid($token)) return true;
-		return false;
-	}
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if (isset($_POST['action'])) {
 		$action = $_POST['action'];
 		switch ($action) {
+			// Generate token
 			case 'generate_token':
-				Auth::generate_token($conn, $_POST['username'], $_POST['password']);
+				echo Auth::generate_token($conn, $_POST['username'], $_POST['password']);
 				break;
+			// Check token
 			case 'check_token':
+				if (!isset($_POST['token'])) {
+					echo Res::fail(401, 'Token not provided');
+					break;
+				}
 				if (Auth::check_token($_POST['token'])) {
 					echo Res::success(200, 'Token valid', null);
 				}
@@ -66,14 +32,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					echo Res::success(200, 'Token invalid', null);
 				}
 				break;
+			// Print token payload
+			case 'print_token':
+				if (!isset($_POST['token'])) {
+					echo Res::fail(401, 'Token not provided');
+					break;
+				}
+				echo Auth::print_token($_POST['token']);
+				break;
+			// Get user id from token
+			case 'get_user_id':
+				if (!isset($_POST['token'])) {
+					echo Res::fail(401, 'Token not provided');
+					break;
+				}
+				echo Auth::get_user_id($conn, $_POST['token']);
+				break;
+			// Check user credentials on login
 			case 'check_credentials':
 				break;
+			// Not a valid action
 			default:
 				echo Res::fail(400, 'Invalid action');
 				break;
 		}
-	}
-	else {
-		echo Res::fail(400, 'No action provided');
 	}
 }
