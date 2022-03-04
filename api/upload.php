@@ -1,11 +1,10 @@
 <?php
 
-// Require files
-$cwd = dirname(__FILE__).DIRECTORY_SEPARATOR;
-require_once $cwd.'utils/res.php';
-require_once $cwd.'utils/jwt.php';
-require_once $cwd.'utils/db.php';
-require_once $cwd.'api/auth.php';
+// Include files
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'utils/res.php';
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'utils/jwt.php';
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'utils/db.php';
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'api/auth.php';
 
 // Set HTTP headers
 header('Content-Type: application/json; charset=utf-8');

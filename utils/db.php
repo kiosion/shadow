@@ -1,10 +1,9 @@
 <?php
 
-// Require files
-$cwd = dirname(__FILE__).DIRECTORY_SEPARATOR;
-require_once $cwd.'dotenv.php';
+// Include files
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'dotenv.php';
 // Load .env file
-$env = new Dotenv(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.env');
+$env = new DotEnv(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.env');
 $env->load();
 // Set vars for db
 $db_host = getenv('DB_HOST');

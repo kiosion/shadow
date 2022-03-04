@@ -1,5 +1,8 @@
 <?php
 
+// Include files
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'dotenv.php';
+
 class JWT {
 	// Get JWT secret from .env file
 	private static function get_secret() :string {
