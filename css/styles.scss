@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Ubuntu:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+/* Import fonts */
+html, body { font-family: 'Roboto', sans-serif !important; }
+h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display-1 { font-family: 'Ubuntu', sans-serif !important; }
+
+/* Override some bootstrap styles */
+.not-allowed {
+	cursor: not-allowed !important;
+	pointer-events: all !important;
+}
+button, button.btn, a.btn, .btn {
+	border-radius: 12px !important;
+}

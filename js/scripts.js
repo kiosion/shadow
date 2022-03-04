@@ -25,10 +25,10 @@ $(document).ready(() => {
 				password: pw.val(),
 			}
 		});
-		// On success, check response
+		// Check response when done
 		post.done((authRes) => {
 			if (authRes.status == 'success' && authRes.msg == 'Credentials valid') {
-				// Request token
+				// Request token if creds are valid
 				console.log("Credentials valid, requesting token...");
 				let token = $.ajax({
 					type: 'POST',
@@ -40,17 +40,17 @@ $(document).ready(() => {
 						type: 'login',
 					}
 				});
-				// On success, check response
+				// Check response when done
 				token.done((tokenRes) => {
-					//console.log(token_response);
+					// If token was generated and returned
 					if (tokenRes.status == 'success' && tokenRes.msg == 'Token generated') {	
 						console.log("Token generated, setting cookie...");
-						// Set cookie with expiry of 6 hours
+						// Set login_token cookie with expiry of 6 hours
 						Cookies.set('login_token', tokenRes.data, { expires: 6 });
 						console.log("Cookie set, redirecting...");
 						//window.location.href = 'index.php';
 					}
-					// Else, log error and redirect to index.php with error
+					// If not generated or returned, log error and redirect to index.php
 					else {
 						console.log(tokenRes.msg);
 						//window.location.href = 'index.php?error=2';
