@@ -1,6 +1,7 @@
 <?php
-$cwd = getcwd().'/';
+
 // Require files
+$cwd = dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
 require_once $cwd.'utils/res.php';
 require_once $cwd.'utils/jwt.php';
 require_once $cwd.'utils/db.php';
@@ -26,8 +27,20 @@ class Auth {
 		else {
 			$row = fetchAssoc($result);
 			$username = $row['username'];
-			$headers = array('alg' => 'HS256', 'typ' => 'JWT');
-			$payload = array('username' => $username, 'exp' => (time() + 120)); // Valid for 2 minutes, 120 seconds
+			$issuedAt = new DateTimeImmutable();
+			$expiration = $issuedAt->modify('+2 minutes')->getTimestamp();
+			$serverName = "cdn.kio.dev";
+			$payload = array(
+				'iat' => $issuedAt->getTimestamp(), // Issued at: time
+				'iss' => $serverName, // Issuer
+				'nbf' => $issuedAt->getTimestamp(), // Not before
+				'exp' => $expiration, // Expire after: (2 minutes)
+				'username' => $username // Username
+			);
+			$headers = array(
+				'alg' => 'HS256', 
+				'typ' => 'JWT'
+			);
 			$jwt = JWT::generate_jwt($headers, $payload);
 			echo Res::success(200, 'Success', $jwt);
 		}
@@ -41,20 +54,28 @@ class Auth {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	if ($_POST['action'] == 'generate_token') {
-		// Use function
-		Auth::generate_token($conn, $_POST['username'], $_POST['password']);
-	}
-	else if ($_POST['action'] == 'check_token') {
-		// Use function
-		if (Auth::check_token($_POST['token'])) {
-			echo Res::success(200, 'Token valid', null);
-		}
-		else {
-			echo Res::fail(200, 'Token invalid');
+	if (isset($_POST['action'])) {
+		$action = $_POST['action'];
+		switch ($action) {
+			case 'generate_token':
+				Auth::generate_token($conn, $_POST['username'], $_POST['password']);
+				break;
+			case 'check_token':
+				if (Auth::check_token($_POST['token'])) {
+					echo Res::success(200, 'Token valid', null);
+				}
+				else {
+					echo Res::success(200, 'Token invalid', null);
+				}
+				break;
+			case 'check_credentials':
+				break;
+			default:
+				echo Res::fail(400, 'Invalid action');
+				break;
 		}
 	}
 	else {
-		Res::fail(400, 'Method not supported');
+		echo Res::fail(400, 'No action provided');
 	}
 }

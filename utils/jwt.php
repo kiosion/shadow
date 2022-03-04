@@ -1,13 +1,19 @@
 <?php
-// Class for JWT
+
 class JWT {
-	// Generate a JWT
-	public static function generate_jwt($headers, $payload, $secret = 'secret') {
+	// Get JWT secret from .env file
+	private static function get_secret() :string {
+		$env = new DotEnv(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.env');
+		$env->load();
+		return getenv('JWT_SECRET');
+	}
+	// Generate a JWT, TOOD: change secret
+	public static function generate_jwt($headers, $payload) {
 		$headers_encoded = self::base64url_encode(json_encode($headers));
 		
 		$payload_encoded = self::base64url_encode(json_encode($payload));
 		
-		$signature = hash_hmac('SHA256', "$headers_encoded.$payload_encoded", $secret, true);
+		$signature = hash_hmac('SHA256', "$headers_encoded.$payload_encoded", self::get_secret(), true);
 		$signature_encoded = self::base64url_encode($signature);
 		
 		$jwt = "$headers_encoded.$payload_encoded.$signature_encoded";
@@ -15,7 +21,7 @@ class JWT {
 		return $jwt;
 	}
 	// Check if JWT is valid
-	public static function is_jwt_valid($jwt, $secret = 'secret') {
+	public static function is_jwt_valid($jwt) {
 		// split the jwt
 		$tokenParts = explode('.', $jwt);
 		$header = base64_decode($tokenParts[0]);
@@ -29,7 +35,7 @@ class JWT {
 		// build a signature based on the header and payload using the secret
 		$base64_url_header = self::base64url_encode($header);
 		$base64_url_payload = self::base64url_encode($payload);
-		$signature = hash_hmac('SHA256', $base64_url_header . "." . $base64_url_payload, $secret, true);
+		$signature = hash_hmac('SHA256', $base64_url_header . "." . $base64_url_payload, self::get_secret(), true);
 		$base64_url_signature = self::base64url_encode($signature);
 
 		// verify it matches the signature provided in the jwt

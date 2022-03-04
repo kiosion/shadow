@@ -1,4 +1,4 @@
 # Imgs dir
 imgs/*
-# db file
-db.php
+# .env file
+.env
