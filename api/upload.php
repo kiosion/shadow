@@ -82,7 +82,6 @@ class Upload {
 
 // If POST is used
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	// If token is valid, upload file
 	if (isset($_FILES['file'])) {
 		// Create new upload object
 		$upload = new Upload($upload_dir, $_FILES['file']);

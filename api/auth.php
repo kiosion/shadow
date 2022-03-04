@@ -11,7 +11,6 @@ header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
-// To be turned POST-based eventually
 class Auth {
 	// Function to generate token from username and password
 	public static function generate_token($conn, $username, $password) {
