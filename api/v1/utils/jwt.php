@@ -4,7 +4,7 @@
 if (!isset($include)) {
 	header('Content-Type: application/json; charset=utf-8');
 	include_once 'res.php';
-	echo Res::fail(403, 'Unauthorized');
+	echo Res::fail(403, 'Forbidden');
 	exit();
 }
 
@@ -24,22 +24,22 @@ class JWT {
 	private static function base64url_encode($data) {
 		return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 	}
-	// Generate a JWT, TOOD: change secret
+	// Generate a JWT
 	public static function generate_jwt($headers, $payload) {
 		$headers_encoded = self::base64url_encode(json_encode($headers));
 		$payload_encoded = self::base64url_encode(json_encode($payload));
 		$signature = hash_hmac('SHA256', "$headers_encoded.$payload_encoded", self::get_secret(), true);
-		$signature_encoded = self::base64url_encode($signature);
-		$jwt = "$headers_encoded.$payload_encoded.$signature_encoded";
+		$sig_encoded = self::base64url_encode($signature);
+		$jwt = "$headers_encoded.$payload_encoded.$sig_encoded";
 		return $jwt;
 	}
 	// Check if JWT is valid
 	public static function is_jwt_valid($jwt, $type) {
-		// Split the token
+		// Split into parts
 		$tokenParts = explode('.', $jwt);
 		$header = base64_decode($tokenParts[0]);
 		$payload = base64_decode($tokenParts[1]);
-		$signature_provided = $tokenParts[2];
+		$sig_provided = $tokenParts[2];
 		
 		// Check the provided type against the type in the payload
 		if (json_decode($payload)->type != $type) return false;
@@ -54,12 +54,12 @@ class JWT {
 		$base64_url_header = self::base64url_encode($header);
 		$base64_url_payload = self::base64url_encode($payload);
 		$signature = hash_hmac('SHA256', $base64_url_header . "." . $base64_url_payload, self::get_secret(), true);
-		$base64_url_signature = self::base64url_encode($signature);
+		$base64_url_sig = self::base64url_encode($signature);
 
 		// Verify it matches the signature provided in the jwt
-		$is_signature_valid = ($base64_url_signature === $signature_provided);
+		$is_sig_valid = ($base64_url_sig === $sig_provided);
 		
-		if (!$is_signature_valid) {
+		if (!$is_sig_valid) {
 			return false;
 		} 
 		else if ($is_token_expired) {

@@ -3,8 +3,8 @@
 // Prevent direct access
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 	header('Content-Type: application/json; charset=utf-8');
-	include_once dirname(__FILE__).'/../includes/utils/res.php';
-	echo Res::fail(403, 'Unauthorized');
+	include_once 'utils/res.php';
+	echo Res::fail(403, 'Forbidden');
 	exit();
 }
 
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		$action = $_POST['action'];
 		switch ($action) {
 			// Generate token
-			case 'generate_token':
+			case 'request_token':
 				echo Auth::generate_token($conn, $_POST['username'], $_POST['password'], $_POST['type']);
 				break;
 			// Check token
@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				}
 				break;
 			// Print token payload
-			case 'print_token':
+			case 'print_payload':
 				if (!isset($_POST['token'])) {
 					echo Res::fail(401, 'Token not provided');
 					break;
@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				echo Auth::print_token($_POST['token']);
 				break;
 			// Get user id from token
-			case 'get_user_id':
+			case 'get_uid':
 				if (!isset($_POST['token'])) {
 					echo Res::fail(401, 'Token not provided');
 					break;
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				echo Auth::get_user_id($conn, $_POST['token']);
 				break;
 			// Check user credentials on login
-			case 'check_credentials':
+			case 'check_creds':
 				if (!isset($_POST['username']) || !isset($_POST['password'])) {
 					echo Res::fail(401, 'Username or password not provided');
 					break;
@@ -129,13 +129,13 @@ class Auth {
 		else return Res::success(200, 'Token payload decoded', $payload);
 	}
 	// Function to get user id from token
-	public static function get_user_id($conn, $token) {
+	public static function get_user_id($token) {
 		if (!isset($token)) return false;
 		$payload = JWT::get_info($token);
 		if (!$payload) echo Res::fail(401, 'Invalid token');
 		else {
 			// Query database for user id given username
-			$sql = "SELECT * FROM user WHERE username = '$payload[username]'";
+			$sql = "SELECT * FROM users WHERE username = '$payload[username]'";
 			$result = runQuery($sql);
 			$row = fetchAssoc($result);
 			return Res::success(200, 'User ID retrieved', $row['id']);
@@ -146,7 +146,7 @@ class Auth {
 		// If username or password is not set, return false
 		if (!isset($username) || !isset($password)) return false;
 		// Check if username and password are valid
-		$sql = "SELECT * FROM user WHERE (username = '".mysqli_real_escape_string($conn, $_POST['username'])."') AND (password = '".mysqli_real_escape_string($conn, $_POST['password'])."') LIMIT 1;";
+		$sql = "SELECT * FROM users WHERE (username = '".mysqli_real_escape_string($conn, $_POST['username'])."') AND (password = '".mysqli_real_escape_string($conn, $_POST['password'])."') LIMIT 1;";
 		// Run query
 		$result = runQuery($sql);
 		if (numRows($result) < 1) {
@@ -155,17 +155,5 @@ class Auth {
 		else {
 			return true;
 		}
-	}
-	// Function to check login token
-	public static function check_login_token($token) {
-		if (!isset($token)) return false;
-		if (JWT::is_jwt_valid($token, 'login')) return true;
-		else return false;
-	}
-	// Function to check api token
-	public static function check_api_token($token) {
-		if (!isset($token)) return false;
-		if (JWT::is_jwt_valid($token, 'api')) return true;
-		else return false;
 	}
 }

@@ -4,8 +4,8 @@ if (!isset($include)) {
 	header("Location: ../../index.php");
 }
 
-$arr = array("action"=>"print_token","token"=>"$token");
-$res = post('http://localhost/shadow/api/auth.php', $arr);
+$arr = array("action"=>"print_payload","token"=>"$token");
+$res = post('http://localhost/shadow/api/v1/auth.php', $arr);
 $username = json_decode($res)->data->username;
 ?>
 <div class="row justify-content-around">

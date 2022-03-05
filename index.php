@@ -10,18 +10,13 @@ require_once 'includes/utils/post.php';
 // Check if the user is logged in via cookie with JWT token
 if (isset($_COOKIE['shadow_login_token'])) {
 	$token = $_COOKIE['shadow_login_token'];
-
 	// Check if the token is valid via POST req to API auth endpoint
 	$arr = array("action"=>"check_token","token"=>"$token","type"=>"login");
-	$res = post('http://localhost/shadow/api/auth.php', $arr);
-	echo "Result: ".$res."\n";
-
+	$res = post('http://localhost/shadow/api/v1/auth.php', $arr);
 	if (json_decode($res)->msg == 'Token valid') {
 		$login = true;
-		echo "Token valid\n";
 	}
 }
-else echo "Cookie not set\n";
 ?>
 <!DOCTYPE html>
 <html lang="en">

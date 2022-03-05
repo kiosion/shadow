@@ -4,7 +4,7 @@
 if (!isset($include)) {
 	header('Content-Type: application/json; charset=utf-8');
 	include_once 'res.php';
-	echo Res::fail(403, 'Unauthorized');
+	echo Res::fail(403, 'Forbidden');
 	exit();
 }
 

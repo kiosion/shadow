@@ -1,9 +1,19 @@
 <?php
 
+//Prevent direct access
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+	header('Content-Type: application/json; charset=utf-8');
+	include_once 'utils/res.php';
+	echo Res::fail(403, 'Forbidden');
+	exit();
+}
+
+$include = true;
+
 // Include files
-require_once dirname(__FILE__).'/utils/res.php';
-require_once dirname(__FILE__).'/utils/db.php';
-require_once dirname(__FILE__).'/auth.php';
+require_once 'utils/res.php';
+require_once 'utils/db.php';
+require_once 'auth.php';
 
 // Set HTTP headers
 header('Content-Type: application/json; charset=utf-8');
@@ -11,25 +21,32 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
 // Get token from header and check if it is valid
-if (!Auth::check_api_auth(JWT::get_bearer_token())) {
-	echo Res::fail(401, 'Not authorized');
+if (!Auth::check_token(JWT::get_bearer_token(), 'api')) {
+	echo Res::fail(401, 'Unauthorized');
 	exit();
 }
 
 // Set some vars
 $res = array();
-$upload_dir = $cwd.'../imgs/';
+$upload_dir = '../imgs/';
 if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
 
 // If POST is used
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if (isset($_FILES['file'])) {
 		// Fetch user id from token
-		$uid = Auth::get_user_id($conn, JWT::get_bearer_token());
+		$uid = json_decode(Auth::get_user_id(JWT::get_bearer_token()), true);
+		if ($uid['status'] == 'success') {
+			$uid = $uid['data'];
+		}
+		else {
+			echo Res::fail(500, 'File upload failed');
+			exit();
+		}
 		// Create new upload object
 		$upload = new Upload($upload_dir, $_FILES['file'], $uid);
 		// Upload file
-		if ($res = $upload->upload_file()) {
+		if ($res = $upload->upload_file($conn)) {
 			// Return response
 			echo $res;
 		}
@@ -52,11 +69,10 @@ else {
 }
 
 class Upload {
-	public function __construct($dir, $file, $uid, $conn) {
+	public function __construct($dir, $file, $uid) {
 		$this->dir = $dir; // Upload directory
 		$this->file = $file; // File object to uplaod
 		$this->uid = $uid; // User ID initiating upload
-		$this->conn = $conn; // DB connection
 	}
 	// Generate random string
 	private static function random_string($len) {
@@ -67,7 +83,7 @@ class Upload {
 		return $str;
 	}
 	// Upload file, add to db if successful
-	public function upload_file() {
+	public function upload_file($conn) {
 		$file = $this->file;
 		$dir = $this->dir;
 		$file_name = $file['name'];
@@ -84,19 +100,19 @@ class Upload {
 			return $this->upload_fail(500, 'Error uploading, file error');
 		}
 		// Move the file to the uploads directory
-		$rand_name = $this->random_string(5).'.'.$file_ext;
-		$upload_name = $dir.$rand_name;
-		if (move_uploaded_file($file_tmp_name, $upload_name)) {
+		$ul_name = $this->random_string(5).'.'.$file_ext;
+		$og_name = $file_name;
+		$dir_name = $dir.$ul_name;
+		if (move_uploaded_file($file_tmp_name, $dir_name)) {
 			// Add file to db
 			$uid = $this->uid;
-			$conn = $this->conn;
 			$tz = new DateTimeZone('America/Halifax');
 			$time = ((new DateTimeImmutable("now", $tz))->setTimezone($tz))->getTimestamp();
 			// Format: UID, filename, timestamp
-			$sql = "INSERT INTO files (uid, name, time) VALUES($uid, $upload_name, $time)";
+			$sql = "INSERT INTO files (uid, og_name, ul_name, time) VALUES ('$uid', '$og_name', '$ul_name', '$time')";
 			// Run query
-			if(runQuery($conn, $sql)) {
-				return $this->upload_success($dir.$rand_name);
+			if(runQuery($sql)) {
+				return $this->upload_success($dir.$ul_name);
 			}
 			else return $this->upload_fail(500, 'Error uploading, database error'); // TODO: Also delete file so we don't have 'ghost' files left over on fail
 		}

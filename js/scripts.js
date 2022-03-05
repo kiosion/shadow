@@ -1,5 +1,3 @@
-// Imports
-
 // On DOM loaded
 $(document).ready(() => {
 	// Handle login form update on submit
@@ -13,9 +11,9 @@ $(document).ready(() => {
 		console.log("Checking creds...");
 		let post = $.ajax({
 			type: 'POST',
-			url: 'api/auth.php',
+			url: 'api/v1/auth.php',
 			data: { 
-				action: 'check_credentials',
+				action: 'check_creds',
 				username: un.val(),
 				password: pw.val(),
 			}
@@ -27,9 +25,9 @@ $(document).ready(() => {
 				console.log("Credentials valid, requesting token...");
 				let token = $.ajax({
 					type: 'POST',
-					url: 'api/auth.php',
+					url: 'api/v1/auth.php',
 					data: {
-						action: 'generate_token',
+						action: 'request_token',
 						username: un.val(),
 						password: pw.val(),
 						type: 'login',
@@ -48,39 +46,34 @@ $(document).ready(() => {
 					// If not generated or returned, log error and redirect to index.php
 					else {
 						console.log(tokenRes.msg);
-						//window.location.href = 'index.php?error=2';
+						window.location.href = 'index.php?error=token';
 					}
 				});
 				// On fail, log error and redirect to index.php with error
 				token.fail(() => {
-					//window.location.href = 'index.php?error=3';
-					console.log("Error generating token");
+					console.log("Error requesting token");
+					window.location.href = 'index.php?error=token';
 				});
 			}
 			else if (authRes.status == 'success' && authRes.msg == 'Credentials invalid') {
 				// Log error and redirect to index.php with error
-				console.log("Invalid credentials");
-				//window.location.href = 'index.php?error=1';
+				window.location.href = 'index.php?error=creds';
 			}
 			// If 'status' is 'error', then display error message
 			else if (authRes.status == 'error') {
 				// Display error message from 'msg' field
-				console.log("Failed to auth, server responded with error: " + post.responseJSON.msg);
+				console.log("Failed to auth, server responded with error: " + authRes.msg);
+				window.location.href = 'index.php?error=server';
 			}
 			else {
 				console.log("Failed to auth, server responded with unknown error");
+				window.location.href = 'index.php?error=server';
 			}
-			// Redirect to index
-			//window.location.href = 'index.php';
 		});
 		// On fail
-		post.fail((xhr) => {
-			if (xhr.status != 200 && xhr.status != null) {
-				console.log('Server responded: ' + xhr.status);
-			}
-			console.log('Failed to auth!');
-			// Redirect to login with error
-			//window.location.href = 'index.php?error=1';
+		post.fail(() => {
+			console.log('Failed to auth, server responded with unknown error');
+			window.location.href = 'index.php?error=server';
 		});
 	});
 	// Handle button clicks
@@ -91,5 +84,11 @@ $(document).ready(() => {
 		Cookies.remove('shadow_login_token');
 		// Redirect to index
 		window.location.href = 'index.php';
+	});
+	// Dashboard button
+	$('#dashLaunchButton').click((e) => {
+		e.preventDefault();
+		// Redirect to dashboard
+		window.location.href = 'admin/index.php';
 	});
 });
