@@ -1,10 +1,18 @@
 <?php
 
+// Prevent direct access
+if (!isset($include)) {
+	header('Content-Type: application/json; charset=utf-8');
+	include_once 'res.php';
+	echo Res::fail(403, 'Unauthorized');
+	exit();
+}
+
 // Include files
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'dotenv.php';
+require_once 'dotenv.php';
 
 // Load .env file
-$env = new DotEnv(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.env');
+$env = new DotEnv(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.env');
 $env->load();
 
 // Set vars for db

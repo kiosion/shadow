@@ -1,12 +1,22 @@
 <?php
 
+// Prevent direct access
+if (!isset($include)) {
+	header('Content-Type: application/json; charset=utf-8');
+	include_once 'res.php';
+	echo Res::fail(403, 'Unauthorized');
+	exit();
+}
+
+$include = true;
+
 // Include files
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'dotenv.php';
+require_once 'dotenv.php';
 
 class JWT {
 	// Get JWT secret from .env file
-	private static function get_secret() :string {
-		$env = new DotEnv(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.env');
+	private static function get_secret() {
+		$env = new DotEnv('../.env');
 		$env->load();
 		return getenv('JWT_SECRET');
 	}
@@ -36,7 +46,9 @@ class JWT {
 
 		// Check the expiration time
 		$expiration = json_decode($payload)->exp;
-		$is_token_expired = ($expiration - time()) < 0;
+		// Current time with America/Halifax timezone
+		$curr_time = (new DateTime('now', new DateTimeZone('America/Halifax')))->setTimeZone(new DateTimeZone('America/Halifax'))->getTimeStamp();
+		$is_token_expired = ($expiration - $curr_time) < 0;
 
 		// Build a signature based on the header and payload using the secret
 		$base64_url_header = self::base64url_encode($header);
@@ -50,7 +62,7 @@ class JWT {
 		if (!$is_signature_valid) {
 			return false;
 		} 
-		elseif ($is_token_expired) {
+		else if ($is_token_expired) {
 			return false;
 		}
 		else {
@@ -82,6 +94,7 @@ class JWT {
 			'iat' => $iat_date->format('d.m.Y, H:i:s').' UTC-4',
 			'exp' => $exp_date->format('d.m.Y, H:i:s').' UTC-4',
 			'iss' => json_decode($payload)->iss,
+			'type' => json_decode($payload)->type,
 			'username' => json_decode($payload)->username,
 			'expired' => $is_token_expired
 		);

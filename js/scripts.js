@@ -2,11 +2,6 @@
 
 // On DOM loaded
 $(document).ready(() => {
-	// Handle form submission for login form
-	$("#1").submit((e) => {
-		e.preventDefault();
-		console.log("Submitted!");
-	});
 	// Handle login form update on submit
 	$("#loginForm").submit((e) => {
 		// Prevent default submit
@@ -46,9 +41,9 @@ $(document).ready(() => {
 					if (tokenRes.status == 'success' && tokenRes.msg == 'Token generated') {	
 						console.log("Token generated, setting cookie...");
 						// Set login_token cookie with expiry of 6 hours
-						Cookies.set('login_token', tokenRes.data, { expires: 6 });
+						Cookies.set('shadow_login_token', tokenRes.data, { expires: .25 });
 						console.log("Cookie set, redirecting...");
-						//window.location.href = 'index.php';
+						window.location.href = 'index.php';
 					}
 					// If not generated or returned, log error and redirect to index.php
 					else {
@@ -87,5 +82,14 @@ $(document).ready(() => {
 			// Redirect to login with error
 			//window.location.href = 'index.php?error=1';
 		});
+	});
+	// Handle button clicks
+	// Logout button
+	$('#logoutButton').click((e) => {
+		e.preventDefault();
+		// Remove shadow_login_token cookie
+		Cookies.remove('shadow_login_token');
+		// Redirect to index
+		window.location.href = 'index.php';
 	});
 });

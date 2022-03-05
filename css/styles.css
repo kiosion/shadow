@@ -12,3 +12,15 @@ h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display
 button, button.btn, a.btn, .btn {
 	border-radius: 12px !important;
 }
+.form-group>.form-floating:nth-of-type(1)>.form-control {
+	border-top-left-radius: 12px !important;
+	border-top-right-radius: 12px !important;
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.form-group>.form-floating:nth-of-type(2)>.form-control {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	border-bottom-left-radius: 12px !important;
+	border-bottom-right-radius: 12px !important;
+}

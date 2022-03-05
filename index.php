@@ -1,17 +1,27 @@
 <?php
 
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'includes/utils/jwt.php';
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'includes/utils/auth.php';
+// Set vars
+$login = false;
+$include = true;
+
+// Include files
+require_once 'includes/utils/post.php';
+
 // Check if the user is logged in via cookie with JWT token
-if (isset($_COOKIE['login_token'])) {
-	if (Auth::check_login_token($_COOKIE['login_token'])) {
-		// If logged in, redirect to admin dash
-		//header('Location: admin/index.php');
-		// console log
-		echo 'Cookie set';
+if (isset($_COOKIE['shadow_login_token'])) {
+	$token = $_COOKIE['shadow_login_token'];
+
+	// Check if the token is valid via POST req to API auth endpoint
+	$arr = array("action"=>"check_token","token"=>"$token","type"=>"login");
+	$res = post('http://localhost/shadow/api/auth.php', $arr);
+	echo "Result: ".$res."\n";
+
+	if (json_decode($res)->msg == 'Token valid') {
+		$login = true;
+		echo "Token valid\n";
 	}
 }
-else echo "Cookie not set."
+else echo "Cookie not set\n";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,13 +31,14 @@ else echo "Cookie not set."
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Shadow - Index</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-	<link href="css/styles.scss" rel="stylesheet">
+	<link href="css/styles.css" rel="stylesheet">
 </head>
 <body class="text-center bg-black">
 	<div class="d-flex flex-column min-vh-100">
 		<main class="container my-auto">
 			<?php
-				include 'includes/pages/login.php';
+				if (!$login) include 'includes/pages/login.php';
+				else include 'includes/pages/index.php';
 			?>
 		</main>
 	</div>
