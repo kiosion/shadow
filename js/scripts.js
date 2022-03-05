@@ -86,7 +86,7 @@ $(document).ready(() => {
 		window.location.href = 'index.php';
 	});
 	// Dashboard button
-	$('#dashLaunchButton').click((e) => {
+	$('#launchDashButton').click((e) => {
 		e.preventDefault();
 		// Redirect to dashboard
 		window.location.href = 'admin/index.php';

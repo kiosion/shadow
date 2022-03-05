@@ -7,7 +7,7 @@ $include = true;
 // Include files
 require_once 'includes/utils/post.php';
 
-// Check if the user is logged in via cookie with JWT token
+// Verify login token
 if (isset($_COOKIE['shadow_login_token'])) {
 	$token = $_COOKIE['shadow_login_token'];
 	// Check if the token is valid via POST req to API auth endpoint
