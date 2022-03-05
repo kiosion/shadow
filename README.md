@@ -1,6 +1,6 @@
 <div align="center">
 	<h1>Shadow</h1>
-	<p>PHP backend for uploading files to a server, plus a work-in-progress admin UI to manage them.</p>
+	<p>PHP backend + frontend for file management / uploading / sharing. Still very much a work-in-progress.</p>
 </div>
 
 ### DEPS
