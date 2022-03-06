@@ -37,9 +37,9 @@ $currentLink = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 							break;
 						case 'file':
 							echo '
-								<button type="button" id="menuBar-copyLink" data-link="<?php echo $currentLink; ?>" class="btn btn-light me-3" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy link"><i class="fas fa-link p-1"></i></button>
-								<button type="button" id="menuBar-viewRaw" data-link="<?php echo $currentLink; ?>/raw" class="btn btn-light me-3" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View raw"><i class="fas fa-external-link-square p-1"></i></button>
-								<button type="button" id="menuBar-download" data-link="<?php echo $currentLink; ?>/download" class="btn btn-primary" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download file"><i class="fas fa-cloud-download p-1"></i></button>
+								<button type="button" id="menuBar-copyLink" data-link="'.$currentLink.'" class="btn btn-light me-3" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy link"><i class="fas fa-link p-1"></i></button>
+								<button type="button" id="menuBar-viewRaw" data-link="'.$currentLink.'/raw" class="btn btn-light me-3" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View raw"><i class="fas fa-external-link-square p-1"></i></button>
+								<button type="button" id="menuBar-download" data-link="'.$currentLink.'/download" class="btn btn-primary" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download file"><i class="fas fa-cloud-download p-1"></i></button>
 							';
 							break;
 						default:
