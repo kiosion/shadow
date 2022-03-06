@@ -103,7 +103,7 @@ $(document).ready(() => {
 			position: "absolute", 
 			top: e.pageY, 
 			left: e.pageX, 
-			display: "block" 
+			display: "block",
 		});
 	});
 	$("html").click(() => {
@@ -111,23 +111,56 @@ $(document).ready(() => {
 			display: "none" 
 		});
 	});
-	// Context menu actions, TODO: Not working.
-	$("#contextMenu-CopyLink").click((e) => {
-		e.preventDefault();
-		let link = $(e.target).attr('data-link');
-		alert("Clicked! Link: " + link);
-		copyToClipboard(link);
+	// Context menu actions
+	$(".dropdown-item.copy-link").click((e) => {
+		copyLink(e);
 		$("#contextMenu").css({
 			display: "none"
 		});
 	});
+	$(".dropdown-item.view-raw").click((e) => {
+		viewRaw(e);
+		$("#contextMenu").css({
+			display: "none"
+		});
+	});
+	$(".dropdown-item.download").click((e) => {
+		download(e);
+		$("#contextMenu").css({
+			display: "none"
+		});
+	});
+	// Menu bar button actions
+	$("#menuBar-copyLink").click((e) => {
+		copyLink(e);
+	})
+	$("#menuBar-viewRaw").click((e) => {
+		viewRaw(e);
+	})
+	$("#menuBar-download").click((e) => {
+		download(e);
+	})
 	
 });
 
-function copyToClipboard(text) {
-	var $temp = $("<input>");
+function copyLink(e) {
+	e.preventDefault();
+	let linkText = $(e.delegateTarget).attr('data-link');
+	let $temp = $("<input>");
 	$("body").append($temp);
-	$temp.val(text).select();
+	$temp.val(linkText).select();
     document.execCommand("copy");
     $temp.remove();
+}
+
+function viewRaw(e) {
+	e.preventDefault();
+	let linkText = $(e.delegateTarget).attr('data-link');
+	window.open(linkText);
+}
+
+function download(e) {
+	e.preventDefault();
+	let linkText = $(e.delegateTarget).attr('data-link');
+	window.location.href = ("File/"+linkText);
 }

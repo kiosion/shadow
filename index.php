@@ -1,8 +1,8 @@
 <?php
 
 // Set vars
-$view = 'login';
-$title = 'Shadow - Login';
+$view = 'index';
+$title = 'Shadow - Index';
 $include = true;
 
 // Include files
@@ -12,26 +12,33 @@ require_once 'includes/utils/functions.php';
 // Handle URL paths
 $res = handle_url_paths(parse_url($_SERVER['REQUEST_URI']));
 switch ($res['view']) {
-	case 'raw':
-		$view = 'raw';
-		$filename = $res['filename'];
-		$uid = $res['uid'];
-		// Get filetype from extension
-		$ext = pathinfo($filename, PATHINFO_EXTENSION);
-		$content_type = get_contenttype($ext);
-		break;
 	case 'file':
 		$view = 'file';
 		$title = $res['title'];
-		$filename = $res['filename'];
+		$og_name = $res['og_name'];
+		$ext = $res['ext'];
 		$uid = $res['uid'];
-		// Get filetype from extension
-		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+		$filename = $res['filename'];
+		$content_type = get_contenttype($ext);
+		break;
+	case 'raw':
+		$view = 'raw';
+		$ext = $res['ext'];
+		$uid = $res['uid'];
+		$filename = $res['filename'];
+		$content_type = get_contenttype($ext);
+		break;
+	case 'download':
+		$view = 'download';
+		$ext = $res['ext'];
+		$uid = $res['uid'];
+		$og_name = $res['og_name'];
+		$filename = $res['filename'];
 		$content_type = get_contenttype($ext);
 		break;
 	case 'admin':
 		$view = 'admin';
-		$title = 'Shadow - Admin';
+		$title = $res['title'];
 		break;
 	case '404':
 		$view = '404';
@@ -41,16 +48,16 @@ switch ($res['view']) {
 		break;
 }
 
-// Verify login state
-if (!($view == 'raw' || $view == 'file')) {
-	$res = verify_login_token();
-	if ($res['view'] == 'index') {
-		$view = 'index';
-		$title = 'Shadow - Index';
+// Verify login state only if not viewing file
+if ($view != 'raw' && $view != 'file') {
+	$res = verify_login_token($view);
+	if (!($res['status'] == 'valid')) {
+		$view = 'login';
+		$title = 'Shadow - Login';
 	}
 }
 
-// Page content
+// Show HTML content
 if ($view == 'raw') {
 	// Set HTTP headers
 	header('Content-Type: '.$content_type);
@@ -59,72 +66,46 @@ if ($view == 'raw') {
 	fpassthru(fopen('uploads/users/'.$uid.'/'.$filename, 'r'));
 	exit();
 }
+else if ($view == 'download') {
+	// Serve file using readfile
+	header('Content-Type: application/octet-stream');
+	header('Content-Disposition: attachment; filename='.$og_name);
+	readfile('uploads/users/'.$uid.'/'.$filename);
+	exit();
+}
 else {
-	echo '
-		<!DOCTYPE html>
-		<html lang="en">
-		<head>
-			<meta charset="UTF-8">
-			<meta http-equiv="X-UA-Compatible" content="IE=edge">
-			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>'.$title.'</title>
-			'; require_once 'includes/styles.php'; echo '
-		</head>
-	';
+	require_once 'includes/components/head.php';
 	switch ($view) {
 		// Login page
 		case 'login':
-			echo '
-				<body class="text-center bg-black">
-					<div class="d-flex flex-column min-vh-100 mx-2">
-						'; require 'includes/components/header.php'; echo '
-						<main class="container-fluid my-auto">
-							'; include 'includes/pages/login.php'; echo '
-						</main>
-						'; require 'includes/components/footer.php'; echo '
-					</div>
-			';
+			$includeBody = 'includes/pages/login.php';
+			$includeFooter = 'includes/components/footer.php';
 			break;
 		// Index page
 		case 'index':
-			echo '
-				<body class="text-center bg-black">
-					<div class="d-flex flex-column min-vh-100 mx-2">
-						'; require 'includes/components/header.php'; echo '
-						<main class="container-fluid my-auto">
-							'; include 'includes/pages/index.php'; echo '
-						</main>
-						'; require 'includes/components/footer.php'; echo '
-					</div>
-			';
+			$includeHeader = 'includes/components/header.php';
+			$includeBody = 'includes/pages/index.php';
+			$includeFooter = 'includes/components/footer.php';
 			break;
 		// File view page
 		case 'file':
-			echo '
-				<body class="text-center bg-black">
-					<div class="d-flex flex-column min-vh-100 mx-2">
-						'; require 'includes/components/file-header.php'; echo'
-						<main class="container-fluid my-auto">
-							'; include 'includes/pages/file.php'; echo '
-						</main>
-						'; require 'includes/components/file-footer.php'; echo '
-					</div>
-			';
+			$includeHeader  = 'includes/components/file-header.php';
+			$includeBody = 'includes/pages/file.php';
+			$includeFooter = 'includes/components/file-footer.php';
 			break;
-		// default:
-		// 	echo '
-		// 		<body class="text-center bg-black">
-		// 			<div class="d-flex flex-column min-vh-100">
-		// 				'; require 'includes/components/header.php'; echo'
-		// 				<main class="container my-auto">
-		// 					'; include 'includes/pages/'.$view.'.php'; echo '
-		// 				</main>
-		// 				'; require 'includes/components/footer.php'; echo '
-		// 			</div>
-		// 	';
-		// 	break;
+		case 'admin':
+			$includeHeader = 'includes/components/header.php';
+			$includeBody = 'includes/pages/admin.php';
+			$includeFooter = 'includes/components/footer.php';
+			break;
+		default:
+			$includeHeader = 'includes/components/header.php';
+			$includeBody = 'includes/pages/error/'.$view.'.php';
+			$includeFooter = 'includes/components/footer.php';
+			break;
 	}
-	include 'includes/components/context-menu.php';
+	require_once 'includes/components/body.php';
+	include_once 'includes/components/context-menu.php';
 	echo '
 		</body>
 		'; require_once 'includes/scripts.php'; echo '

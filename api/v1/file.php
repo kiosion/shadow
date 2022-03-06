@@ -13,7 +13,7 @@ $include = true;
 // Include files
 require_once 'utils/res.php';
 require_once 'utils/db.php';
-require_once 'auth.php';
+//require_once 'auth.php';
 
 // Set HTTP headers
 header('Content-Type: application/json; charset=utf-8');
@@ -21,10 +21,10 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
 // Get token from header and check if it is valid
-if (!Auth::check_token(JWT::get_bearer_token(), 'api')) {
-	echo Res::fail(401, 'Unauthorized');
-	exit();
-}
+//if (!Auth::check_token(JWT::get_bearer_token(), 'api')) {
+// 	echo Res::fail(401, 'Unauthorized');
+// 	exit();
+// }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if (isset($_POST['action'])) {
@@ -36,7 +36,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					echo Res::fail(401, 'Filename not provided');
 					break;
 				}
-				echo File::get_uid($_POST['filename']);
+				// Check for file extension
+				$ext = pathinfo($_POST['filename'], PATHINFO_EXTENSION);
+				if ($ext == '') {
+					$res = File::get_uid($_POST['filename']);
+				}
+				else {
+					// Remove file extension
+					$filename = substr($_POST['filename'], 0, -strlen($ext) - 1);
+					$res = File::get_uid($filename);
+				}
+				echo $res;
 				break;
 			// Not a valid action
 			default:
@@ -55,7 +65,7 @@ class File {
 			$sql = "SELECT * FROM files WHERE ul_name = '$filename';";
 			$result = runQuery($sql);
 			$row = fetchAssoc($result);
-			if ($row) return Res::success(200, 'Uploader UID retrieved', $row['uid']);
+			if ($row) return Res::success(200, 'File info retrieved', array("uid" => $row['uid'], "og_name" => $row['og_name'], "ul_name" => $row['ul_name'], "ext" => $row['ext']));
 			else return Res::fail(404, 'File "'.$filename.'" not found');
 		}
 	}

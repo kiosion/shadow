@@ -1,7 +1,7 @@
 <?php
 
 // Verify login token
-function verify_login_token() {
+function verify_login_token($view) {
 	if (isset($_COOKIE['shadow_login_token'])) {
 		$token = $_COOKIE['shadow_login_token'];
 		// Check if the token is valid via POST req to API auth endpoint
@@ -9,8 +9,12 @@ function verify_login_token() {
 		$res = post('http://localhost/api/v1/auth.php', $arr);
 		if (json_decode($res)->msg == 'Token valid') {
 			return array(
-				'view' => 'index',
-				'title' => 'Shadow - Index',
+				'status' => 'valid',
+			);
+		}
+		else {
+			return array(
+				'status' => 'invalid',
 			);
 		}
 	}
@@ -25,9 +29,12 @@ function handle_url_paths($url) {
 		// Check if file is present after '/file/'
 		$filename = substr($path, strrpos($path, 'file/') + 5);
 		if ($filename == '') header('Location: /');
-		// Check if path ends with '/raw'
+		// Check if path ends with '/raw' or '/download'
 		if (strstr($path, '/raw')) {
 			$filename = substr($filename, 0, - 4);
+		}
+		if (strstr($path, '/download')) {
+			$filename = substr($filename, 0, - 9);
 		}
 		// Check for anything else after filename
 		if (substr($filename, -1) == '/') {
@@ -36,30 +43,58 @@ function handle_url_paths($url) {
 		if (strstr($filename, '/')) { 
 			$filename = substr($filename, 0, strpos($filename, '/'));
 		}
-		// Get uid from filename using function
+		// Check for extension at end of filename
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+		if ($ext != '') {
+			// Remove extension from end of filename
+			$filename = substr($filename, 0, - strlen($ext) - 1);
+		}
 		$arr = array("action"=>"get_uid","filename"=>"$filename");
 		$res = post('http://localhost/api/v1/file.php', $arr);
 		$res_decoded = json_decode($res);
 		if ($res_decoded->status == 'success') {
-			$uid = $res_decoded->data;
+			$uid = $res_decoded->data->uid;
+			$ul_name = $res_decoded->data->ul_name;
+			$og_name = $res_decoded->data->og_name;
+			$ext = $res_decoded->data->ext;
 			// Check if URL contains trailing '/raw'
 			if (strstr($path, '/raw')) {
 				return array(
 					'view' => 'raw',
-					'filename' => $filename,
+					'ext' => $ext,
+					'filename' => $ul_name.'.'.$ext,
 					'uid' => $uid,
 				);
 			}
+			// Check if URL contains trailing '/download'
+			else if (strstr($path, '/download')) {
+				return array(
+					'view' => 'download',
+					'ext' => $ext,
+					'og_name' => $og_name,
+					'filename' => $ul_name.'.'.$ext,
+					'uid' => $uid,
+				);
+			}
+			// Else if view is normal
 			else {
 				return array(
 					'view' => 'file',
-					'title' => 'Shadow - '.$filename,
-					'filename' => $filename,
+					'title' => 'Shadow - '.$ul_name,
+					'og_name' => $og_name,
+					'ext' => $ext,
+					'filename' => $ul_name.'.'.$ext,
 					'uid' => $uid,
 				);
 			}
 		}
 		else return array('view' => '404');
+	}
+	else if (strstr($path, '/admin')) {
+		return array(
+			'view' => 'admin',
+			'title' => 'Shadow - Admin',
+		);
 	}
 	// Check if URL contains anything after '/'
 	else if (substr($path, 1) != '') {

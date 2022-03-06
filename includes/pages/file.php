@@ -26,6 +26,6 @@
 		?>
 	</div>
 	<div class="file-card-info pb-3">
-		<pre class="fs-6 fw-bold text-light my-0"><?php echo $filename; ?></pre>
+		<pre class="fs-6 fw-bold text-light my-0"><?php echo $og_name; ?></pre>
 	</div>
 </div>

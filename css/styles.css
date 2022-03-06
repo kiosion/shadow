@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Ubuntu:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 /* Import fonts */
-html, body { font-family: 'Roboto', sans-serif !important; }
+html, body { font-family: 'Roboto', sans-serif !important; overflow-x: hidden !important; }
 h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display-1 { font-family: 'Ubuntu', sans-serif !important; }
 
 /* Set colour vars */
@@ -25,14 +25,16 @@ h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display
 	--radius-2: 12px;
 }
 
-/* Override some bootstrap styles */
+/* Not-allowed cursor */
 .not-allowed {
 	cursor: not-allowed !important;
 	pointer-events: all !important;
 }
-button, button.btn, a.btn, .btn {
-	border-radius: var(--radius-1) !important;
+/* Divs */
+div {
+	transition: all .1s ease-in-out;
 }
+/* Forms */
 .form-group>.form-floating:nth-of-type(1)>.form-control {
 	border-top-left-radius: var(--radius-1) !important;
 	border-top-right-radius: var(--radius-1) !important;
@@ -45,7 +47,18 @@ button, button.btn, a.btn, .btn {
 	border-bottom-left-radius: var(--radius-1) !important;
 	border-bottom-right-radius: var(--radius-1) !important;
 }
-/* Colours */
+input:active, input:focus {
+	box-shadow: none !important;
+	outline: none !important;
+	border-color: var(--white) !important;
+}
+#loginForm {
+	min-width: 350px !important;
+}
+#indexContent {
+	max-width: 600px !important;
+}
+/* Background */
 .bg-dark {
 	background-color: var(--background-2) !important;
 }
@@ -54,8 +67,11 @@ button, button.btn, a.btn, .btn {
 }
 /* Buttons */
 button, button:hover, button:active, button:focus {
-	transition: .1s ease-in-out !important;
+	border-radius: var(--radius-1) !important;
+	transition: all .1s ease-in !important;
 	border: none !important;
+	outline: none !important;
+	box-shadow: none !important;
 }
 .btn {
 	background-color: var(--background-2) !important;
@@ -70,8 +86,8 @@ button, button:hover, button:active, button:focus {
 	color: var(--white) !important;
 }
 .btn-primary:hover {
-	background-color: var(--cyan) !important;
-	box-shadow: 0 0 8px var(--cyan) !important;
+	background-color: var(--purple) !important;
+	box-shadow: 0 0 8px var(--purple) !important;
 	color: var(--black) !important;
 }
 .btn-dark {
@@ -97,6 +113,15 @@ button, button:hover, button:active, button:focus {
 	color: var(--white) !important;
 }
 .btn-dark-danger:hover {
+	background-color: var(--red) !important;
+	box-shadow: 0 0 8px var(--red) !important;
+	color: var(--white) !important;
+}
+.btn-light-danger {
+	background-color: var(--background-2) !important;
+	color: var(--white) !important;
+}
+.btn-light-danger:hover {
 	background-color: var(--red) !important;
 	box-shadow: 0 0 8px var(--red) !important;
 	color: var(--white) !important;
@@ -129,12 +154,18 @@ div.contextMenu {
 .dropdown-menu>li, .dropdown-menu>a {
 	cursor: pointer;
 }
-.dropdown-menu>li:hover>a {
+.dropdown-menu>li>a {
 	border-radius: var(--radius-1);
+}
+.dropdown-menu>li:active>a {
+	background-color: var(--purple) !important;
 }
 .dropdown-menu>li>a {
 	padding-left: 0;
 }
 .dropdown-menu>li>a>span {
 	padding-left: 18px;
+}
+#contextMenu {
+	transition: opacity .2s ease-in-out;
 }
