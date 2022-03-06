@@ -124,9 +124,10 @@ else {
 		// 	';
 		// 	break;
 	}
+	include 'includes/components/context-menu.php';
 	echo '
 		</body>
-		'; require_once "includes/scripts.php"; echo '
+		'; require_once 'includes/scripts.php'; echo '
 		</html>
 	';
 }

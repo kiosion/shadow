@@ -92,4 +92,42 @@ $(document).ready(() => {
 	});
 	// Init tooltips
 	$("html").tooltip({ selector: '[data-bs-toggle=tooltip]' });
+
+	// Init right click menu
+	$("html").contextmenu((e) => {
+		e.preventDefault();
+	});
+	$(".file-card-file").contextmenu((e) => {
+		e.preventDefault();
+		$("#contextMenu").css({
+			position: "absolute", 
+			top: e.pageY, 
+			left: e.pageX, 
+			display: "block" 
+		});
+	});
+	$("html").click(() => {
+		$("#contextMenu").css({
+			display: "none" 
+		});
+	});
+	// Context menu actions, TODO: Not working.
+	$("#contextMenu-CopyLink").click((e) => {
+		e.preventDefault();
+		let link = $(e.target).attr('data-link');
+		alert("Clicked! Link: " + link);
+		copyToClipboard(link);
+		$("#contextMenu").css({
+			display: "none"
+		});
+	});
+	
 });
+
+function copyToClipboard(text) {
+	var $temp = $("<input>");
+	$("body").append($temp);
+	$temp.val(text).select();
+    document.execCommand("copy");
+    $temp.remove();
+}

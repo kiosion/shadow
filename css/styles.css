@@ -6,7 +6,7 @@ h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display
 
 /* Set colour vars */
 :root {
-	--background-darker: #171922;
+	--background-darker: #191b24;
 	--background-1: #282a36;
 	--background-2: #44475a;
 	--background-lighter: #61647a;
@@ -20,6 +20,9 @@ h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display
 	--purple: #bd93f9;
 	--red: #ff5555;
 	--yellow: #f1fa8c;
+
+	--radius-1: 8px;
+	--radius-2: 12px;
 }
 
 /* Override some bootstrap styles */
@@ -28,19 +31,19 @@ h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display
 	pointer-events: all !important;
 }
 button, button.btn, a.btn, .btn {
-	border-radius: 12px !important;
+	border-radius: var(--radius-1) !important;
 }
 .form-group>.form-floating:nth-of-type(1)>.form-control {
-	border-top-left-radius: 12px !important;
-	border-top-right-radius: 12px !important;
+	border-top-left-radius: var(--radius-1) !important;
+	border-top-right-radius: var(--radius-1) !important;
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
 .form-group>.form-floating:nth-of-type(2)>.form-control {
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
-	border-bottom-left-radius: 12px !important;
-	border-bottom-right-radius: 12px !important;
+	border-bottom-left-radius: var(--radius-1) !important;
+	border-bottom-right-radius: var(--radius-1) !important;
 }
 /* Colours */
 .bg-dark {
@@ -100,11 +103,38 @@ button, button:hover, button:active, button:focus {
 }
 /* File card container */
 .file-card {
-	border-radius: 12px !important;
+	border-radius: 8px !important;
 	background-color: var(--background-darker) !important;
 	min-width: 400px !important;
 	max-width: fit-content;
 	margin-left: auto;
 	margin-right: auto;
 	overflow: hidden;
+}
+/* Popup */
+div.contextMenu {
+	padding: 0;
+	margin: 0;
+}
+.dropdown-menu-dark {
+	position: static;
+	display: block;
+	min-width: 200px;
+	display: grid;
+	gap: 0.25rem;
+	padding: 0.5rem;
+	border-radius: var(--radius-1);
+	background-color: var(--background-darker) !important;
+}
+.dropdown-menu>li, .dropdown-menu>a {
+	cursor: pointer;
+}
+.dropdown-menu>li:hover>a {
+	border-radius: var(--radius-1);
+}
+.dropdown-menu>li>a {
+	padding-left: 0;
+}
+.dropdown-menu>li>a>span {
+	padding-left: 18px;
 }
