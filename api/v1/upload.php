@@ -28,8 +28,6 @@ if (!Auth::check_token(JWT::get_bearer_token(), 'api')) {
 
 // Set some vars
 $res = array();
-$upload_dir = '../imgs/';
-if (!file_exists($upload_dir)) mkdir($upload_dir, 0777, true);
 
 // If POST is used
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -44,9 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			exit();
 		}
 		// Create new upload object
-		$upload = new Upload($upload_dir, $_FILES['file'], $uid);
+		$upload = new Upload($_FILES['file'], $uid);
 		// Upload file
-		if ($res = $upload->upload_file($conn)) {
+		if ($res = $upload->upload_file()) {
 			// Return response
 			echo $res;
 		}
@@ -69,8 +67,8 @@ else {
 }
 
 class Upload {
-	public function __construct($dir, $file, $uid) {
-		$this->dir = $dir; // Upload directory
+	public function __construct($file, $uid) {
+		$this->dir = '../../uploads/users/'.$uid.'/'; // Upload directory
 		$this->file = $file; // File object to uplaod
 		$this->uid = $uid; // User ID initiating upload
 	}
@@ -83,7 +81,7 @@ class Upload {
 		return $str;
 	}
 	// Upload file, add to db if successful
-	public function upload_file($conn) {
+	public function upload_file() {
 		$file = $this->file;
 		$dir = $this->dir;
 		$file_name = $file['name'];
@@ -99,8 +97,10 @@ class Upload {
 		if ($file_error > 0) {
 			return $this->upload_fail(500, 'Error uploading, file error');
 		}
+		// If directory doesn't exist, create it
+		if (!file_exists($dir)) mkdir($dir, 0777, true);
 		// Move the file to the uploads directory
-		$ul_name = $this->random_string(5).'.'.$file_ext;
+		$ul_name = $this->random_string(6).'.'.$file_ext;
 		$og_name = $file_name;
 		$dir_name = $dir.$ul_name;
 		if (move_uploaded_file($file_tmp_name, $dir_name)) {
@@ -112,7 +112,7 @@ class Upload {
 			$sql = "INSERT INTO files (uid, og_name, ul_name, time) VALUES ('$uid', '$og_name', '$ul_name', '$time')";
 			// Run query
 			if(runQuery($sql)) {
-				return $this->upload_success($dir.$ul_name);
+				return $this->upload_success($ul_name);
 			}
 			else return $this->upload_fail(500, 'Error uploading, database error'); // TODO: Also delete file so we don't have 'ghost' files left over on fail
 		}
@@ -121,7 +121,7 @@ class Upload {
 		}
 	}
 	private static function upload_success($path) {
-		return Res::success(200, 'Uploaded successfully', $path);
+		return Res::success(200, 'Upload successful', $path);
 	}
 	private static function upload_fail($code, $msg) {
 		return Res::fail($code, $msg);

@@ -76,7 +76,6 @@ $(document).ready(() => {
 			window.location.href = 'index.php?error=server';
 		});
 	});
-	// Handle button clicks
 	// Logout button
 	$('#logoutButton').click((e) => {
 		e.preventDefault();
@@ -89,6 +88,8 @@ $(document).ready(() => {
 	$('#launchDashButton').click((e) => {
 		e.preventDefault();
 		// Redirect to dashboard
-		window.location.href = 'admin/index.php';
+		window.location.href = 'admin/';
 	});
+	// Init tooltips
+	$("html").tooltip({ selector: '[data-bs-toggle=tooltip]' });
 });

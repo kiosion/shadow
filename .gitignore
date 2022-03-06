@@ -1,4 +1,4 @@
 # Imgs dir
-imgs/*
+uploads/*
 # .env file
 .env

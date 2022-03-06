@@ -20,7 +20,7 @@ if (!isset($include)) {
 						<label for="password" class="text-light">Password</label>
 					</div>
 				</div>
-			<button id="submit" type="submit" class="w-100 btn btn-lg btn-outline-light">Login</button>
+			<button id="submit" type="submit" class="w-100 btn btn-lg btn-light">Login</button>
 			<p class="mt-5 mb-3 text-muted">&copy; 2022 Kiosion</p>
 		</form>
 	</div>

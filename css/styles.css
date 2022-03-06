@@ -4,6 +4,24 @@
 html, body { font-family: 'Roboto', sans-serif !important; }
 h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display-1 { font-family: 'Ubuntu', sans-serif !important; }
 
+/* Set colour vars */
+:root {
+	--background-darker: #171922;
+	--background-1: #282a36;
+	--background-2: #44475a;
+	--background-lighter: #61647a;
+	--black: #060608;
+	--white: #f8f8f2;
+	--comment: #6272a4;
+	--cyan: #8be9fd;
+	--green: #50fa7b;
+	--orange: #ffb86c;
+	--pink: #ff79c6;
+	--purple: #bd93f9;
+	--red: #ff5555;
+	--yellow: #f1fa8c;
+}
+
 /* Override some bootstrap styles */
 .not-allowed {
 	cursor: not-allowed !important;
@@ -23,4 +41,70 @@ button, button.btn, a.btn, .btn {
 	border-top-right-radius: 0;
 	border-bottom-left-radius: 12px !important;
 	border-bottom-right-radius: 12px !important;
+}
+/* Colours */
+.bg-dark {
+	background-color: var(--background-2) !important;
+}
+.bg-black {
+	background-color: var(--background-1) !important;
+}
+/* Buttons */
+button, button:hover, button:active, button:focus {
+	transition: .1s ease-in-out !important;
+	border: none !important;
+}
+.btn {
+	background-color: var(--background-2) !important;
+	color: var(--black) !important;
+}
+.btn-secondary:hover {
+	background-color: var(--foreground) !important;
+	box-shadow: 0 0 8px var(--foreground) !important;
+}
+.btn-primary {
+	background-color: var(--background-2) !important;
+	color: var(--white) !important;
+}
+.btn-primary:hover {
+	background-color: var(--cyan) !important;
+	box-shadow: 0 0 8px var(--cyan) !important;
+	color: var(--black) !important;
+}
+.btn-dark {
+	background-color: var(--background-1) !important;
+	color: var(--white) !important;
+}
+.btn-dark:hover {
+	background-color: var(--background-lighter) !important;
+	box-shadow: 0 0 8px var(--background-lighter) !important;
+	color: var(--white) !important;
+}
+.btn-light {
+	background-color: var(--background-2) !important;
+	color: var(--white) !important;
+}
+.btn-light:hover {
+	background-color: var(--background-lighter) !important;
+	box-shadow: 0 0 8px var(--background-lighter) !important;
+	color: var(--white) !important;
+}
+.btn-dark-danger {
+	background-color: var(--background-1) !important;
+	color: var(--white) !important;
+}
+.btn-dark-danger:hover {
+	background-color: var(--red) !important;
+	box-shadow: 0 0 8px var(--red) !important;
+	color: var(--white) !important;
+}
+/* File card container */
+.file-card {
+	border-radius: 12px !important;
+	background-color: var(--background-darker) !important;
+	min-width: 400px !important;
+	max-width: fit-content;
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
 }

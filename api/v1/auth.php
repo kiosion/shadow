@@ -96,7 +96,7 @@ class Auth {
 			$tz = new DateTimeZone('America/Halifax');
 			$issuedAt = (new DateTimeImmutable("now", $tz))->setTimeZone($tz);
 			if ($type == 'login') $expiration = $issuedAt->modify('+6 hours')->getTimestamp(); // Login token expiry is 6 hours
-			else $expiration = $issuedAt->modify('+20 minutes')->getTimestamp(); // API token expiry is 20 minutes
+			else $expiration = $issuedAt->modify('+7 days')->getTimestamp(); // API token expiry is 7 days
 			$serverName = "cdn.kio.dev";
 			$payload = array(
 				'nbf' => $issuedAt->getTimestamp(), // Not before

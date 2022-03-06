@@ -1,45 +1,132 @@
 <?php
 
 // Set vars
-$login = false;
+$view = 'login';
+$title = 'Shadow - Login';
 $include = true;
 
 // Include files
 require_once 'includes/utils/post.php';
+require_once 'includes/utils/functions.php';
 
-// Verify login token
-if (isset($_COOKIE['shadow_login_token'])) {
-	$token = $_COOKIE['shadow_login_token'];
-	// Check if the token is valid via POST req to API auth endpoint
-	$arr = array("action"=>"check_token","token"=>"$token","type"=>"login");
-	$res = post('http://localhost/shadow/api/v1/auth.php', $arr);
-	if (json_decode($res)->msg == 'Token valid') {
-		$login = true;
+// Handle URL paths
+$res = handle_url_paths(parse_url($_SERVER['REQUEST_URI']));
+switch ($res['view']) {
+	case 'raw':
+		$view = 'raw';
+		$filename = $res['filename'];
+		$uid = $res['uid'];
+		// Get filetype from extension
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+		$content_type = get_contenttype($ext);
+		break;
+	case 'file':
+		$view = 'file';
+		$title = $res['title'];
+		$filename = $res['filename'];
+		$uid = $res['uid'];
+		// Get filetype from extension
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+		$content_type = get_contenttype($ext);
+		break;
+	case 'admin':
+		$view = 'admin';
+		$title = 'Shadow - Admin';
+		break;
+	case '404':
+		$view = '404';
+		break;
+	case '403':
+		$view = '403';
+		break;
+}
+
+// Verify login state
+if (!($view == 'raw' || $view == 'file')) {
+	$res = verify_login_token();
+	if ($res['view'] == 'index') {
+		$view = 'index';
+		$title = 'Shadow - Index';
 	}
 }
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Shadow - Index</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-	<link href="css/styles.css" rel="stylesheet">
-</head>
-<body class="text-center bg-black">
-	<div class="d-flex flex-column min-vh-100">
-		<main class="container my-auto">
-			<?php
-				if (!$login) include 'includes/pages/login.php';
-				else include 'includes/pages/index.php';
-			?>
-		</main>
-	</div>
-</body>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
-<script src="js/scripts.js"></script>
-</html>
+
+// Page content
+if ($view == 'raw') {
+	// Set HTTP headers
+	header('Content-Type: '.$content_type);
+	header('Content-Length: '.filesize('uploads/users/'.$uid.'/'.$filename));
+	// Display file using fpassthru
+	fpassthru(fopen('uploads/users/'.$uid.'/'.$filename, 'r'));
+	exit();
+}
+else {
+	echo '
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>'.$title.'</title>
+			'; require_once 'includes/styles.php'; echo '
+		</head>
+	';
+	switch ($view) {
+		// Login page
+		case 'login':
+			echo '
+				<body class="text-center bg-black">
+					<div class="d-flex flex-column min-vh-100 mx-2">
+						'; require 'includes/components/header.php'; echo '
+						<main class="container-fluid my-auto">
+							'; include 'includes/pages/login.php'; echo '
+						</main>
+						'; require 'includes/components/footer.php'; echo '
+					</div>
+			';
+			break;
+		// Index page
+		case 'index':
+			echo '
+				<body class="text-center bg-black">
+					<div class="d-flex flex-column min-vh-100 mx-2">
+						'; require 'includes/components/header.php'; echo '
+						<main class="container-fluid my-auto">
+							'; include 'includes/pages/index.php'; echo '
+						</main>
+						'; require 'includes/components/footer.php'; echo '
+					</div>
+			';
+			break;
+		// File view page
+		case 'file':
+			echo '
+				<body class="text-center bg-black">
+					<div class="d-flex flex-column min-vh-100 mx-2">
+						'; require 'includes/components/file-header.php'; echo'
+						<main class="container-fluid my-auto">
+							'; include 'includes/pages/file.php'; echo '
+						</main>
+						'; require 'includes/components/file-footer.php'; echo '
+					</div>
+			';
+			break;
+		// default:
+		// 	echo '
+		// 		<body class="text-center bg-black">
+		// 			<div class="d-flex flex-column min-vh-100">
+		// 				'; require 'includes/components/header.php'; echo'
+		// 				<main class="container my-auto">
+		// 					'; include 'includes/pages/'.$view.'.php'; echo '
+		// 				</main>
+		// 				'; require 'includes/components/footer.php'; echo '
+		// 			</div>
+		// 	';
+		// 	break;
+	}
+	echo '
+		</body>
+		'; require_once "includes/scripts.php"; echo '
+		</html>
+	';
+}
