@@ -4,6 +4,8 @@
 if (!isset($include)) {
 	header("Location: ../../");
 }
+// Set page link
+$currentLink = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 ?>
 <header class="p-3 bg-black text-white">
 	<div class="container-fluid">
@@ -16,14 +18,37 @@ if (!isset($include)) {
 
 			<div class="text-end">
 				<?php
-					if ($view == 'login') {
-						echo '<button id="loginButton-header" type="button" class="btn btn-light">Login</button>';
-					}
-					else if ($view == 'index') {
-						echo '<button id="logoutButton-header" type="button" class="btn btn-light-danger">Logout</button>';
-					}
-					else if ($view == '404' || $view == '403' || $view == '500') {
-						echo '<button id="homeButton-header" type="button" class="btn btn-light">Go back</button>'; // TODO: jQuery pushhistorystate to go back a page
+					echo '<div class="text-end">';
+					switch ($app_route) {
+						case 'login':
+							echo '
+								<button id="loginButton-header" type="button" class="btn btn-light">Login</button>
+							';
+							break;
+						case 'index':
+							echo '
+								<button id="logoutButton-header" type="button" class="btn btn-light-danger">Logout</button>
+							';
+							break;
+						case 'admin':
+							echo '
+								<button id="logoutButton-header" type="button" class="btn btn-light-danger">Logout</button>
+							';
+							break;
+						case 'file':
+							echo '
+								<button type="button" id="menuBar-copyLink" data-link="<?php echo $currentLink; ?>" class="btn btn-light me-3" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy link"><i class="fas fa-link p-1"></i></button>
+								<button type="button" id="menuBar-viewRaw" data-link="<?php echo $currentLink; ?>/raw" class="btn btn-light me-3" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View raw"><i class="fas fa-external-link-square p-1"></i></button>
+								<button type="button" id="menuBar-download" data-link="<?php echo $currentLink; ?>/download" class="btn btn-primary" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download file"><i class="fas fa-cloud-download p-1"></i></button>
+							';
+							break;
+						default:
+						echo '
+							<button id="homeButton-header" type="button" class="btn btn-light">Go back</button>
+						';
+						// TODO: jQuery pushhistorystate to go back a page
+						break;
+							
 					}
 				?>
 			</div>

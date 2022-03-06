@@ -88,9 +88,9 @@ switch ($app_route) {
 				break;
 			// File view page
 			case 'file':
-				$includeHeader  = 'includes/components/file-header.php';
+				$includeHeader  = 'includes/components/header.php';
 				$includeBody = 'includes/pages/file.php';
-				$includeFooter = 'includes/components/file-footer.php';
+				$includeFooter = 'includes/components/footer.php';
 				break;
 			// Admin UI
 			case 'admin':
