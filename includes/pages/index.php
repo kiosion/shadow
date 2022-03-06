@@ -1,7 +1,7 @@
 <?php
 
 if (!isset($include)) {
-	header("Location: ../../index.php");
+	header("Location: ../../");
 }
 
 $arr = array("action"=>"print_payload","token"=>"$_COOKIE[shadow_login_token]");

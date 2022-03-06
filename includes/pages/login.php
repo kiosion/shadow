@@ -1,7 +1,7 @@
 <?php
 
 if (!isset($include)) {
-	header("Location: ../../index.php");
+	header("Location: ../../");
 }
 
 ?>

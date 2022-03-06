@@ -1,5 +1,10 @@
 <?php
 
+// Prevent direct access
+if (!isset($include)) {
+	header("Location: ../../");
+}
+
 $currentLink = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 ?>
 <header class="p-3 bg-black text-white">

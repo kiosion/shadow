@@ -1,3 +1,9 @@
+<?php
+
+if (!isset($include)) {
+	header("Location: ../../");
+}
+?>
 <div class="file-card shadow">
 	<div class="file-card-file pb-3">
 		<?php

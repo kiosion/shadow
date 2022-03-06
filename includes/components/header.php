@@ -1,3 +1,10 @@
+<?php
+
+// Prevent direct access
+if (!isset($include)) {
+	header("Location: ../../");
+}
+?>
 <header class="p-3 bg-black text-white">
 	<div class="container-fluid">
 		<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start">

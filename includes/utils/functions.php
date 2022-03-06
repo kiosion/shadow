@@ -1,7 +1,15 @@
 <?php
 
+// Prevent direct access
+if (!isset($include)) {
+	header('Content-Type: application/json; charset=utf-8');
+	include_once 'res.php';
+	echo Res::fail(403, 'Unauthorized');
+	exit();
+}
+
 // Verify login token
-function verify_login_token($view) {
+function verify_login_token($app_route) {
 	if (isset($_COOKIE['shadow_login_token'])) {
 		$token = $_COOKIE['shadow_login_token'];
 		// Check if the token is valid via POST req to API auth endpoint
@@ -60,7 +68,7 @@ function handle_url_paths($url) {
 			// Check if URL contains trailing '/raw'
 			if (strstr($path, '/raw')) {
 				return array(
-					'view' => 'raw',
+					'app_route' => 'raw',
 					'ext' => $ext,
 					'filename' => $ul_name.'.'.$ext,
 					'uid' => $uid,
@@ -69,17 +77,17 @@ function handle_url_paths($url) {
 			// Check if URL contains trailing '/download'
 			else if (strstr($path, '/download')) {
 				return array(
-					'view' => 'download',
+					'app_route' => 'download',
 					'ext' => $ext,
 					'og_name' => $og_name,
 					'filename' => $ul_name.'.'.$ext,
 					'uid' => $uid,
 				);
 			}
-			// Else if view is normal
+			// Else if app_route is normal
 			else {
 				return array(
-					'view' => 'file',
+					'app_route' => 'file',
 					'title' => 'Shadow - '.$ul_name,
 					'og_name' => $og_name,
 					'ext' => $ext,
@@ -88,11 +96,11 @@ function handle_url_paths($url) {
 				);
 			}
 		}
-		else return array('view' => '404');
+		else return array('app_route' => '404');
 	}
 	else if (strstr($path, '/admin')) {
 		return array(
-			'view' => 'admin',
+			'app_route' => 'admin',
 			'title' => 'Shadow - Admin',
 		);
 	}
