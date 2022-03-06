@@ -1,4 +1,6 @@
-# Imgs dir
+# Upload dir content
 uploads/*
 # .env file
 .env
+# .bak files
+*.bak
