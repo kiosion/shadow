@@ -34,6 +34,10 @@ h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display
 div {
 	transition: all .1s ease-in-out;
 }
+/* Main content */
+main#page-index {
+	padding-top: 30vh !important;
+}
 /* Forms */
 .form-group>.form-floating:nth-of-type(1)>.form-control {
 	border-top-left-radius: var(--radius-1) !important;
@@ -56,7 +60,7 @@ input:active, input:focus {
 	min-width: 350px !important;
 }
 #indexContent {
-	max-width: 600px !important;
+	max-width: 800px !important;
 }
 /* Background */
 .bg-dark {
@@ -126,6 +130,69 @@ button, button:hover, button:active, button:focus {
 	box-shadow: 0 0 8px var(--red) !important;
 	color: var(--white) !important;
 }
+.btn-action-dark {
+	border-radius: 0px !important;
+	background-color: var(--background-1) !important;
+	color: var(--white) !important;
+}
+.btn-action-dark:hover {
+	border-radius: 0px !important;
+	background-color: var(--purple) !important;
+	box-shadow: 0 0 8px var(--purple) !important;
+	color: var(--white) !important;
+}
+.btn-action-dark-cyan {
+	border-radius: 0px !important;
+	background-color: var(--background-1) !important;
+	color: var(--white) !important;
+}
+.btn-action-dark-cyan:hover {
+	border-radius: 0px !important;
+	background-color: var(--cyan) !important;
+	box-shadow: 0 0 8px var(--cyan) !important;
+	color: var(--black) !important;
+}
+.btn-action-dark-orange {
+	border-radius: 0px !important;
+	background-color: var(--background-1) !important;
+	color: var(--white) !important;
+}
+.btn-action-dark-orange:hover {
+	border-radius: 0px !important;
+	background-color: var(--orange) !important;
+	box-shadow: 0 0 8px var(--orange) !important;
+	color: var(--black) !important;
+}
+.btn-action-dark-green {
+	border-radius: 0px !important;
+	background-color: var(--background-1) !important;
+	color: var(--white) !important;
+}
+.btn-action-dark-green:hover {
+	border-radius: 0px !important;
+	background-color: var(--green) !important;
+	box-shadow: 0 0 8px var(--green) !important;
+	color: var(--black) !important;
+}
+.btn-action-dark-danger {
+	border-radius: 0px !important;
+	background-color: var(--background-1) !important;
+	color: var(--white) !important;
+}
+.btn-action-dark-danger:hover {
+	border-radius: 0px !important;
+	background-color: var(--red) !important;
+	box-shadow: 0 0 8px var(--red) !important;
+	color: var(--white) !important;
+}
+.btn-group-first, .btn-group-first:hover {
+	border-top-left-radius: var(--radius-1) !important;
+	border-bottom-left-radius: var(--radius-1) !important;
+}
+.btn-group-last, .btn-group-last:hover  {
+	border-top-right-radius: var(--radius-1) !important;
+	border-bottom-right-radius: var(--radius-1) !important;
+}
 /* File card container */
 .file-card {
 	border-radius: 8px !important;
@@ -135,6 +202,32 @@ button, button:hover, button:active, button:focus {
 	margin-left: auto;
 	margin-right: auto;
 	overflow: hidden;
+}
+.file-card-file>img {
+	max-height: 80vh;
+	max-width: 80vw;
+}
+.file-card-file>audio {
+	width: 100%;
+	border-radius: 0;
+	padding: .5rem;
+}
+.file-card-file>#embed-pdf {
+	min-width: 80vw;
+	min-height: 80vh;
+	max-width: 80vw;
+	max-height: 80vh;
+}
+.file-card-file>pre {
+	padding: 1rem 1.5rem 1rem 1.5rem;
+	max-width: 80vw;
+	max-height: 80vh;
+	text-align: left;
+	white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
 /* Popup */
 div.contextMenu {
@@ -168,4 +261,32 @@ div.contextMenu {
 }
 #contextMenu {
 	transition: opacity .2s ease-in-out;
+}
+/* Uploads table */
+#uploads-table-container {
+	max-width: 1400px;
+	margin-left: auto;
+	margin-right: auto;
+}
+#uploads-table>.row-item {
+	border-top-left-radius: var(--radius-1) !important;
+	border-top-right-radius: var(--radius-1) !important;
+}
+#uploads-table>.row-item ~ .row-item {
+	border-radius: 0 !important;
+}
+.row-header>div {
+	text-align: left;
+}
+.row-item>div {
+	text-align: left;
+	margin-top: auto;
+	margin-bottom: auto;
+}
+.row-item {
+	align-content: center !important;
+	min-height: 60px;
+}
+.row-item:hover {
+	background-color: var(--background-lighter) !important;
 }

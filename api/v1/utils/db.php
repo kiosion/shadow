@@ -12,7 +12,7 @@ if (!isset($include)) {
 require_once 'dotenv.php';
 
 // Load .env file
-$env = new DotEnv(dirname(__FILE__).DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'.env');
+$env = new DotEnv('.env');
 $env->load();
 
 // Set vars for db

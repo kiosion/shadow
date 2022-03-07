@@ -11,7 +11,7 @@ if (!isset($include)) {
 class DotEnv {
 	protected $path;
 	public function __construct(string $path) {
-		$this->path = $path;
+		$this->path = dirname(__DIR__).'/.env';
 	}
 	// Load function, loads .env file into $_ENV var
 	public function load() :void {

@@ -5,7 +5,11 @@ if (!isset($include)) {
 	header("Location: ../../");
 }
 // Set page link
-$currentLink = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+$currentLink = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; // TODO: HTTP for now since HTTPS isn't implemented in my local apache test setup
+// If trailing '/' in link, remove it
+if (substr($currentLink, -1) == '/') {
+	$currentLink = substr($currentLink, 0, -1);
+}
 ?>
 <header class="p-3 bg-black text-white">
 	<div class="container-fluid">
@@ -27,7 +31,8 @@ $currentLink = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 							break;
 						case 'index':
 							echo '
-								<button id="logoutButton-header" type="button" class="btn btn-light-danger">Logout</button>
+								<button id="accountButton-header" type="button" class="btn btn-light me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Account" style="width:40px;"><i class="fas fa-user"></i></button>
+								<button id="logoutButton-header" type="button" class="btn btn-light-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Logout" style="width:40px;"><i class="fas fa-sign-out-alt"></i></button>
 							';
 							break;
 						case 'admin':

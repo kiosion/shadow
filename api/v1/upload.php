@@ -78,6 +78,11 @@ class Upload {
 		$chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		$str = '';
 		for ($i = 0; $i < $len; $i++) $str .= $chars[mt_rand(0, strlen($chars)-1)];
+		// Check name isn't in use
+		$sql = "SELECT * FROM files WHERE BINARY ul_name = '$str'";
+		if (numRows(runQuery($sql)) > 0) {
+			$str = self::random_string($len);
+		}
 		return $str;
 	}
 	// Upload file, add to db if successful
@@ -100,19 +105,19 @@ class Upload {
 		// If directory doesn't exist, create it
 		if (!file_exists($dir)) mkdir($dir, 0777, true);
 		// Move the file to the uploads directory
-		$ul_name = $this->random_string(6).'.'.$file_ext;
+		$ul_name = $this->random_string(6);
 		$og_name = $file_name;
-		$dir_name = $dir.$ul_name;
+		$dir_name = $dir.$ul_name.'.'.$file_ext;
 		if (move_uploaded_file($file_tmp_name, $dir_name)) {
 			// Add file to db
 			$uid = $this->uid;
 			$tz = new DateTimeZone('America/Halifax');
 			$time = ((new DateTimeImmutable("now", $tz))->setTimezone($tz))->getTimestamp();
 			// Format: UID, filename, timestamp
-			$sql = "INSERT INTO files (uid, og_name, ul_name, time) VALUES ('$uid', '$og_name', '$ul_name', '$time')";
+			$sql = "INSERT INTO files (uid, og_name, ul_name, ext, time) VALUES ('$uid', '$og_name', '$ul_name', '$file_ext', '$time')";
 			// Run query
 			if(runQuery($sql)) {
-				return $this->upload_success($ul_name);
+				return $this->upload_success($ul_name.'.'.$file_ext);
 			}
 			else return $this->upload_fail(500, 'Error uploading, database error'); // TODO: Also delete file so we don't have 'ghost' files left over on fail
 		}

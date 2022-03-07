@@ -13,6 +13,7 @@ require_once 'includes/utils/functions.php';
 
 // Handle URL paths
 $res = handle_url_paths(parse_url($_SERVER['REQUEST_URI']));
+//var_dump($res);
 switch ($res['app_route']) {
 	case 'file':
 		$app_route = 'file';
@@ -20,20 +21,20 @@ switch ($res['app_route']) {
 		$og_name = $res['og_name'];
 		$uid = $res['uid'];
 		$filename = $res['filename'];
-		$content_type = get_contenttype($res['ext']);
+		$content_type = get_mimetype($res['ext']);
 		break;
 	case 'raw':
 		$app_route = 'raw';
 		$uid = $res['uid'];
 		$filename = $res['filename'];
-		$content_type = get_contenttype($res['ext']);
+		$content_type = get_mimetype($res['ext']);
 		break;
 	case 'download':
 		$app_route = 'download';
 		$uid = $res['uid'];
 		$og_name = $res['og_name'];
 		$filename = $res['filename'];
-		$content_type = get_contenttype($res['ext']);
+		$content_type = get_mimetype($res['ext']);
 		break;
 	case 'admin':
 		$app_route = 'admin';

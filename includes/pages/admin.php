@@ -3,5 +3,7 @@
 if (!isset($include)) {
 	header("Location: ../../");
 }
-
-echo '<p class="text-light">TODO</p>';
+?>
+<main class="container-fluid my-auto pb-5">
+	<p class="text-light">TODO</p>
+</main>

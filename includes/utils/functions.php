@@ -111,7 +111,7 @@ function handle_url_paths($url) {
 }
 
 // Get filetype from ext
-function get_contenttype($ext) {
+function get_mimetype($ext) {
 	$ext = strtolower($ext);
 	// Set content type
 	switch ($ext) {
@@ -119,16 +119,16 @@ function get_contenttype($ext) {
 			return 'text/plain';
 			break;
 		case 'html':
-			return 'text/plain';
+			return 'text/html';
 			break;
 		case 'css':
-			return 'text/plain';
+			return 'text/css';
 			break;
 		case 'js':
-			return 'text/plain';
+			return 'application/js';
 			break;
 		case 'php':
-			return 'text/plain';
+			return 'application/php';
 			break;
 		case 'jpg':
 			return 'image/jpeg';

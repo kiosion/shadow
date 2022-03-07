@@ -62,7 +62,7 @@ class File {
 		if (!isset($filename)) return false;
 		else {
 			// Query database for user id given username
-			$sql = "SELECT * FROM files WHERE ul_name = '$filename';";
+			$sql = "SELECT * FROM files WHERE BINARY ul_name = '$filename';";
 			$result = runQuery($sql);
 			$row = fetchAssoc($result);
 			if ($row) return Res::success(200, 'File info retrieved', array("uid" => $row['uid'], "og_name" => $row['og_name'], "ul_name" => $row['ul_name'], "ext" => $row['ext']));
