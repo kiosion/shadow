@@ -17,30 +17,16 @@ if (!isset($include)) {
 				switch ($content_type) {
 					// Plain text files
 					case 'text/plain':
-						echo '<pre class="text-light">'.htmlspecialchars(file_get_contents($filepath)).'</pre>';
-						break;
 					case 'text/js':
-						echo '<pre class="text-light">'.htmlspecialchars(file_get_contents($filepath)).'</pre>';
-						break;
 					case 'text/html':
 						echo '<pre class="text-light">'.htmlspecialchars(file_get_contents($filepath)).'</pre>';
 						break;
 					// Image files
 					case 'image/avif':
-						echo '<img src="/file/'.$filename.'/raw" class="img-fluid" alt="'.$filename.'">';
-						break;
 					case 'image/bmp':
-						echo '<img src="/file/'.$filename.'/raw" class="img-fluid" alt="'.$filename.'">';
-						break;
 					case 'image/gif':
-						echo '<img src="/file/'.$filename.'/raw" class="img-fluid" alt="'.$filename.'">';
-						break;
 					case 'image/vdn.microsoft.icon':
-						echo '<img src="/file/'.$filename.'/raw" class="img-fluid" alt="'.$filename.'">';
-						break;
 					case 'image/jpeg':
-						echo '<img src="/file/'.$filename.'/raw" class="img-fluid" alt="'.$filename.'">';
-						break;
 					case 'image/png':
 						echo '<img src="/file/'.$filename.'/raw" class="img-fluid" alt="'.$filename.'">';
 						break;
@@ -55,23 +41,11 @@ if (!isset($include)) {
 						break;
 					// Audio files
 					case 'audio/aac':
-						echo '<audio controls src="/file/'.$filename.'/raw" preload="metadata">This browser doesn\'t support the Audio embed.</audio>';
-						break;
 					case 'audio/flac':
-						echo '<audio controls src="/file/'.$filename.'/raw" preload="metadata">This browser doesn\'t support the Audio embed.</audio>';
-						break;
 					case 'audio/mpeg':
-						echo '<audio controls src="/file/'.$filename.'/raw" preload="metadata">This browser doesn\'t support the Audio embed.</audio>';
-						break;
 					case 'audio/ogg':
-						echo '<audio controls src="/file/'.$filename.'/raw" preload="metadata">This browser doesn\'t support the Audio embed.</audio>';
-						break;
 					case 'audio/opus':
-						echo '<audio controls src="/file/'.$filename.'/raw" preload="metadata">This browser doesn\'t support the Audio embed.</audio>';
-						break;
 					case 'audio/wav':
-						echo '<audio controls src="/file/'.$filename.'/raw" preload="metadata">This browser doesn\'t support the Audio embed.</audio>';
-						break;
 					case 'audio/webm':
 						echo '<audio controls src="/file/'.$filename.'/raw" preload="metadata">This browser doesn\'t support the Audio embed.</audio>';
 						break;

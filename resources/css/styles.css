@@ -32,7 +32,7 @@ h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display
 }
 /* Divs */
 div {
-	transition: all .1s ease-in-out;
+	transition: background-color .1s ease-in-out, color .1s ease-in-out, box-shadow .1s ease-in-out;
 }
 /* Main content */
 main#page-index {
@@ -70,13 +70,14 @@ input:active, input:focus {
 	background-color: var(--background-1) !important;
 }
 /* Buttons */
-button, button:hover, button:active, button:focus {
+button:not(.btn-group-child), button:not(.btn-group-child):active, button:not(.btn-group-child):focus {
 	border-radius: var(--radius-1) !important;
 	transition: all .1s ease-in !important;
 	border: none !important;
 	outline: none !important;
 	box-shadow: none !important;
 }
+
 .btn {
 	background-color: var(--background-2) !important;
 	color: var(--black) !important;
@@ -85,16 +86,25 @@ button, button:hover, button:active, button:focus {
 	background-color: var(--foreground) !important;
 	box-shadow: 0 0 8px var(--foreground) !important;
 }
-.btn-primary {
+.btn-light-purple {
 	background-color: var(--background-2) !important;
 	color: var(--white) !important;
 }
-.btn-primary:hover {
+.btn-light-purple:hover {
 	background-color: var(--purple) !important;
 	box-shadow: 0 0 8px var(--purple) !important;
 	color: var(--black) !important;
 }
-.btn-dark {
+.btn-light-cyan {
+	background-color: var(--background-2) !important;
+	color: var(--white) !important;
+}
+.btn-light-cyan:hover {
+	background-color: var(--cyan) !important;
+	box-shadow: 0 0 8px var(--cyan) !important;
+	color: var(--black) !important;
+}
+.btn-dark, .btn-dark-danger {
 	background-color: var(--background-1) !important;
 	color: var(--white) !important;
 }
@@ -103,7 +113,7 @@ button, button:hover, button:active, button:focus {
 	box-shadow: 0 0 8px var(--background-lighter) !important;
 	color: var(--white) !important;
 }
-.btn-light {
+.btn-light, .btn-light-danger {
 	background-color: var(--background-2) !important;
 	color: var(--white) !important;
 }
@@ -112,17 +122,9 @@ button, button:hover, button:active, button:focus {
 	box-shadow: 0 0 8px var(--background-lighter) !important;
 	color: var(--white) !important;
 }
-.btn-dark-danger {
-	background-color: var(--background-1) !important;
-	color: var(--white) !important;
-}
 .btn-dark-danger:hover {
 	background-color: var(--red) !important;
 	box-shadow: 0 0 8px var(--red) !important;
-	color: var(--white) !important;
-}
-.btn-light-danger {
-	background-color: var(--background-2) !important;
 	color: var(--white) !important;
 }
 .btn-light-danger:hover {
@@ -130,69 +132,105 @@ button, button:hover, button:active, button:focus {
 	box-shadow: 0 0 8px var(--red) !important;
 	color: var(--white) !important;
 }
-.btn-action-dark {
-	border-radius: 0px !important;
+.btn-action-dark, .btn-action-dark-danger, .btn-action-dark-cyan, .btn-action-dark-orange, .btn-action-dark-green {
 	background-color: var(--background-1) !important;
 	color: var(--white) !important;
 }
 .btn-action-dark:hover {
-	border-radius: 0px !important;
 	background-color: var(--purple) !important;
 	box-shadow: 0 0 8px var(--purple) !important;
 	color: var(--white) !important;
 }
-.btn-action-dark-cyan {
-	border-radius: 0px !important;
-	background-color: var(--background-1) !important;
-	color: var(--white) !important;
-}
 .btn-action-dark-cyan:hover {
-	border-radius: 0px !important;
 	background-color: var(--cyan) !important;
 	box-shadow: 0 0 8px var(--cyan) !important;
 	color: var(--black) !important;
 }
-.btn-action-dark-orange {
-	border-radius: 0px !important;
-	background-color: var(--background-1) !important;
-	color: var(--white) !important;
-}
 .btn-action-dark-orange:hover {
-	border-radius: 0px !important;
 	background-color: var(--orange) !important;
 	box-shadow: 0 0 8px var(--orange) !important;
 	color: var(--black) !important;
 }
-.btn-action-dark-green {
-	border-radius: 0px !important;
-	background-color: var(--background-1) !important;
-	color: var(--white) !important;
-}
 .btn-action-dark-green:hover {
-	border-radius: 0px !important;
 	background-color: var(--green) !important;
 	box-shadow: 0 0 8px var(--green) !important;
 	color: var(--black) !important;
 }
-.btn-action-dark-danger {
-	border-radius: 0px !important;
-	background-color: var(--background-1) !important;
-	color: var(--white) !important;
-}
 .btn-action-dark-danger:hover {
-	border-radius: 0px !important;
 	background-color: var(--red) !important;
 	box-shadow: 0 0 8px var(--red) !important;
 	color: var(--white) !important;
 }
-.btn-group-first, .btn-group-first:hover {
-	border-top-left-radius: var(--radius-1) !important;
-	border-bottom-left-radius: var(--radius-1) !important;
+
+.btn-action-light {
+	background-color: var(--background-2) !important;
+	color: var(--white) !important;
 }
-.btn-group-last, .btn-group-last:hover  {
-	border-top-right-radius: var(--radius-1) !important;
-	border-bottom-right-radius: var(--radius-1) !important;
+.btn-action-light:hover {
+	background-color: var(--background-lighter) !important;
+	box-shadow: 0 0 8px var(--background-lighter) !important;
+	color: var(--white) !important;
 }
+
+/* Button dropdown/dropup toggles */
+.btn.dropdown-toggle {
+	background-color: var(--background-2) !important;
+	color: var(--white) !important;
+	border: none !important;
+	border-radius: var(--radius-2) !important;
+	height: 38px !important;
+}
+.btn.dropdown-toggle:hover, .btn.dropdown-toggle:active {
+	background-color: var(--background-lighter) !important;
+	box-shadow: 0 0 8px var(--background-lighter) !important;
+	color: var(--white) !important;
+}
+.sortByDropdown {
+	width: fit-content !important;
+}
+.orderByDropdown {
+	width: fit-content !important;
+}
+.paginationButtons {
+	width: fit-content !important;
+	padding-right: 0 !important;
+}
+.dropup>.dropdown-menu {
+	background-color: var(--background-darker) !important;
+	border-radius: var(--radius-2) !important;
+}
+.dropup>.dropdown-menu>li:focus, .dropup>.dropdown-menu>li:focus>a, .dropup>.dropdown-menu>li>a:focus {
+	background-color: var(--background-darker) !important;
+}
+.dropup>.dropdown-menu>li>a {
+	color: var(--white) !important;
+}
+.dropup>.dropdown-menu>li:hover, .dropup>.dropdown-menu>li:hover>a {
+	background-color: var(--background-1) !important;
+}
+.dropup>.dropdown-menu>li:active, .dropup>.dropdown-menu>li:active>a, .dropup>.dropdown-menu>li.active, .dropup>.dropdown-menu>li.active>a {
+	background-color: var(--purple) !important;
+	color: var(--black) !important;
+}
+
+/* Button action groups */
+.btn-group>.btn-group:not(:last-child)>.btn, .btn-group>.btn-group:not(:last-child)>.btn:hover {
+	border-top-right-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+}
+.btn-group>.btn-group:not(:first-child)>.btn, .btn-group>.btn-group:not(:first-child)>.btn:hover {
+	border-top-left-radius: 0 !important;
+	border-bottom-left-radius: 0 !important;
+}
+.btn-group>.btn:first-child, .btn-group>.btn:first-child:hover {
+	border-top-left-radius: var(--radius-2) !important;
+	border-bottom-left-radius: var(--radius-2) !important;
+}
+.btn-group>.btn:last-child, .btn-group>.btn:last-child:hover {
+	border-top-right-radius: var(--radius-2) !important;
+	border-bottom-right-radius: var(--radius-2) !important;
+}
+
 /* File card container */
 .file-card {
 	border-radius: 8px !important;
@@ -250,8 +288,12 @@ div.contextMenu {
 .dropdown-menu>li>a {
 	border-radius: var(--radius-1);
 }
+.dropdown-menu>li:active {
+	color: var(--black) !important;
+}
 .dropdown-menu>li:active>a {
-	background-color: var(--purple) !important;
+	color: var(--black) !important;
+	background-color: var(--cyan) !important;
 }
 .dropdown-menu>li>a {
 	padding-left: 0;
@@ -268,12 +310,22 @@ div.contextMenu {
 	margin-left: auto;
 	margin-right: auto;
 }
-#uploads-table>.row-item {
+#uploads-table>.row-container>.row-item:first-of-type {
 	border-top-left-radius: var(--radius-1) !important;
 	border-top-right-radius: var(--radius-1) !important;
+	height: 4.5rem;
+	padding-top: .5rem;
 }
-#uploads-table>.row-item ~ .row-item {
-	border-radius: 0 !important;
+#uploads-table>.row-container>.row-item{
+	padding-left: 1rem;
+	padding-right: 1rem;
+	height: 4rem !important;
+}
+#uploads-table>.row-container>.row-item:last-of-type {
+	border-bottom-left-radius: var(--radius-1) !important;
+	border-bottom-right-radius: var(--radius-1) !important;
+	height: 4.5rem;
+	padding-bottom: .5rem;
 }
 .row-header>div {
 	text-align: left;
@@ -289,4 +341,26 @@ div.contextMenu {
 }
 .row-item:hover {
 	background-color: var(--background-lighter) !important;
+}
+.row-footer>div {
+	text-align: left;
+}
+.col-num {
+	width: 50px !important;
+	cursor: default !important;
+}
+.col-name {
+	cursor: default !important;
+}
+.col-size {
+	min-width: 100px !important;
+	width: 100px !important;
+	cursor: default !important;
+}
+.col-date {
+	width: 115px !important;
+	cursor: default !important;
+}
+.col-actions {
+	max-width: 450px !important;
 }

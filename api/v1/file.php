@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if (isset($_POST['action'])) {
 		$action = $_POST['action'];
 		switch ($action) {
-			// Get uploader uid from filename
+			// Get uploader uid from filename, this func is public as it is used to view files
 			case 'get_uid':
 				if (!isset($_POST['filename'])) {
 					echo Res::fail(401, 'Filename not provided');
@@ -47,6 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					$res = File::get_uid($filename);
 				}
 				echo $res;
+				break;
+			case 'get_info':
+				break;
+			case 'set_visibility':
 				break;
 			// Not a valid action
 			default:

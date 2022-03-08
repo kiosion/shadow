@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					echo Res::fail(401, 'Token not provided');
 					break;
 				}
-				echo Auth::get_user_id($conn, $_POST['token']);
+				echo Auth::get_uid($conn, $_POST['token']);
 				break;
 			// Check user credentials on login
 			case 'check_creds':
@@ -73,10 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 				else {
 					echo Res::success(200, 'Credentials invalid', null);
 				}
-				break;
-			// Not a valid action
-			default:
-				echo Res::fail(400, 'Invalid action');
 				break;
 		}
 	}
@@ -129,7 +125,7 @@ class Auth {
 		else return Res::success(200, 'Token payload decoded', $payload);
 	}
 	// Function to get user id from token
-	public static function get_user_id($token) {
+	public static function get_uid($token) {
 		if (!isset($token)) return false;
 		$payload = JWT::get_info($token);
 		if (!$payload) echo Res::fail(401, 'Invalid token');

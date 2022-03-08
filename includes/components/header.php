@@ -5,13 +5,13 @@ if (!isset($include)) {
 	header("Location: ../../");
 }
 // Set page link
-$currentLink = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']; // TODO: HTTP for now since HTTPS isn't implemented in my local apache test setup
+$currentLink = 'http://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 // If trailing '/' in link, remove it
 if (substr($currentLink, -1) == '/') {
 	$currentLink = substr($currentLink, 0, -1);
 }
 ?>
-<header class="p-3 bg-black text-white">
+<header class="p-3 bg-black text-white fixed">
 	<div class="container-fluid">
 		<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start">
 			<div class="col-12 col-sm-auto me-sm-auto mb-2 justify-content-center mb-sm-0">
@@ -44,7 +44,7 @@ if (substr($currentLink, -1) == '/') {
 							echo '
 								<button type="button" id="menuBar-copyLink" data-link="'.$currentLink.'" class="btn btn-light me-3" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy link"><i class="fas fa-link p-1"></i></button>
 								<button type="button" id="menuBar-viewRaw" data-link="'.$currentLink.'/raw" class="btn btn-light me-3" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View raw"><i class="fas fa-external-link-square p-1"></i></button>
-								<button type="button" id="menuBar-download" data-link="'.$currentLink.'/download" class="btn btn-primary" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download file"><i class="fas fa-cloud-download p-1"></i></button>
+								<button type="button" id="menuBar-download" data-link="'.$currentLink.'/download" class="btn btn-light-cyan" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download file"><i class="fas fa-cloud-download p-1"></i></button>
 							';
 							break;
 						default:

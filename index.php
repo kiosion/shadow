@@ -3,8 +3,8 @@
 // TODO: Import config
 
 // Set vars
-$app_route = 'index';
-$page_title = 'Shadow - Index'; // TODO: Name of app
+$app_route = 'login';
+$page_title = 'Shadow - Login'; // TODO: Name of app
 $include = true;
 
 // Include files
@@ -49,11 +49,11 @@ switch ($res['app_route']) {
 }
 
 // Verify login state only if not viewing file
-if ($app_route != 'raw' && $app_route != 'file') {
+if ($app_route != 'raw' && $app_route != 'file' && $app_route != 'download') {
 	$res = verify_login_token($app_route);
-	if (!($res['status'] == 'valid')) {
-		$app_route = 'login';
-		$page_title = 'Shadow - Login';
+	if ($res['status'] == 'valid') {
+		$app_route = 'index';
+		$page_title = 'Shadow - Index';
 	}
 }
 

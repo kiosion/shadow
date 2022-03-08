@@ -33,7 +33,7 @@ $res = array();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if (isset($_FILES['file'])) {
 		// Fetch user id from token
-		$uid = json_decode(Auth::get_user_id(JWT::get_bearer_token()), true);
+		$uid = json_decode(Auth::get_uid(JWT::get_bearer_token()), true);
 		if ($uid['status'] == 'success') {
 			$uid = $uid['data'];
 		}
@@ -114,7 +114,7 @@ class Upload {
 			$tz = new DateTimeZone('America/Halifax');
 			$time = ((new DateTimeImmutable("now", $tz))->setTimezone($tz))->getTimestamp();
 			// Format: UID, filename, timestamp
-			$sql = "INSERT INTO files (uid, og_name, ul_name, ext, time) VALUES ('$uid', '$og_name', '$ul_name', '$file_ext', '$time')";
+			$sql = "INSERT INTO files (uid, og_name, ul_name, ext, time, size, vis) VALUES ('$uid', '$og_name', '$ul_name', '$file_ext', '$time', '$file_size', 0)";
 			// Run query
 			if(runQuery($sql)) {
 				return $this->upload_success($ul_name.'.'.$file_ext);

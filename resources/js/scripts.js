@@ -133,15 +133,42 @@ $(document).ready(() => {
 	// Menu bar button actions
 	$("#menuBar-copyLink").click((e) => {
 		copyLink(e);
-	})
+	});
 	$("#menuBar-viewRaw").click((e) => {
 		viewRaw(e);
-	})
+	});
 	$("#menuBar-download").click((e) => {
 		download(e);
-	})
-	
+	});
+	// Upload table button actions
+	$(".fileButtonOpen").click((e) => {
+		openLink(e, true);
+	});
+	$(".fileButtonCopy").click((e) => {
+		copyLink(e);
+	});
+	$(".fileButtonDownload").click((e) => {
+		openLink(e, true);
+	});
+	// Pagination button actions
+	$(".buttonPrevPage").click((e) => {
+		openLink(e, false);
+	});
+	$(".buttonNextPage").click((e) => {
+		openLink(e, false);
+	});
 });
+
+function openLink(e, newPage) {
+	e.preventDefault();
+	let link = $(e.delegateTarget).attr('data-link');
+	if (newPage) {
+		window.open(link, '_blank');
+	}
+	else {
+		window.location.href = link;
+	}
+}
 
 function copyLink(e) {
 	e.preventDefault();
@@ -156,7 +183,7 @@ function copyLink(e) {
 function viewRaw(e) {
 	e.preventDefault();
 	let linkText = $(e.delegateTarget).attr('data-link');
-	window.open(linkText);
+	window.open(linkText, '_blank');
 }
 
 function download(e) {

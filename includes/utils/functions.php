@@ -12,19 +12,34 @@ if (!isset($include)) {
 function verify_login_token($app_route) {
 	if (isset($_COOKIE['shadow_login_token'])) {
 		$token = $_COOKIE['shadow_login_token'];
+		if (empty($token)) {
+			return array(
+				'status' => 'invalid',
+				'route' => 'login'
+			);
+		}
 		// Check if the token is valid via POST req to API auth endpoint
 		$arr = array("action"=>"check_token","token"=>"$token","type"=>"login");
 		$res = post('http://localhost/api/v1/auth.php', $arr);
 		if (json_decode($res)->msg == 'Token valid') {
+			// TODO: Check that the token is valid for the given app route
 			return array(
 				'status' => 'valid',
+				'route' => $app_route
 			);
 		}
 		else {
 			return array(
 				'status' => 'invalid',
+				'route' => 'login'
 			);
 		}
+	}
+	else {
+		return array(
+			'status' => 'invalid',
+			'route' => 'login'
+		);
 	}
 }
 
@@ -104,10 +119,10 @@ function handle_url_paths($url) {
 			'title' => 'Shadow - Admin',
 		);
 	}
-	// Check if URL contains anything after '/'
-	else if (substr($path, 1) != '') {
-		header('Location: /');
-	}
+	// // Check if URL contains anything after '/'
+	// else if (substr($path, 1) != '') {
+	// 	header('Location: /');
+	// }
 }
 
 // Get filetype from ext
@@ -116,6 +131,7 @@ function get_mimetype($ext) {
 	// Set content type
 	switch ($ext) {
 		case 'txt':
+		case 'asc':
 			return 'text/plain';
 			break;
 		case 'html':
