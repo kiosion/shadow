@@ -11,7 +11,7 @@ if (substr($currentLink, -1) == '/') {
 	$currentLink = substr($currentLink, 0, -1);
 }
 ?>
-<header class="p-3 bg-black text-white fixed">
+<header class="p-3 bg-black text-white fixed-top">
 	<div class="container-fluid">
 		<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start">
 			<div class="col-12 col-sm-auto me-sm-auto mb-2 justify-content-center mb-sm-0">
