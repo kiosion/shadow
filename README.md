@@ -4,23 +4,16 @@
 </div>
 
 ### ABOUT
-I wasn't happy with any file manager / sharing solution out there, so I started working on my own - Shadow is still very much a work-in-progress, so feel free to contribute if you're knowledgeable with PHP, JS, or creating similar solutions.
+I wasn't happy with any self-hosted file manager / file sharing solution out there, so I created my own! Shadow is still very much a work-in-progress, so feel free to contribute if you're knowledgeable with PHP, JS, SQL, or creating similar solutions.
 
 #### Features:
 - Supports any file format, but images, videos, and text files will display a preview in the web UI
-- Beautiful & easy-to-navigate interface
-	- Custom context menus, dropdowns, right-click menus, etc
-	- Dark & light modes
-	- Previews for almost every filetype
-- Supports multiple storage backends
-	- Local storage
-	- AWS S3 buckets
-	- Google Cloud
-- User managment with customizable permissions
+- Beautiful & easy-to-navigate interface with custom context menus, dropdowns, dark & light modes, and file previews
+- Image/video files embed in Twitter, Discord, Telegram and other socials
+- Supports multiple storage backends - local storage, AWS S3 buckets, Google Cloud, etc
+- User & file managment with customizable permissions
 - Privacy settings for uploads - Public, private, or registered users only
-- URL preview embeds with Twitter, Discord, Telegram and other socials for image/video content
-- Authentication via JWT
-- API supports direct downloads, uploads, and fetching user/file info
+- API that supports direct downloads, uploads, and fetching user/file info
 
 ### SCREENSHOTS
 
