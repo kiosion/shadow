@@ -1,10 +1,12 @@
 <?php
 
-// TODO: Import config
-
-// Set vars
-$app_route = 'login';
-$page_title = 'Shadow - Login'; // TODO: Name of app
+// TODO: Import config from .json file, split out of index.php
+// $config_array = json_decode(file_get_contents('config/app.json'), true);
+// if ($config_array['ssl']) $app_url = 'https://'.$config_array['host'];
+// else $app_url = 'http://'.$config_array['host'];
+// $app_name = $config_array['name'];
+//$app_route = 'login';
+//$page_title = 'Shadow - Login';
 $include = true;
 
 // Include files
@@ -13,47 +15,69 @@ require_once 'includes/utils/functions.php';
 
 // Handle URL paths
 $res = handle_url_paths(parse_url($_SERVER['REQUEST_URI']));
-//var_dump($res);
-switch ($res['app_route']) {
-	case 'file':
-		$app_route = 'file';
-		$page_title = $res['title'];
-		$og_name = $res['og_name'];
-		$uid = $res['uid'];
-		$filename = $res['filename'];
-		$content_type = get_mimetype($res['ext']);
-		break;
-	case 'raw':
-		$app_route = 'raw';
-		$uid = $res['uid'];
-		$filename = $res['filename'];
-		$content_type = get_mimetype($res['ext']);
-		break;
-	case 'download':
-		$app_route = 'download';
-		$uid = $res['uid'];
-		$og_name = $res['og_name'];
-		$filename = $res['filename'];
-		$content_type = get_mimetype($res['ext']);
-		break;
-	case 'admin':
-		$app_route = 'admin';
-		$page_title = $res['title'];
-		break;
-	case '404':
-		$app_route = '404';
-		break;
-	case '403':
-		$app_route = '403';
-		break;
+$app_route = $res['app_route'];
+$page_title = 'Shadow - '.$res['title'];
+if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
+	$content_type = get_mimetype($res['ext']);
+	$filename = $res['filename'];
+	$og_name = $res['og_name'];
+	$uid = $res['uid'];
 }
+// switch ($res['app_route']) {
+// 	case 'file':
+// 		$app_route = 'file';
+// 		$page_title = $res['title'];
+// 		$og_name = $res['og_name'];
+// 		$uid = $res['uid'];
+// 		$filename = $res['filename'];
+// 		$content_type = get_mimetype($res['ext']);
+// 		break;
+// 	case 'raw':
+// 		$app_route = 'raw';
+// 		$uid = $res['uid'];
+// 		$filename = $res['filename'];
+// 		$content_type = get_mimetype($res['ext']);
+// 		break;
+// 	case 'download':
+// 		$app_route = 'download';
+// 		$uid = $res['uid'];
+// 		$og_name = $res['og_name'];
+// 		$filename = $res['filename'];
+// 		$content_type = get_mimetype($res['ext']);
+// 		break;
+// 	case 'login':
+// 		$app_route = 'login';
+// 		$page_title = 'Shadow - Login';
+// 		break;
+// 	case 'index':
+// 		$app_route = 'index';
+// 		$page_title = 'Shadow - Home';
+// 		break;
+// 	case 'admin':
+// 		$app_route = 'admin';
+// 		$page_title = $res['title'];
+// 		break;
+// 	case '404':
+// 		$app_route = '404';
+// 		$page_title = 'Shadow - 404';
+// 		break;
+// 	case '403':
+// 		$app_route = '403';
+// 		$page_title = 'Shadow - 403';
+// 		break;
+// }
 
 // Verify login state only if not viewing file
-if ($app_route != 'raw' && $app_route != 'file' && $app_route != 'download') {
+if ($app_route != 'login' && $app_route != 'raw' && $app_route != 'file' && $app_route != 'download' && $app_route != '404' && $app_route != '403') {
 	$res = verify_login_token($app_route);
 	if ($res['status'] == 'valid') {
-		$app_route = 'index';
-		$page_title = 'Shadow - Index';
+		$user_auth_token = $res['token'];
+		$user_auth_role = $res['role'];
+		$user_auth_username = $res['username'];
+	}
+	else {
+		header('Location: /'.$res['redir'].'');
+		exit();
 	}
 }
 
@@ -81,10 +105,16 @@ switch ($app_route) {
 				$includeBody = 'includes/pages/login.php';
 				$includeFooter = 'includes/components/footer.php';
 				break;
-			// Index / account page
+			// Home page
 			case 'index':
 				$includeHeader = 'includes/components/header.php';
 				$includeBody = 'includes/pages/index.php';
+				$includeFooter = 'includes/components/footer.php';
+				break;
+			// Upload page
+			case 'upload':
+				$includeHeader = 'includes/components/header.php';
+				$includeBody = 'includes/pages/upload.php';
 				$includeFooter = 'includes/components/footer.php';
 				break;
 			// File view page

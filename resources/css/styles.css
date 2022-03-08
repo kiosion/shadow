@@ -38,6 +38,13 @@ div {
 main#page-index {
 	padding-top: 30vh !important;
 }
+.nosel {
+	-webkit-user-select: none;
+	-webkit-touch-callout: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+  }
 /* Forms */
 .form-group>.form-floating:nth-of-type(1)>.form-control {
 	border-top-left-radius: var(--radius-1) !important;
@@ -171,7 +178,14 @@ button:not(.btn-group-child), button:not(.btn-group-child):active, button:not(.b
 	box-shadow: 0 0 8px var(--background-lighter) !important;
 	color: var(--white) !important;
 }
-
+/* Table sort headers */
+#sortName, #sortDate, #sortSize {
+	cursor: pointer !important;
+}
+#sortName:hover, #sortDate:hover, #sortSize:hover {
+	color: var(--purple) !important;
+	cursor: pointer !important;
+}
 /* Button dropdown/dropup toggles */
 .btn.dropdown-toggle {
 	background-color: var(--background-2) !important;

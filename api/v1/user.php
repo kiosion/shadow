@@ -89,6 +89,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 							echo Res::fail(404, 'No uploads found');
 						}
 						break;
+					case 'get_role':
+						$role = User::get_role($uid);
+						if ($role != false) {
+							echo Res::success(200, 'Role retrieved', $role);
+						}
+						else {
+							echo Res::fail(404, 'No role or user found');
+						}
+						break;
 				}
 			}
 			else {
@@ -139,6 +148,22 @@ class User {
 		if ($res) {
 			// Return count
 			return $res->fetch_assoc()['count'];
+		}
+		// If no results are found
+		else {
+			return false;
+		}
+	}
+	public static function get_role($uid) {
+		if (!isset($uid)) return false;
+		// Set query
+		$sql = "SELECT role FROM users WHERE id = '$uid'";
+		// Get results
+		$res = runQuery($sql);
+		// If results are found
+		if ($res) {
+			// Return role
+			return $res->fetch_assoc()['role'];
 		}
 		// If no results are found
 		else {

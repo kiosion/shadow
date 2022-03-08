@@ -5,7 +5,7 @@ if (!isset($include)) {
 	header("Location: ../../");
 }
 ?>
-	<body class="text-center bg-black">
+	<body class="text-center bg-black" ondragstart="return false;">
 		<div class="d-flex flex-column min-vh-100">
 			<?php 
 				if (isset($includeHeader)) require $includeHeader;

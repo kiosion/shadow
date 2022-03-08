@@ -19,13 +19,17 @@ function verify_login_token($app_route) {
 			);
 		}
 		// Check if the token is valid via POST req to API auth endpoint
-		$arr = array("action"=>"check_token","token"=>"$token","type"=>"login");
+		$arr = array("action"=>"print_payload","token"=>"$token");
 		$res = post('http://localhost/api/v1/auth.php', $arr);
-		if (json_decode($res)->msg == 'Token valid') {
+		if (json_decode($res)->data->expired == false && json_decode($res)->data->type == 'login') {
 			// TODO: Check that the token is valid for the given app route
+			$arr2 = array("action"=>"get_role","token"=>"$token");
+			$res2 = post('http://localhost/api/v1/user.php', $arr2);
 			return array(
 				'status' => 'valid',
-				'route' => $app_route
+				'token' => $token,
+				'role' => json_decode($res2)->data,
+				'username' => json_decode($res)->data->username,
 			);
 		}
 		else {
@@ -48,9 +52,27 @@ function handle_url_paths($url) {
 	// Explode path into array, delimiter is /
 	$path_arr = explode('/', $url['path']);
 	// Check if path is empty
-	if (empty($path_arr[1])) return array('app_route' => 'index');
+	if (empty($path_arr[1])) return header('Location: /home');
 	// Else, switch statement to check if path is valid
 	switch ($path_arr[1]) {
+		case 'login':
+			return array(
+				'app_route' => 'login',
+				'title' => 'Login',
+			);
+			break;
+		case 'home':
+			return array(
+				'app_route' => 'index',
+				'title' => 'Home',
+			);
+			break;
+		case 'upload':
+			return array(
+				'app_route' => 'upload',
+				'title' => 'Upload',
+			);
+			break;
 		case 'file':
 			// Check if file is present after '/file/', if not, return error
 			$filename = $path_arr[2];
@@ -73,8 +95,9 @@ function handle_url_paths($url) {
 					case 'raw':
 						return array(
 							'app_route' => 'raw',
-							'ext' => $ext,
+							'title' => '',
 							'filename' => $ul_name.'.'.$ext,
+							'ext' => $ext,
 							'uid' => $uid,
 						);
 						break;
@@ -82,9 +105,10 @@ function handle_url_paths($url) {
 					case 'download':
 						return array(
 							'app_route' => 'download',
-							'ext' => $ext,
-							'og_name' => $og_name,
+							'title' => '',
 							'filename' => $ul_name.'.'.$ext,
+							'og_name' => $og_name,
+							'ext' => $ext,
 							'uid' => $uid,
 						);
 						break;
@@ -93,21 +117,36 @@ function handle_url_paths($url) {
 						return array(
 							'app_route' => 'file',
 							'title' => 'Shadow - '.$ul_name,
+							'filename' => $ul_name.'.'.$ext,
 							'og_name' => $og_name,
 							'ext' => $ext,
-							'filename' => $ul_name.'.'.$ext,
 							'uid' => $uid,
 						);
 						break;
 						
 				}
 			}
-			else return array('app_route' => '404');
+			else return array(
+				'app_route' => '404',
+				'title' => '404 Not Found',
+			);
+			break;
+		case 'settings':
+			return array(
+				'app_route' => 'settings',
+				'title' => 'Settings',
+			);
 			break;
 		case 'admin':
 			return array(
 				'app_route' => 'admin',
 				'title' => 'Shadow - Admin',
+			);
+			break;
+		default:
+			return array(
+				'app_route' => '404',
+				'title' => '404 Not Found',
 			);
 			break;
 	}

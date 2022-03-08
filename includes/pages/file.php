@@ -1,8 +1,10 @@
 <?php
 
+// Prevent direct access
 if (!isset($include)) {
 	header("Location: ../../");
 }
+
 ?>
 <main class="container-fluid my-auto pb-5">
 	<div class="file-card shadow">
@@ -28,16 +30,10 @@ if (!isset($include)) {
 					case 'image/vdn.microsoft.icon':
 					case 'image/jpeg':
 					case 'image/png':
-						echo '<img src="/file/'.$filename.'/raw" class="img-fluid" alt="'.$filename.'">';
-						break;
 					case 'image/svg':
-						//TODO
-						break;
 					case 'image/tiff':
-						echo '<img src="/file/'.$filename.'/raw" class="img-fluid" alt="'.$filename.'">';
-						break;
 					case 'image/webp':
-						echo '<img src="/file/'.$filename.'/raw" class="img-fluid" alt="'.$filename.'">';
+						echo '<img src="/file/'.$filename.'/raw" class="img-fluid nosel" alt="'.$filename.'">';
 						break;
 					// Audio files
 					case 'audio/aac':
@@ -47,24 +43,23 @@ if (!isset($include)) {
 					case 'audio/opus':
 					case 'audio/wav':
 					case 'audio/webm':
-						echo '<audio controls src="/file/'.$filename.'/raw" preload="metadata">This browser doesn\'t support the Audio embed.</audio>';
+						echo '<audio controls src="/file/'.$filename.'/raw" preload="metadata" class="nosel">This browser doesn\'t support the Audio embed.</audio>';
 						break;
 					// Application-type files
 					case 'application/pdf':
 						echo '<embed id="embed-pdf" src="/file/'.$filename.'/raw" type="application/pdf" width="100%" height="100%">';
 						break;
 					case 'application/php':
-						$filepath = '/uploads/users/'.$uid.'/'.$filename;
-						echo '<pre class="text-light">'.htmlspecialchars(file_get_contents($filepath)).'</pre>';
-						break;
 					case 'application/json':
 						$filepath = '/uploads/users/'.$uid.'/'.$filename;
 						echo '<pre class="text-light">'.htmlspecialchars(file_get_contents($filepath)).'</pre>';
 						break;
-					
 					// Other file types
 					default:
-						echo '<p class="text-light pt-4">This file cannot be previewed.</p>';
+						// Remove string content before first slash
+						$str_content_type = explode('/', $content_type);
+						$str_content_type = $str_content_type[1];
+						echo '<p class="text-light pt-4 nosel">\'.'.$str_content_type.'\' files cannot be previewed.</p>';
 						break;
 					}
 				}

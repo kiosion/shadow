@@ -27,9 +27,10 @@ class RowItem {
 			return array();
 		}
 		else {
+			$end = $start+count($uploads);
 			return array(
 				"start" => $start,
-				"end" => $start+10,
+				"end" => $end,
 				"uploads_count" => $uploads_count,
 				"uploads" => $uploads,
 			);
@@ -111,7 +112,7 @@ if (isset($_GET['s'])) {
 	$sort = $_GET['s'];
 }
 else {
-	$sort = 'time';
+	$sort = 't';
 }
 // Check URL for order
 if (isset($_GET['o'])) {
@@ -127,20 +128,60 @@ $rowItems = RowItem::fetchUploads($token, $start, $sort, $order);
 
 if ($rowItems['uploads_count'] > 0) {
 
+	// Set vars for pagination, sorting, etc
 	$start = $rowItems['start'];
 	$end = $rowItems['end'];
 	$count = $rowItems['uploads_count'];
+	$itemsPerPage = 10;
+	// Calculate number of pages to display given total items ($count) and items per page ($itemsPerPage)
+	$pages = ceil($count / $itemsPerPage);
+	// Calculate indexes required to display page buttons (prev, next)
+	$prev = $start - $itemsPerPage;
+	$next = $start + $itemsPerPage;
+	// Get request URI, trim any query strings present
+	$requestURI = explode('?', $_SERVER['REQUEST_URI']);
+	$requestURI = $requestURI[0];
+	// Create links for page buttons including other parameters
+	$prevLink = 'http://'.$_SERVER['HTTP_HOST'].$requestURI.'?i='.$prev;
+	if (isset($_GET['s'])) $prevLink .= '&s='.$sort;
+	if (isset($_GET['o'])) $prevLink .= '&o='.$order;
+	$nextLink = 'http://'.$_SERVER['HTTP_HOST'].$requestURI.'?i='.$next;
+	if (isset($_GET['s'])) $nextLink .= '&s='.$sort;
+	if (isset($_GET['o'])) $nextLink .= '&o='.$order;
+
+	// Create links for sort, order buttons including other parameters
+	$sortLink = 'http://'.$_SERVER['HTTP_HOST'].$requestURI.'?i='.$start;
+	$sortLinkName = $sortLink.'&s=n';
+	$sortLinkNameAsc = $sortLink.'&s=n&o=a';
+	$sortLinkNameDesc = $sortLink.'&s=n&o=d';
+	$sortLinkDate = $sortLink.'&s=t';
+	$sortLinkDateAsc = $sortLink.'&s=t&o=a';
+	$sortLinkDateDesc = $sortLink.'&s=t&o=d';
+	$sortLinkSize = $sortLink.'&s=s';
+	$sortLinkSizeAsc = $sortLink.'&s=s&o=a';
+	$sortLinkSizeDesc = $sortLink.'&s=s&o=d';
+	$orderLink = 'http://'.$_SERVER['HTTP_HOST'].$requestURI.'?i='.$start;
+	if (isset($_GET['s'])) $orderLink .= '&s='.$sort;
+	$orderLinkAsc = $orderLink.'&o=a';
+	$orderLinkDesc = $orderLink.'&o=d';
 
 	// Table header
 	echo '
 		<div class="row-fluid px-5" id="uploads-table-container">
 			<div class="col-fluid" id="uploads-table">
-				<div class="row row-header ps-3 text-light fw-bold">
-					<div class="col-1 col-num">#</div>
-					<div class="col col-md col-name text-truncate">Name</div>
-					<div class="col-1 d-none col-size d-md-block">Size</div>
-					<div class="col-2 d-none col-date d-md-block">Date</div>
-					<div class="col col-actions">Actions</div>
+				<div class="row row-header ps-3 text-light fw-bold nosel">
+					<div class="col-1 col-num">#</div>';
+					if ($sort == 'n' && $order == 'a') echo '<div class="col col-md col-name text-truncate" id="sortName" data-link="'.$sortLinkNameDesc.'">Name<i class="fas fa-sort-up ps-2"></i></div>';
+					else if ($sort == 'n' && $order == 'd') echo '<div class="col col-md col-name text-truncate" id="sortName" data-link="'.$sortLinkNameAsc.'">Name<i class="fas fa-sort-down ps-2"></i></div>';
+					else echo '<div class="col col-md col-name text-truncate" id="sortName" data-link="'.$sortLinkName.'">Name</div>';
+					if ($sort == 's' && $order == 'a') echo '<div class="col-1 d-none col-size d-md-block" id="sortSize" data-link="'.$sortLinkSizeDesc.'">Size<i class="fas fa-sort-up ps-2"></i></div>';
+					else if ($sort == 's' && $order == 'd') echo '<div class="col-1 d-none col-size d-md-block" id="sortSize" data-link="'.$sortLinkSizeAsc.'">Size<i class="fas fa-sort-down ps-2"></i></div>';
+					else echo '<div class="col-1 d-none col-size d-md-block" id="sortSize" data-link="'.$sortLinkSize.'">Size</div>';
+					if ($sort == 't' && $order == 'a') echo '<div class="col-2 d-none col-date d-md-block" id="sortDate" data-link="'.$sortLinkDateDesc.'">Date<i class="fas fa-sort-up ps-2"></i></div>';
+					else if ($sort == 't' && $order == 'd') echo '<div class="col-2 d-none col-date d-md-block" id="sortDate" data-link="'.$sortLinkDateAsc.'">Date<i class="fas fa-sort-down ps-2"></i></div>';
+					else echo '<div class="col-2 d-none col-date d-md-block" id="sortDate" data-link="'.$sortLinkDate.'">Date</div>';
+
+					echo '<div class="col col-actions">Actions</div>
 				</div>
 				<div class="row-fluid row-container py-4">
 	';
@@ -151,36 +192,12 @@ if ($rowItems['uploads_count'] > 0) {
 	// Table footer
 	echo '
 				</div>
-				<div class="row-fluid row-footer text-light fw-bold px-0">
+				<div class="row-fluid row-footer text-light fw-bold px-0 nosel">
 					<div class="row d-flex justify-content-between flex-nowrap">
 						<div class="col">
 							Items: '.($start+1).' - '.$end.' of '.$count.'
 						</div>
 	';
-	$itemsPerPage = 10;
-	// Calculate number of pages to display given total items ($count) and items per page ($itemsPerPage)
-	$pages = ceil($count / $itemsPerPage);
-	// Calculate indexes required to display page buttons (prev, next)
-	$prev = $start - $itemsPerPage;
-	$next = $start + $itemsPerPage;
-	// Create links for page buttons including other parameters
-	$prevLink = 'http://'.$_SERVER['HTTP_HOST'].'?i='.$prev;
-	if (isset($_GET['s'])) $prevLink .= '&s='.$sort;
-	if (isset($_GET['o'])) $prevLink .= '&o='.$order;
-	$nextLink = '?i='.$next;
-	if (isset($_GET['s'])) $nextLink .= '&s='.$sort;
-	if (isset($_GET['o'])) $nextLink .= '&o='.$order;
-
-	// Create links for sort, order buttons including other parameters
-	$sortLink = 'http://'.$_SERVER['HTTP_HOST'].'?i='.$start;
-	if (isset($_GET['o'])) $sortLink .= '&o='.$order;
-	$sortLinkName = $sortLink.'&s=n';
-	$sortLinkDate = $sortLink.'&s=t';
-	$sortLinkSize = $sortLink.'&s=s';
-	$orderLink = 'http://'.$_SERVER['HTTP_HOST'].'?i='.$start;
-	if (isset($_GET['s'])) $orderLink .= '&s='.$sort;
-	$orderLinkAsc = $orderLink.'&o=a';
-	$orderLinkDesc = $orderLink.'&o=d';
 
 	// Sort, order buttons, pagination buttons
 	echo '
@@ -188,10 +205,10 @@ if ($rowItems['uploads_count'] > 0) {
 							<div class="dropup">
 								<a class="btn btn-secondary dropdown-toggle" role="button" id="dropdownSortBy" data-bs-toggle="dropdown" aria-expanded="false">Sort by</a>
 								<ul class="dropdown-menu" aria-labelledby="dropdownSortBy">';
-									if ($sort == 'n') echo '<li class="dropdown-item"><a class="dropdown-item active">Name</a></li>';
+									if ($sort == 'n') echo '<li class="dropdown-item active"><a class="dropdown-item">Name</a></li>';
 									else echo '<li class="dropdown-item"><a class="dropdown-item" href="'.$sortLinkName.'">Name</a></li>'; 
-									if ($sort == 't') echo '<li class="dropdown-item active"><a class="dropdown-item">Date</a></li>';
-									else echo '<li class="dropdown-item"><a class="dropdown-item" href="'.$sortLinkDate.'">Date</a></li>';
+									if ($sort == 't') echo '<li class="dropdown-item active"><a class="dropdown-item">Time</a></li>';
+									else echo '<li class="dropdown-item"><a class="dropdown-item" href="'.$sortLinkDate.'">Time</a></li>';
 									if ($sort == 's') echo '<li class="dropdown-item"><a class="dropdown-item active">Size</a></li>';
 									else echo '<li class="dropdown-item"><a class="dropdown-item" href="'.$sortLinkSize.'">Size</a></li>';
 									echo'
@@ -211,26 +228,29 @@ if ($rowItems['uploads_count'] > 0) {
 							</div>
 						</div>
 						<div class="col-2 paginationButtons">
-							<div class="btn-group" role="group">
-									';if ($start == 0) {
-										echo '<a class="btn btn-action-light btn-group-child" data-bs-toggle="tooltip" data-bs-placement="top" title="Previous"><i class="fas fa-angle-left"></i></a>';
+							<div class="btn-group" role="group">';
+									if ($start == 0) {
+										echo '<a class="btn btn-action-light btn-group-child disabled" data-bs-toggle="tooltip" data-bs-placement="top" title="Previous"><i class="fas fa-angle-left"></i></a>';
 									}
 									else {
 										$prev = 0;
 										echo '<a href="'.$prevLink.'" class="btn btn-action-light btn-group-child" data-bs-toggle="tooltip" data-bs-placement="top" title="Previous"><i class="fas fa-angle-left"></i></a>';
 									}
-									echo '<a href="'.$nextLink.'" class="btn btn-action-light btn-group-child" data-bs-toggle="tooltip" data-bs-placement="top" title="Next"><i class="fas fa-angle-right"></i></a>
+									if ($next > $count) {
+										echo '<a class="btn btn-action-light btn-group-child disabled" data-bs-toggle="tooltip" data-bs-placement="top" title="Next"><i class="fas fa-angle-right"></i></a>';
+									}
+									else {
+										echo '<a href="'.$nextLink.'" class="btn btn-action-light btn-group-child" data-bs-toggle="tooltip" data-bs-placement="top" title="Next"><i class="fas fa-angle-right"></i></a>';
+									}
+									echo '
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	
 	';
 }
 else {
-	echo '
-		<p class="fs-5 fw-bold my-5 text-light">No uploads to display!</p>
-	';
+	echo '<p class="fs-5 fw-bold my-5 text-light">No uploads to display!</p>';
 }

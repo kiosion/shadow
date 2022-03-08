@@ -11,7 +11,7 @@ $(document).ready(() => {
 		console.log("Checking creds...");
 		let post = $.ajax({
 			type: 'POST',
-			url: 'api/v1/auth.php',
+			url: '/api/v1/auth.php',
 			data: { 
 				action: 'check_creds',
 				username: un.val(),
@@ -25,7 +25,7 @@ $(document).ready(() => {
 				console.log("Credentials valid, requesting token...");
 				let token = $.ajax({
 					type: 'POST',
-					url: 'api/v1/auth.php',
+					url: '/api/v1/auth.php',
 					data: {
 						action: 'request_token',
 						username: un.val(),
@@ -41,39 +41,39 @@ $(document).ready(() => {
 						// Set login_token cookie with expiry of 6 hours
 						Cookies.set('shadow_login_token', tokenRes.data, { expires: .25 });
 						console.log("Cookie set, redirecting...");
-						window.location.href = 'index.php';
+						window.location.href = '/home';
 					}
 					// If not generated or returned, log error and redirect to index.php
 					else {
 						console.log(tokenRes.msg);
-						window.location.href = 'index.php?error=token';
+						window.location.href = '/login/?error=token';
 					}
 				});
 				// On fail, log error and redirect to index.php with error
 				token.fail(() => {
 					console.log("Error requesting token");
-					window.location.href = 'index.php?error=token';
+					window.location.href = '/login/?error=token';
 				});
 			}
 			else if (authRes.status == 'success' && authRes.msg == 'Credentials invalid') {
 				// Log error and redirect to index.php with error
-				window.location.href = 'index.php?error=creds';
+				window.location.href = '/login/?error=creds';
 			}
 			// If 'status' is 'error', then display error message
 			else if (authRes.status == 'error') {
 				// Display error message from 'msg' field
 				console.log("Failed to auth, server responded with error: " + authRes.msg);
-				window.location.href = 'index.php?error=server';
+				window.location.href = '/login/?error=server';
 			}
 			else {
 				console.log("Failed to auth, server responded with unknown error");
-				window.location.href = 'index.php?error=server';
+				window.location.href = '/login/?error=server';
 			}
 		});
 		// On fail
 		post.fail(() => {
 			console.log('Failed to auth, server responded with unknown error');
-			window.location.href = 'index.php?error=server';
+			window.location.href = '/login/?error=server';
 		});
 	});
 	// Logout button
@@ -82,13 +82,13 @@ $(document).ready(() => {
 		// Remove shadow_login_token cookie
 		Cookies.remove('shadow_login_token');
 		// Redirect to index
-		window.location.href = 'index.php';
+		window.location.href = '/login';
 	});
 	// Dashboard button
 	$('#launchDashButton').click((e) => {
 		e.preventDefault();
 		// Redirect to dashboard
-		window.location.href = 'admin/';
+		window.location.href = '/admin';
 	});
 	// Init tooltips
 	$("html").tooltip({ selector: '[data-bs-toggle=tooltip]' });
@@ -130,6 +130,23 @@ $(document).ready(() => {
 			display: "none"
 		});
 	});
+	// Header button actions
+	$('#header-logoutButton').click((e) => {
+		e.preventDefault();
+		// Remove shadow_login_token cookie
+		Cookies.remove('shadow_login_token');
+		// Redirect to index
+		window.location.href = '/login';
+	});
+	$('#header-settingsButton').click((e) => {
+		openLink(e, false);
+	});
+	$('#header-accountButton').click((e) => {
+		openLink(e, false);
+	});
+	$('#header-uploadButton').click((e) => {
+		openLink(e, false);
+	});
 	// Menu bar button actions
 	$("#menuBar-copyLink").click((e) => {
 		copyLink(e);
@@ -149,6 +166,15 @@ $(document).ready(() => {
 	});
 	$(".fileButtonDownload").click((e) => {
 		openLink(e, true);
+	});
+	$("#sortName").click((e) => {
+		openLink(e, false);
+	});
+	$("#sortSize").click((e) => {
+		openLink(e, false);
+	});
+	$("#sortDate").click((e) => {
+		openLink(e, false);
 	});
 	// Pagination button actions
 	$(".buttonPrevPage").click((e) => {

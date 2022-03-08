@@ -5,17 +5,16 @@ if (!isset($include)) {
 	header("Location: ../../");
 }
 // Set page link
-$currentLink = 'http://'.$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-// If trailing '/' in link, remove it
-if (substr($currentLink, -1) == '/') {
-	$currentLink = substr($currentLink, 0, -1);
-}
+$requestURI = explode('/', $_SERVER['REQUEST_URI']);
+$requestURI = '/'.$requestURI[1].'/'.$requestURI[2];
+$currentLink = 'http://'.$_SERVER['HTTP_HOST'].$requestURI;
+$currentHost = 'http://'.$_SERVER['HTTP_HOST'];
 ?>
-<header class="p-3 bg-black text-white fixed-top">
+<header class="p-3 bg-black text-white fixed-top nosel">
 	<div class="container-fluid">
 		<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start">
 			<div class="col-12 col-sm-auto me-sm-auto mb-2 justify-content-center mb-sm-0">
-				<a href="/" class="h4 text-white text-decoration-none">
+				<a href="/home" class="h4 text-white text-decoration-none">
 					Shadow
 				</a>
 			</div>
@@ -26,18 +25,28 @@ if (substr($currentLink, -1) == '/') {
 					switch ($app_route) {
 						case 'login':
 							echo '
-								<button id="loginButton-header" type="button" class="btn btn-light">Login</button>
+								<button id="header-loginButton" type="button" class="btn btn-light">Login</button>
 							';
 							break;
+						case 'upload':
 						case 'index':
 							echo '
-								<button id="accountButton-header" type="button" class="btn btn-light me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Account" style="width:40px;"><i class="fas fa-user"></i></button>
-								<button id="logoutButton-header" type="button" class="btn btn-light-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Logout" style="width:40px;"><i class="fas fa-sign-out-alt"></i></button>
+								<button id="header-uploadButton" data-link="'.$currentHost.'/upload" type="button" class="btn btn-light me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Upload" style="width:60px;"><i class="fas fa-upload"></i></button>
+								<button id="header-accountButton" data-link="'.$currentHost.'/account" type="button" class="btn btn-light me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Account" style="width:60px;"><i class="fas fa-user"></i></button>
+							';
+							// If user has admin privileges, show system settings button
+							if ($user_auth_role == 1) {
+								echo '
+								<button id="header-settingsButton" data-link="'.$currentHost.'/settings" type="button" class="btn btn-light me-3" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings" style="width:60px;"><i class="fas fa-cog"></i></button>
+								';
+							}
+							echo '
+								<button id="header-logoutButton" type="button" class="btn btn-light-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Logout" style="width:60px;"><i class="fas fa-sign-out-alt"></i></button>
 							';
 							break;
 						case 'admin':
 							echo '
-								<button id="logoutButton-header" type="button" class="btn btn-light-danger">Logout</button>
+								<button id="header-logoutButton" type="button" class="btn btn-light-danger">Logout</button>
 							';
 							break;
 						case 'file':
