@@ -45,84 +45,72 @@ function verify_login_token($app_route) {
 
 // Handle URL paths
 function handle_url_paths($url) {
-	// Check if URL contains file
-	$path = $url['path'];
-	// Check if path contains '/file/'
-	if (strstr($path, '/file/')) {
-		// Check if file is present after '/file/'
-		$filename = substr($path, strrpos($path, 'file/') + 5);
-		if ($filename == '') header('Location: /');
-		// Check if path ends with '/raw' or '/download'
-		if (strstr($path, '/raw')) {
-			$filename = substr($filename, 0, - 4);
-		}
-		if (strstr($path, '/download')) {
-			$filename = substr($filename, 0, - 9);
-		}
-		// Check for anything else after filename
-		if (substr($filename, -1) == '/') {
-			$filename = substr($filename, 0, - 1);
-		}
-		if (strstr($filename, '/')) { 
-			$filename = substr($filename, 0, strpos($filename, '/'));
-		}
-		// Check for extension at end of filename
-		$ext = pathinfo($filename, PATHINFO_EXTENSION);
-		if ($ext != '') {
+	// Explode path into array, delimiter is /
+	$path_arr = explode('/', $url['path']);
+	// Check if path is empty
+	if (empty($path_arr[1])) return array('app_route' => 'index');
+	// Else, switch statement to check if path is valid
+	switch ($path_arr[1]) {
+		case 'file':
+			// Check if file is present after '/file/', if not, return error
+			$filename = $path_arr[2];
+			if (empty($filename)) return array('app_route' => '404');
+			// Check for extension at end of filename
+			$ext = pathinfo($filename, PATHINFO_EXTENSION);
 			// Remove extension from end of filename
-			$filename = substr($filename, 0, - strlen($ext) - 1);
-		}
-		$arr = array("action"=>"get_uid","filename"=>"$filename");
-		$res = post('http://localhost/api/v1/file.php', $arr);
-		$res_decoded = json_decode($res);
-		if ($res_decoded->status == 'success') {
-			$uid = $res_decoded->data->uid;
-			$ul_name = $res_decoded->data->ul_name;
-			$og_name = $res_decoded->data->og_name;
-			$ext = $res_decoded->data->ext;
-			// Check if URL contains trailing '/raw'
-			if (strstr($path, '/raw')) {
-				return array(
-					'app_route' => 'raw',
-					'ext' => $ext,
-					'filename' => $ul_name.'.'.$ext,
-					'uid' => $uid,
-				);
+			if (!empty($ext)) $filename = substr($filename, 0, - strlen($ext) - 1);
+			$arr = array("action"=>"get_uid","filename"=>"$filename");
+			$res = post('http://localhost/api/v1/file.php', $arr);
+			$res_decoded = json_decode($res);
+			if ($res_decoded->status == 'success') {
+				$uid = $res_decoded->data->uid;
+				$ul_name = $res_decoded->data->ul_name;
+				$og_name = $res_decoded->data->og_name;
+				$ext = $res_decoded->data->ext;
+				// Switch statement for raw/download/view
+				switch ($path_arr[3]) {
+					// Check if URL contains trailing '/raw'
+					case 'raw':
+						return array(
+							'app_route' => 'raw',
+							'ext' => $ext,
+							'filename' => $ul_name.'.'.$ext,
+							'uid' => $uid,
+						);
+						break;
+					// Check if URL contains trailing '/download'
+					case 'download':
+						return array(
+							'app_route' => 'download',
+							'ext' => $ext,
+							'og_name' => $og_name,
+							'filename' => $ul_name.'.'.$ext,
+							'uid' => $uid,
+						);
+						break;
+					// Else if viewing file
+					default:
+						return array(
+							'app_route' => 'file',
+							'title' => 'Shadow - '.$ul_name,
+							'og_name' => $og_name,
+							'ext' => $ext,
+							'filename' => $ul_name.'.'.$ext,
+							'uid' => $uid,
+						);
+						break;
+						
+				}
 			}
-			// Check if URL contains trailing '/download'
-			else if (strstr($path, '/download')) {
-				return array(
-					'app_route' => 'download',
-					'ext' => $ext,
-					'og_name' => $og_name,
-					'filename' => $ul_name.'.'.$ext,
-					'uid' => $uid,
-				);
-			}
-			// Else if app_route is normal
-			else {
-				return array(
-					'app_route' => 'file',
-					'title' => 'Shadow - '.$ul_name,
-					'og_name' => $og_name,
-					'ext' => $ext,
-					'filename' => $ul_name.'.'.$ext,
-					'uid' => $uid,
-				);
-			}
-		}
-		else return array('app_route' => '404');
+			else return array('app_route' => '404');
+			break;
+		case 'admin':
+			return array(
+				'app_route' => 'admin',
+				'title' => 'Shadow - Admin',
+			);
+			break;
 	}
-	else if (strstr($path, '/admin')) {
-		return array(
-			'app_route' => 'admin',
-			'title' => 'Shadow - Admin',
-		);
-	}
-	// // Check if URL contains anything after '/'
-	// else if (substr($path, 1) != '') {
-	// 	header('Location: /');
-	// }
 }
 
 // Get filetype from ext
