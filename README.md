@@ -6,15 +6,34 @@
 ### ABOUT
 I wasn't happy with any file manager / sharing solution out there, so I started working on my own - Shadow is still very much a work-in-progress, so feel free to contribute if you're knowledgeable with PHP, JS, or creating similar solutions.
 
-#### FEATURES
+#### Features:
 - Supports any file format, but images, videos, and text files will display a preview in the web UI
-- Beautiful & easy-to-navigate interface with custom CSS support
-- Supports multiple storage backends: Local storage, AWS buckets, Google Cloud, etc.
+- Beautiful & easy-to-navigate interface
+	- Custom context menus, dropdowns, right-click menus, etc
+	- Dark & light modes
+	- Previews for almost every filetype
+- Supports multiple storage backends
+	- Local storage
+	- AWS S3 buckets
+	- Google Cloud
 - User managment with customizable permissions
-- Privacy settings for uploads - Public, private, or other users only
-- URL preview embeds with Twitter, Discord, Telegram and other socials
+- Privacy settings for uploads - Public, private, or registered users only
+- URL preview embeds with Twitter, Discord, Telegram and other socials for image/video content
 - Authentication via JWT
-- API supports direct downloads & uploads
+- API supports direct downloads, uploads, and fetching user/file info
+
+### SCREENSHOTS
+
+#### Sign-in page:
+<img src="resources/imgs/ss-0.jpg" alt="Screenshot 1" width="800px"></img>
+#### Dashboard:
+<img src="resources/imgs/ss-1.jpg" alt="Screenshot 2" width="800px"></img>
+#### Text file preview:
+<img src="resources/imgs/ss-2.jpg" alt="Screenshot 3" width="800px"></img>
+#### Image file preview:
+<img src="resources/imgs/ss-3.jpg" alt="Screenshot 4" width="800px"></img>
+#### Audio file preview:
+<img src="resources/imgs/ss-4.jpg" alt="Screenshot 5" width="800px"></img>
 
 ### INSTALL
 Install instructions & install script are a WIP :)
