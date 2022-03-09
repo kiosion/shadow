@@ -13,6 +13,14 @@ $include = true;
 require_once 'includes/utils/post.php';
 require_once 'includes/utils/functions.php';
 
+// Set token if user is logged in
+if (isset($_COOKIE['shadow_login_token'])) {
+	$token = $_COOKIE['shadow_login_token'];
+}
+else {
+	$token = '';
+}
+
 // Handle URL paths
 $res = handle_url_paths(parse_url($_SERVER['REQUEST_URI']));
 $app_route = $res['app_route'];
@@ -22,11 +30,45 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 	$filename = $res['filename'];
 	$og_name = $res['og_name'];
 	$uid = $res['uid'];
+	// Check if requested file is private
+	$arr = array("action"=>"get_info","filename"=>"$filename", "token"=>"$_COOKIE[shadow_login_token]");
+	$res = post('http://localhost/api/v1/file.php', $arr);
+	$res_decoded = json_decode($res);
+	$priv_file = false;
+	// If file is hidden
+	if ($res_decoded->data->vis == 1) {
+		//Check if user is logged in
+		if (!isset($_COOKIE['shadow_login_token'])) {
+			// Display 403 error
+			$app_route = '403';
+		}
+		else {
+			// Verify login token
+			if (verify_login_token($app_route, $token)['status'] != 'valid') $app_route = '403';
+			else $priv_file = true;
+		}
+	}
+	// If file is private
+	if ($res_decoded->data->vis == 2) {
+		//Check if user is logged in
+		if (!isset($_COOKIE['shadow_login_token'])) $app_route = '403';
+		else {
+			// Verify login token
+			if (verify_login_token($app_route, $token)['status'] != 'valid') $app_route = '403';
+			else {
+				if (verify_access($filename, $token)['status'] != 'valid') {
+					var_dump(verify_access($filename, $token));
+					$app_route = '403';
+				}
+				else $priv_file = true;
+			}
+		}
+	}
 }
 
 // Verify login state only if not viewing public page
 if ($app_route != 'raw' && $app_route != 'file' && $app_route != 'download' && $app_route != '404' && $app_route != '403') {
-	$res = verify_login_token($app_route);
+	$res = verify_login_token($app_route, $token);
 	if ($res['status'] == 'valid') {
 		if ($app_route == 'login') header('Location: /home');
 		$user_auth_token = $res['token'];

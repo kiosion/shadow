@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 					echo Res::fail(401, 'Token not provided');
 					break;
 				}
-				echo Auth::get_uid($conn, $_POST['token']);
+				echo Auth::get_uid($_POST['token']);
 				break;
 			// Check user credentials on login
 			case 'check_creds':

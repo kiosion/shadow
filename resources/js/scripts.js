@@ -177,6 +177,9 @@ $(document).ready(() => {
 		if (i.hasClass('fa-eye')) { 
 			vis = 1; 
 		}
+		else if (i.hasClass('fa-eye-slash')) {
+			vis = 2;
+		}
 		else {
 			vis = 0;
 		}
@@ -193,20 +196,27 @@ $(document).ready(() => {
 		});
 		// On success
 		post.done((visRes) => {
+			console.log("Vis set to: " + visRes.data);
 			// If 'status' is 'success', then toggle visibility
 			if (visRes.status == 'success') {
 				// Toggle visibility
-				if (i.hasClass('fa-eye')) {
+				if (visRes.data == 1) {
 					i.removeClass('fa-eye');
 					i.addClass('fa-eye-slash');
-					button.attr('title', 'Make file public');
-					button.attr('data-bs-original-title', 'Make file public');
+					button.attr('title', 'Change visibility to private');
+					button.attr('data-bs-original-title', 'Change visibility to private');
 				}
-				else if (i.hasClass('fa-eye-slash')) {
+				else if (visRes.data == 2) {
 					i.removeClass('fa-eye-slash');
+					i.addClass('fa-low-vision');
+					button.attr('title', 'Change visibility to public');
+					button.attr('data-bs-original-title', 'Change visibility to public');
+				}
+				else if (visRes.data == 0) {
+					i.removeClass('fa-low-vision');
 					i.addClass('fa-eye');
-					button.attr('title', 'Make file private');
-					button.attr('data-bs-original-title', 'Make file private');
+					button.attr('title', 'Make file hidden');
+					button.attr('data-bs-original-title', 'Change visibility to hidden');
 				}
 			}
 			// If 'status' is 'error', then display error message

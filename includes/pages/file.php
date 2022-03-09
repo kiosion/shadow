@@ -2,34 +2,14 @@
 
 // Prevent direct access
 if (!isset($include)) {
-	header("Location: ../../");
+	header("Location: /");
 }
 // Set filepath
 $filepath = 'uploads/users/'.$uid.'/'.$filename;
 // Check if file exists and is readable
 if (!file_exists($filepath) || !is_readable($filepath)) {
-	// File does not exist or is not readable
 	// Redirect to 404 page
-	header("Location: /404");
-	exit();
-}
-// Check if file is private
-$arr = array("action"=>"get_info","filename"=>"$filename", "token"=>"$token");
-$res = post('http://localhost/api/v1/file.php', $arr);
-$res_decoded = json_decode($res);
-echo "Visibility: ".$res_decoded->data->vis;
-$priv_file = false;
-// If file is private
-if ($res_decoded->data->vis == 1) {
-	// Check if user is logged in
-	if (!isset($_COOKIE['shadow_login_token'])) {
-		// Redirect to login page
-		header("Location: /login");
-		exit();
-	}
-	else {
-		$priv_file = true;
-	}
+	$app_route = '404';
 }
 ?>
 <main class="container-fluid my-auto pb-5">
@@ -94,7 +74,7 @@ if ($res_decoded->data->vis == 1) {
 		<div class="file-card-info pb-3">
 			<pre class="fs-6 fw-bold text-light my-0"><?php 
 				if ($priv_file) { 
-					echo '<i class="fas fa-lock pe-3"></i>'; 
+					echo '<i class="fas fa-lock ps-2 pe-3" data-bs-toggle="tooltip" data-bs-placement="left" title="You\'re viewing a private file"></i>'; 
 				} 
 				echo htmlspecialchars($og_name);
 			?></pre>

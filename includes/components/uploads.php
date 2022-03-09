@@ -89,11 +89,13 @@ class RowItem {
 				<div class="col-1 d-none col-size d-md-block">'.$item['item_size'].'</div>
 				<div class="col-2 d-none col-date d-md-block" data-bs-toggle="tooltip" data-bs-position="top" title="'.$item['item_time'].'">'.$item['item_date'].'</div>
 				<div class="col d-flex col-actions justify-content-between btn-group" role="group">
-					<button type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonOpen" data-bs-toggle="tooltip" data-bs-placement="top" title="Open"><i class="fas fa-external-link-square"></i></button>
-					<button type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonCopy" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link"><i class="fas fa-link"></i></button>
-					<button type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility"><i class="fas '; if ($item['item_vis'] == '1') { echo 'fa-eye-slash'; } else { echo 'fa-eye'; } echo '"></i></button>
-					<button type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'/download" class="btn btn-action-dark-cyan btn-group-child fileButtonDownload" data-bs-toggle="tooltip" data-bs-placement="top" title="Download"><i class="fas fa-download"></i></button>
-					<button type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-danger btn-group-child fileButtonDelete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"><i class="fas fa-trash"></i></button>
+					<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonOpen" data-bs-toggle="tooltip" data-bs-placement="top" title="Open"><i class="fas fa-external-link-square"></i></a>
+					<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonCopy" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link"><i class="fas fa-link"></i></a>'; 
+					if ($item['item_vis'] == '1') { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to private"><i class="fas fa-eye-slash"></i></a>'; } 
+					else if ($item['item_vis'] == '2') { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to public"><i class="fas fa-low-vision"></i></a>'; }
+					else { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to hidden"><i class="fas fa-eye"></i></a>'; } 
+					echo '<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'/download" class="btn btn-action-dark-cyan btn-group-child fileButtonDownload" data-bs-toggle="tooltip" data-bs-placement="top" title="Download"><i class="fas fa-download"></i></a>
+					<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-danger btn-group-child fileButtonDelete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"><i class="fas fa-trash"></i></a>
 				</div>
 			</div>
 		';

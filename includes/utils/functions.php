@@ -9,27 +9,57 @@ if (!isset($include)) {
 }
 
 // Verify login token
-function verify_login_token($app_route) {
-	if (isset($_COOKIE['shadow_login_token'])) {
-		$token = $_COOKIE['shadow_login_token'];
-		if (empty($token)) {
-			return array(
-				'status' => 'invalid',
-				'route' => 'login'
-			);
-		}
-		// Check if the token is valid via POST req to API auth endpoint
-		$arr = array("action"=>"print_payload","token"=>"$token");
-		$res = post('http://localhost/api/v1/auth.php', $arr);
-		if (json_decode($res)->data->expired == false && json_decode($res)->data->type == 'login') {
-			// TODO: Check that the token is valid for the given app route
-			$arr2 = array("action"=>"get_role","token"=>"$token");
-			$res2 = post('http://localhost/api/v1/user.php', $arr2);
+function verify_login_token($app_route, $token) {
+	if (empty($token)) {
+		return array(
+			'status' => 'invalid',
+			'route' => 'login'
+		);
+	}
+	// Check if the token is valid via POST req to API auth endpoint
+	$arr = array("action"=>"print_payload","token"=>"$token");
+	$res = post('http://localhost/api/v1/auth.php', $arr);
+	if (json_decode($res)->data->expired == false && json_decode($res)->data->type == 'login') {
+		// TODO: Check that the token is valid for the given app route
+		$arr2 = array("action"=>"get_role","token"=>"$token");
+		$res2 = post('http://localhost/api/v1/user.php', $arr2);
+		return array(
+			'status' => 'valid',
+			'token' => $token,
+			'role' => json_decode($res2)->data,
+			'username' => json_decode($res)->data->username,
+		);
+	}
+	else {
+		return array(
+			'status' => 'invalid',
+			'route' => 'login'
+		);
+	}
+}
+
+// Verify user access to file
+function verify_access($file, $token) {
+	if (empty($token)) {
+		return array(
+			'status' => 'invalid',
+			'route' => 'login'
+		);
+	}
+	// Check if the token is valid via POST req to API auth endpoint
+	$arr = array("action"=>"print_payload","token"=>"$token");
+	$res = post('http://localhost/api/v1/auth.php', $arr);
+	if (json_decode($res)->data->expired == false && json_decode($res)->data->type == 'login') {
+		$arr2 = array("action"=>"get_uid","token"=>"$token");
+		$res2 = post('http://localhost/api/v1/auth.php', $arr2);
+		$uid = json_decode($res2)->data;
+		// Check if uid is owner of file
+		$arr3 = array("action"=>"get_info","filename"=>"$file","token"=>"$token");
+		$res3 = post('http://localhost/api/v1/file.php', $arr3);
+		if (json_decode($res3)->data->uid == $uid) {
 			return array(
 				'status' => 'valid',
-				'token' => $token,
-				'role' => json_decode($res2)->data,
-				'username' => json_decode($res)->data->username,
+				'file' => $file,
 			);
 		}
 		else {

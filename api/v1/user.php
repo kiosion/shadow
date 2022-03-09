@@ -156,13 +156,10 @@ class User {
 	}
 	public static function get_role($uid) {
 		if (!isset($uid)) return false;
-		// Set query
+		// Run query
 		$sql = "SELECT role FROM users WHERE id = '$uid'";
-		// Get results
 		$res = runQuery($sql);
-		// If results are found
 		if ($res) {
-			// Return role
 			return $res->fetch_assoc()['role'];
 		}
 		// If no results are found
