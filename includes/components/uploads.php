@@ -51,7 +51,7 @@ class RowItem {
 				"item_type" => $upload['ext'],
 				"item_timestamp" => $upload['time'],
 				"item_size" => $upload['size'],
-				"item_visibility" => $upload['vis'],
+				"item_vis" => $upload['vis'],
 			);
 			// Convert unix timestamp to readable format
 			$timestamp = $item['item_timestamp'];
@@ -91,7 +91,7 @@ class RowItem {
 				<div class="col d-flex col-actions justify-content-between btn-group" role="group">
 					<button type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonOpen" data-bs-toggle="tooltip" data-bs-placement="top" title="Open"><i class="fas fa-external-link-square"></i></button>
 					<button type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonCopy" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link"><i class="fas fa-link"></i></button>
-					<button type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility"><i class="fas '; if ($item['vis'] == 0) echo 'fa-eye-slash'; else echo 'fa-eye'; echo '"></i></button>
+					<button type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility"><i class="fas '; if ($item['item_vis'] == '1') { echo 'fa-eye-slash'; } else { echo 'fa-eye'; } echo '"></i></button>
 					<button type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'/download" class="btn btn-action-dark-cyan btn-group-child fileButtonDownload" data-bs-toggle="tooltip" data-bs-placement="top" title="Download"><i class="fas fa-download"></i></button>
 					<button type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-danger btn-group-child fileButtonDelete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"><i class="fas fa-trash"></i></button>
 				</div>

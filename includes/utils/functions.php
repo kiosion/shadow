@@ -86,7 +86,7 @@ function handle_url_paths($url) {
 			$res_decoded = json_decode($res);
 			if ($res_decoded->status == 'success') {
 				$uid = $res_decoded->data->uid;
-				$ul_name = $res_decoded->data->ul_name;
+				$ul_name = $filename;
 				$og_name = $res_decoded->data->og_name;
 				$ext = $res_decoded->data->ext;
 				// Switch statement for raw/download/view
@@ -128,7 +128,7 @@ function handle_url_paths($url) {
 			}
 			else return array(
 				'app_route' => '404',
-				'title' => '404 Not Found',
+				'title' => '404',
 			);
 			break;
 		case 'settings':

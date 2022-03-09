@@ -23,60 +23,18 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 	$og_name = $res['og_name'];
 	$uid = $res['uid'];
 }
-// switch ($res['app_route']) {
-// 	case 'file':
-// 		$app_route = 'file';
-// 		$page_title = $res['title'];
-// 		$og_name = $res['og_name'];
-// 		$uid = $res['uid'];
-// 		$filename = $res['filename'];
-// 		$content_type = get_mimetype($res['ext']);
-// 		break;
-// 	case 'raw':
-// 		$app_route = 'raw';
-// 		$uid = $res['uid'];
-// 		$filename = $res['filename'];
-// 		$content_type = get_mimetype($res['ext']);
-// 		break;
-// 	case 'download':
-// 		$app_route = 'download';
-// 		$uid = $res['uid'];
-// 		$og_name = $res['og_name'];
-// 		$filename = $res['filename'];
-// 		$content_type = get_mimetype($res['ext']);
-// 		break;
-// 	case 'login':
-// 		$app_route = 'login';
-// 		$page_title = 'Shadow - Login';
-// 		break;
-// 	case 'index':
-// 		$app_route = 'index';
-// 		$page_title = 'Shadow - Home';
-// 		break;
-// 	case 'admin':
-// 		$app_route = 'admin';
-// 		$page_title = $res['title'];
-// 		break;
-// 	case '404':
-// 		$app_route = '404';
-// 		$page_title = 'Shadow - 404';
-// 		break;
-// 	case '403':
-// 		$app_route = '403';
-// 		$page_title = 'Shadow - 403';
-// 		break;
-// }
 
-// Verify login state only if not viewing file
-if ($app_route != 'login' && $app_route != 'raw' && $app_route != 'file' && $app_route != 'download' && $app_route != '404' && $app_route != '403') {
+// Verify login state only if not viewing public page
+if ($app_route != 'raw' && $app_route != 'file' && $app_route != 'download' && $app_route != '404' && $app_route != '403') {
 	$res = verify_login_token($app_route);
 	if ($res['status'] == 'valid') {
+		if ($app_route == 'login') header('Location: /home');
 		$user_auth_token = $res['token'];
 		$user_auth_role = $res['role'];
 		$user_auth_username = $res['username'];
 	}
-	else {
-		header('Location: /'.$res['redir'].'');
+	else if ($app_route != 'login') {
+		header('Location: /login'.$res['redir'].'');
 		exit();
 	}
 }

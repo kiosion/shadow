@@ -147,6 +147,10 @@ $(document).ready(() => {
 	$('#header-uploadButton').click((e) => {
 		openLink(e, false);
 	});
+	$('#header-backButton').click(() => {
+		// Navigate back a page in history
+		window.history.back();
+	});
 	// Menu bar button actions
 	$("#menuBar-copyLink").click((e) => {
 		copyLink(e);
@@ -164,8 +168,63 @@ $(document).ready(() => {
 	$(".fileButtonCopy").click((e) => {
 		copyLink(e);
 	});
+	$(".fileButtonVis").click((e) => {
+		let button = $(e.delegateTarget);
+		let i = button.find('i').eq(0);
+		let fileID = button.attr('data-id');
+		let vis = -1;
+		// Get current visibility based on icon
+		if (i.hasClass('fa-eye')) { 
+			vis = 1; 
+		}
+		else {
+			vis = 0;
+		}
+		// Request to toggle visibility
+		let post = $.ajax({
+			url: '/api/v1/file.php',
+			type: 'POST',
+			data: {
+				action: 'set_visibility',
+				token: Cookies.get('shadow_login_token'),
+				fileID: fileID,
+				vis: vis,
+			}
+		});
+		// On success
+		post.done((visRes) => {
+			// If 'status' is 'success', then toggle visibility
+			if (visRes.status == 'success') {
+				// Toggle visibility
+				if (i.hasClass('fa-eye')) {
+					i.removeClass('fa-eye');
+					i.addClass('fa-eye-slash');
+					button.attr('title', 'Make file public');
+					button.attr('data-bs-original-title', 'Make file public');
+				}
+				else if (i.hasClass('fa-eye-slash')) {
+					i.removeClass('fa-eye-slash');
+					i.addClass('fa-eye');
+					button.attr('title', 'Make file private');
+					button.attr('data-bs-original-title', 'Make file private');
+				}
+			}
+			// If 'status' is 'error', then display error message
+			else if (visRes.status == 'error') {
+				// Display error message from 'msg' field
+				console.log("Failed to toggle visibility, server responded with error: " + visRes.msg);
+			}
+			else {
+				console.log("Failed to toggle visibility, server responded with unknown error");
+			}
+		});
+	});
 	$(".fileButtonDownload").click((e) => {
 		openLink(e, true);
+	});
+	$(".fileButtonDelete").click((e) => {
+		let button = $(e.delegateTarget);
+		let fileID = button.attr('data-id');
 	});
 	$("#sortName").click((e) => {
 		openLink(e, false);

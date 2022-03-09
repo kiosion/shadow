@@ -58,7 +58,7 @@ $currentHost = 'http://'.$_SERVER['HTTP_HOST'];
 							break;
 						default:
 						echo '
-							<button id="homeButton-header" type="button" class="btn btn-light">Go back</button>
+							<button id="header-backButton" type="button" class="btn btn-light">Go back</button>
 						';
 						// TODO: jQuery pushhistorystate to go back a page
 						break;
