@@ -13,13 +13,13 @@ class RowItem {
 	public static function fetchUploads($token, $start, $sort, $order) {
 		$c = $start+1;
 		// Get number of uploads from user
-		$arr = array("token"=>"$token","action"=>"get_upload_count");
-		$res = post('http://localhost/api/v1/user.php', $arr);
+		$arr = array("token"=>"$token","obj"=>"uploads","action"=>"get_upload_count");
+		$res = post('api/v1/user.php', $arr);
 		$uploads_count = json_decode($res, true)['data'];
 
 		// If number of uploads is > 0, get uploads
-		$arr = array("token"=>"$token","action"=>"get_uploads","start"=>"$start","sort"=>"$sort","order"=>"$order");
-		$res = post('http://localhost/api/v1/user.php', $arr);
+		$arr = array("token"=>"$token","obj"=>"uploads","action"=>"get_uploads","start"=>"$start","sort"=>"$sort","order"=>"$order");
+		$res = post('api/v1/user.php', $arr);
 		$uploads = json_decode($res, true)['data'];
 
 		// If no uploads, return empty array
@@ -173,15 +173,15 @@ if ($rowItems['uploads_count'] > 0) {
 			<div class="col-fluid" id="uploads-table">
 				<div class="row row-header ps-3 text-light fw-bold nosel">
 					<div class="col-1 col-num">#</div>';
-					if ($sort == 'n' && $order == 'a') echo '<div class="col col-md col-name text-truncate" id="sortName" data-link="'.$sortLinkNameDesc.'">Name<i class="fas fa-sort-up ps-2"></i></div>';
-					else if ($sort == 'n' && $order == 'd') echo '<div class="col col-md col-name text-truncate" id="sortName" data-link="'.$sortLinkNameAsc.'">Name<i class="fas fa-sort-down ps-2"></i></div>';
-					else echo '<div class="col col-md col-name text-truncate" id="sortName" data-link="'.$sortLinkName.'">Name</div>';
-					if ($sort == 's' && $order == 'a') echo '<div class="col-1 d-none col-size d-md-block" id="sortSize" data-link="'.$sortLinkSizeDesc.'">Size<i class="fas fa-sort-up ps-2"></i></div>';
-					else if ($sort == 's' && $order == 'd') echo '<div class="col-1 d-none col-size d-md-block" id="sortSize" data-link="'.$sortLinkSizeAsc.'">Size<i class="fas fa-sort-down ps-2"></i></div>';
-					else echo '<div class="col-1 d-none col-size d-md-block" id="sortSize" data-link="'.$sortLinkSize.'">Size</div>';
-					if ($sort == 't' && $order == 'a') echo '<div class="col-2 d-none col-date d-md-block" id="sortDate" data-link="'.$sortLinkDateDesc.'">Date<i class="fas fa-sort-up ps-2"></i></div>';
-					else if ($sort == 't' && $order == 'd') echo '<div class="col-2 d-none col-date d-md-block" id="sortDate" data-link="'.$sortLinkDateAsc.'">Date<i class="fas fa-sort-down ps-2"></i></div>';
-					else echo '<div class="col-2 d-none col-date d-md-block" id="sortDate" data-link="'.$sortLinkDate.'">Date</div>';
+					if ($sort == 'n' && $order == 'a') echo '<div class="col col-md col-name text-truncate sortName" data-link="'.$sortLinkNameDesc.'">Name<i class="fas fa-sort-up ps-2"></i></div>';
+					else if ($sort == 'n' && $order == 'd') echo '<div class="col col-md col-name text-truncate sortName" data-link="'.$sortLinkNameAsc.'">Name<i class="fas fa-sort-down ps-2"></i></div>';
+					else echo '<div class="col col-md col-name text-truncate sortName" data-link="'.$sortLinkName.'">Name</div>';
+					if ($sort == 's' && $order == 'a') echo '<div class="col-1 d-none col-size d-md-block sortSize" data-link="'.$sortLinkSizeDesc.'">Size<i class="fas fa-sort-up ps-2"></i></div>';
+					else if ($sort == 's' && $order == 'd') echo '<div class="col-1 d-none col-size d-md-block sortSize" data-link="'.$sortLinkSizeAsc.'">Size<i class="fas fa-sort-down ps-2"></i></div>';
+					else echo '<div class="col-1 d-none col-size d-md-block sortSize" data-link="'.$sortLinkSize.'">Size</div>';
+					if ($sort == 't' && $order == 'a') echo '<div class="col-2 d-none col-date d-md-block sortDate" data-link="'.$sortLinkDateDesc.'">Date<i class="fas fa-sort-up ps-2"></i></div>';
+					else if ($sort == 't' && $order == 'd') echo '<div class="col-2 d-none col-date d-md-block sortDate" data-link="'.$sortLinkDateAsc.'">Date<i class="fas fa-sort-down ps-2"></i></div>';
+					else echo '<div class="col-2 d-none col-date d-md-block sortDate" data-link="'.$sortLinkDate.'">Date</div>';
 
 					echo '<div class="col col-actions">Actions</div>
 				</div>
@@ -211,7 +211,7 @@ if ($rowItems['uploads_count'] > 0) {
 									else echo '<li class="dropdown-item"><a class="dropdown-item" href="'.$sortLinkName.'">Name</a></li>'; 
 									if ($sort == 't') echo '<li class="dropdown-item active"><a class="dropdown-item">Time</a></li>';
 									else echo '<li class="dropdown-item"><a class="dropdown-item" href="'.$sortLinkDate.'">Time</a></li>';
-									if ($sort == 's') echo '<li class="dropdown-item"><a class="dropdown-item active">Size</a></li>';
+									if ($sort == 's') echo '<li class="dropdown-item active"><a class="dropdown-item">Size</a></li>';
 									else echo '<li class="dropdown-item"><a class="dropdown-item" href="'.$sortLinkSize.'">Size</a></li>';
 									echo'
 								</ul>

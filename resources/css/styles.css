@@ -179,10 +179,10 @@ button:not(.btn-group-child), button:not(.btn-group-child):active, button:not(.b
 	color: var(--white) !important;
 }
 /* Table sort headers */
-#sortName, #sortDate, #sortSize {
+.sortName, .sortDate, .sortSize {
 	cursor: pointer !important;
 }
-#sortName:hover, #sortDate:hover, #sortSize:hover {
+.sortName:hover, .sortDate:hover, .sortSize:hover {
 	color: var(--purple) !important;
 	cursor: pointer !important;
 }

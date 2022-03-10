@@ -10,10 +10,9 @@ if (!isset($include)) {
 
 // Function to handle POST requests and responses
 function post($url, $data) {
-	// Call get_api_token to get token for header
-	//$token = get_api_token();
 	// Set authorization as an appended field to the data array with a bearer token
 	$data['authorization'] = 'token-blank-for-now';
+	$url = 'http://localhost/'.$url; // Set url to current server address, plus the given url. TODO: Read from config file
 	// Set curl POST data
 	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_POST, true);

@@ -4,6 +4,12 @@
 if (!isset($include)) {
 	header("Location: ../../");
 }
+// Set page link
+$requestURI = explode('/', $_SERVER['REQUEST_URI']);
+if (!empty($requestURI[2])) $requestURI = '/'.$requestURI[1].'/'.$requestURI[2];
+else $requestURI = '/'.$requestURI[1];
+$currentLink = 'http://'.$_SERVER['HTTP_HOST'].$requestURI;
+$currentHost = 'http://'.$_SERVER['HTTP_HOST'];
 ?>
 <div id="contextMenu" style="display:none;" class="nosel">
 	<ul class="dropdown-menu dropdown-menu-dark mx-0 border-0 shadow">

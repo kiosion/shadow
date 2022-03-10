@@ -4,9 +4,6 @@ if (!isset($include)) {
 	header("Location: ../../");
 }
 
-// $arr = array("action"=>"print_payload","token"=>"$_COOKIE[shadow_login_token]");
-// $res = post('http://localhost/api/v1/auth.php', $arr);
-// $username = json_decode($res)->data->username;
 $username = $user_auth_username;
 ?>
 <main id="page-index" class="container-fluid pb-5">

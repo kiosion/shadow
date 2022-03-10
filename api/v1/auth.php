@@ -12,69 +12,52 @@ $include = true;
 
 // Include files
 require_once 'utils/res.php';
-require_once 'utils/db.php';
 require_once 'utils/jwt.php';
-
-// Set HTTP headers
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
+require_once 'utils/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	if (isset($_POST['action'])) {
-		$action = $_POST['action'];
-		switch ($action) {
-			// Generate token
-			case 'request_token':
-				echo Auth::generate_token($conn, $_POST['username'], $_POST['password'], $_POST['type']);
-				break;
-			// Check token
-			case 'check_token':
-				if (!isset($_POST['token']) || !isset($_POST['type'])) {
-					echo Res::fail(401, 'Token or type not provided');
+	if (isset($_POST['obj']) && isset($_POST['action'])) {
+		if ($_POST['obj'] == 'auth') {
+			switch ($_POST['action']) {
+				// Generate token
+				case 'request_token':
+					echo Auth::generate_token($conn, $_POST['username'], $_POST['password'], $_POST['type']);
 					break;
-				}
-				if (!($_POST['type'] == 'api' || $_POST['type'] == 'login')) {
-					echo Res::fail(401, 'Invalid token type');
+				// Check token
+				case 'check_token':
+					if (!isset($_POST['token']) || !isset($_POST['type'])) {
+						echo Res::fail(401, 'Token or type not provided');
+						break;
+					}
+					if (!($_POST['type'] == 'api' || $_POST['type'] == 'login')) {
+						echo Res::fail(401, 'Invalid token type');
+						break;
+					}
+					if (Auth::check_token($_POST['token'], $_POST['type'])) {
+						echo Res::success(200, 'Token valid', null);
+					}
+					else {
+						echo Res::success(200, 'Token invalid', null);
+					}
 					break;
-				}
-				if (Auth::check_token($_POST['token'], $_POST['type'])) {
-					echo Res::success(200, 'Token valid', null);
-				}
-				else {
-					echo Res::success(200, 'Token invalid', null);
-				}
-				break;
-			// Print token payload
-			case 'print_payload':
-				if (!isset($_POST['token'])) {
-					echo Res::fail(401, 'Token not provided');
+				// Check user credentials on login
+				case 'check_creds':
+					if (!isset($_POST['username']) || !isset($_POST['password'])) {
+						echo Res::fail(401, 'Username or password not provided');
+						break;
+					}
+					if (Auth::check_credentials($conn, $_POST['username'], $_POST['password'])) {
+						echo Res::success(200, 'Credentials valid', null);
+					}
+					else {
+						echo Res::success(200, 'Credentials invalid', null);
+					}
 					break;
-				}
-				echo Auth::print_token($_POST['token']);
-				break;
-			// Get user id from token
-			case 'get_uid':
-				if (!isset($_POST['token'])) {
-					echo Res::fail(401, 'Token not provided');
-					break;
-				}
-				echo Auth::get_uid($_POST['token']);
-				break;
-			// Check user credentials on login
-			case 'check_creds':
-				if (!isset($_POST['username']) || !isset($_POST['password'])) {
-					echo Res::fail(401, 'Username or password not provided');
-					break;
-				}
-				if (Auth::check_credentials($conn, $_POST['username'], $_POST['password'])) {
-					echo Res::success(200, 'Credentials valid', null);
-				}
-				else {
-					echo Res::success(200, 'Credentials invalid', null);
-				}
-				break;
+			}
 		}
+	}
+	else {
+		echo Res::fail(400, 'Object or action not provided');
 	}
 }
 

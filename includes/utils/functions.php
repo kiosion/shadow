@@ -17,12 +17,12 @@ function verify_login_token($app_route, $token) {
 		);
 	}
 	// Check if the token is valid via POST req to API auth endpoint
-	$arr = array("action"=>"print_payload","token"=>"$token");
-	$res = post('http://localhost/api/v1/auth.php', $arr);
+	$arr = array("token"=>"$token","obj"=>"auth","action"=>"print_payload");
+	$res = post('api/v1/user.php', $arr);
 	if (json_decode($res)->data->expired == false && json_decode($res)->data->type == 'login') {
 		// TODO: Check that the token is valid for the given app route
-		$arr2 = array("action"=>"get_role","token"=>"$token");
-		$res2 = post('http://localhost/api/v1/user.php', $arr2);
+		$arr2 = array("token"=>"$token","obj"=>"account","action"=>"get_role",);
+		$res2 = post('api/v1/user.php', $arr2);
 		return array(
 			'status' => 'valid',
 			'token' => $token,
@@ -47,15 +47,15 @@ function verify_access($file, $token) {
 		);
 	}
 	// Check if the token is valid via POST req to API auth endpoint
-	$arr = array("action"=>"print_payload","token"=>"$token");
-	$res = post('http://localhost/api/v1/auth.php', $arr);
+	$arr = array("token"=>"$token","obj"=>"auth","action"=>"print_payload");
+	$res = post('api/v1/user.php', $arr);
 	if (json_decode($res)->data->expired == false && json_decode($res)->data->type == 'login') {
-		$arr2 = array("action"=>"get_uid","token"=>"$token");
-		$res2 = post('http://localhost/api/v1/auth.php', $arr2);
+		$arr2 = array("token"=>"$token","obj"=>"auth","action"=>"get_uid");
+		$res2 = post('api/v1/user.php', $arr2);
 		$uid = json_decode($res2)->data;
 		// Check if uid is owner of file
-		$arr3 = array("action"=>"get_info","filename"=>"$file","token"=>"$token");
-		$res3 = post('http://localhost/api/v1/file.php', $arr3);
+		$arr3 = array("token"=>"$token","action"=>"get_info","filename"=>"$file");
+		$res3 = post('api/v1/file.php', $arr3);
 		if (json_decode($res3)->data->uid == $uid) {
 			return array(
 				'status' => 'valid',
@@ -112,7 +112,7 @@ function handle_url_paths($url) {
 			// Remove extension from end of filename
 			if (!empty($ext)) $filename = substr($filename, 0, - strlen($ext) - 1);
 			$arr = array("action"=>"get_uid","filename"=>"$filename");
-			$res = post('http://localhost/api/v1/file.php', $arr);
+			$res = post('api/v1/file.php', $arr);
 			$res_decoded = json_decode($res);
 			if ($res_decoded->status == 'success') {
 				$uid = $res_decoded->data->uid;
@@ -158,7 +158,7 @@ function handle_url_paths($url) {
 			}
 			else return array(
 				'app_route' => '404',
-				'title' => '404',
+				'title' => 'Error 404',
 			);
 			break;
 		case 'settings':
@@ -167,16 +167,22 @@ function handle_url_paths($url) {
 				'title' => 'Settings',
 			);
 			break;
+		case 'account':
+			return array(
+				'app_route' => 'account',
+				'title' => 'Account',
+			);
+			break;
 		case 'admin':
 			return array(
 				'app_route' => 'admin',
-				'title' => 'Shadow - Admin',
+				'title' => 'Admin',
 			);
 			break;
 		default:
 			return array(
 				'app_route' => '404',
-				'title' => '404 Not Found',
+				'title' => 'Error 404',
 			);
 			break;
 	}

@@ -19,12 +19,6 @@ header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
-// Get token from header and check if it is valid
-//if (!Auth::check_token(JWT::get_bearer_token(), 'api')) {
-// 	echo Res::fail(401, 'Unauthorized');
-// 	exit();
-// }
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if (isset($_POST['action'])) {
 		$action = $_POST['action'];
@@ -129,10 +123,6 @@ class File {
 		// Get UID from token
 		require_once 'auth.php';
 		$uid = json_decode(Auth::get_uid($_POST['token']))->data;
-		// $arr = array("action"=>"get_uid","token"=>"$token");
-		// $res = post('http://localhost/api/v1/auth.php', $arr);
-		// $res_decoded = json_decode($res);
-		// $uid = $res_decoded->data;
 		if (empty($uid)) {
 			return Res::fail(500, 'Failed to get UID from token');
 			exit();

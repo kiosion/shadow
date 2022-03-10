@@ -6,7 +6,8 @@ if (!isset($include)) {
 }
 // Set page link
 $requestURI = explode('/', $_SERVER['REQUEST_URI']);
-$requestURI = '/'.$requestURI[1].'/'.$requestURI[2];
+if (!empty($requestURI[2])) $requestURI = '/'.$requestURI[1].'/'.$requestURI[2];
+else $requestURI = '/'.$requestURI[1];
 $currentLink = 'http://'.$_SERVER['HTTP_HOST'].$requestURI;
 $currentHost = 'http://'.$_SERVER['HTTP_HOST'];
 ?>
@@ -28,6 +29,8 @@ $currentHost = 'http://'.$_SERVER['HTTP_HOST'];
 								<button id="header-loginButton" type="button" class="btn btn-light">Login</button>
 							';
 							break;
+						case 'settings':
+						case 'account':
 						case 'upload':
 						case 'index':
 							echo '
@@ -53,14 +56,19 @@ $currentHost = 'http://'.$_SERVER['HTTP_HOST'];
 							echo '
 								<button type="button" id="menuBar-copyLink" data-link="'.$currentLink.'" class="btn btn-light me-3" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Copy link"><i class="fas fa-link p-1"></i></button>
 								<button type="button" id="menuBar-viewRaw" data-link="'.$currentLink.'/raw" class="btn btn-light me-3" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="View raw"><i class="fas fa-external-link-square p-1"></i></button>
-								<button type="button" id="menuBar-download" data-link="'.$currentLink.'/download" class="btn btn-light-cyan" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download file"><i class="fas fa-cloud-download p-1"></i></button>
+								<button type="button" id="menuBar-download" data-link="'.$currentLink.'/download" class="btn btn-light-cyan" style="width:60px;" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><i class="fas fa-cloud-download p-1"></i></button>
+							';
+							break;
+						case '403':
+							echo '
+								<button id="header-backButton" type="button" class="btn btn-light me-3">Go back</button>
+								<button id="header-loginButton" type="button" class="btn btn-light">Login</button>
 							';
 							break;
 						default:
 						echo '
 							<button id="header-backButton" type="button" class="btn btn-light">Go back</button>
 						';
-						// TODO: jQuery pushhistorystate to go back a page
 						break;
 							
 					}

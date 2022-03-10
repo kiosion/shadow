@@ -32,7 +32,7 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 	$uid = $res['uid'];
 	// Check if requested file is private
 	$arr = array("action"=>"get_info","filename"=>"$filename", "token"=>"$_COOKIE[shadow_login_token]");
-	$res = post('http://localhost/api/v1/file.php', $arr);
+	$res = post('api/v1/file.php', $arr);
 	$res_decoded = json_decode($res);
 	$priv_file = false;
 	// If file is hidden
@@ -127,6 +127,18 @@ switch ($app_route) {
 			case 'admin':
 				$includeHeader = 'includes/components/header.php';
 				$includeBody = 'includes/pages/admin.php';
+				$includeFooter = 'includes/components/footer.php';
+				break;
+			// App settings
+			case 'settings':
+				$includeHeader = 'includes/components/header.php';
+				$includeBody = 'includes/pages/settings.php';
+				$includeFooter = 'includes/components/footer.php';
+				break;
+			// Account page
+			case 'account':
+				$includeHeader = 'includes/components/header.php';
+				$includeBody = 'includes/pages/account.php';
 				$includeFooter = 'includes/components/footer.php';
 				break;
 			// Error pages

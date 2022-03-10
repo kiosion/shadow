@@ -1,99 +1,8 @@
 // On DOM loaded
 $(document).ready(() => {
-	// Handle login form update on submit
-	$("#loginForm").submit((e) => {
-		// Prevent default submit
-		e.preventDefault();
-		console.log("Login form submitted...");
-		let un = $('#username');
-		let pw = $('#password');
-		// Send data using post
-		console.log("Checking creds...");
-		let post = $.ajax({
-			type: 'POST',
-			url: '/api/v1/auth.php',
-			data: { 
-				action: 'check_creds',
-				username: un.val(),
-				password: pw.val(),
-			}
-		});
-		// Check response when done
-		post.done((authRes) => {
-			if (authRes.status == 'success' && authRes.msg == 'Credentials valid') {
-				// Request token if creds are valid
-				console.log("Credentials valid, requesting token...");
-				let token = $.ajax({
-					type: 'POST',
-					url: '/api/v1/auth.php',
-					data: {
-						action: 'request_token',
-						username: un.val(),
-						password: pw.val(),
-						type: 'login',
-					}
-				});
-				// Check response when done
-				token.done((tokenRes) => {
-					// If token was generated and returned
-					if (tokenRes.status == 'success' && tokenRes.msg == 'Token generated') {	
-						console.log("Token generated, setting cookie...");
-						// Set login_token cookie with expiry of 6 hours
-						Cookies.set('shadow_login_token', tokenRes.data, { expires: .25 });
-						console.log("Cookie set, redirecting...");
-						window.location.href = '/home';
-					}
-					// If not generated or returned, log error and redirect to index.php
-					else {
-						console.log(tokenRes.msg);
-						window.location.href = '/login/?error=token';
-					}
-				});
-				// On fail, log error and redirect to index.php with error
-				token.fail(() => {
-					console.log("Error requesting token");
-					window.location.href = '/login/?error=token';
-				});
-			}
-			else if (authRes.status == 'success' && authRes.msg == 'Credentials invalid') {
-				// Log error and redirect to index.php with error
-				window.location.href = '/login/?error=creds';
-			}
-			// If 'status' is 'error', then display error message
-			else if (authRes.status == 'error') {
-				// Display error message from 'msg' field
-				console.log("Failed to auth, server responded with error: " + authRes.msg);
-				window.location.href = '/login/?error=server';
-			}
-			else {
-				console.log("Failed to auth, server responded with unknown error");
-				window.location.href = '/login/?error=server';
-			}
-		});
-		// On fail
-		post.fail(() => {
-			console.log('Failed to auth, server responded with unknown error');
-			window.location.href = '/login/?error=server';
-		});
-	});
-	// Logout button
-	$('#logoutButton').click((e) => {
-		e.preventDefault();
-		// Remove shadow_login_token cookie
-		Cookies.remove('shadow_login_token');
-		// Redirect to index
-		window.location.href = '/login';
-	});
-	// Dashboard button
-	$('#launchDashButton').click((e) => {
-		e.preventDefault();
-		// Redirect to dashboard
-		window.location.href = '/admin';
-	});
 	// Init tooltips
 	$("html").tooltip({ selector: '[data-bs-toggle=tooltip]' });
-
-	// Init right click menu
+	// Init context menu
 	$("html").contextmenu((e) => {
 		e.preventDefault();
 	});
@@ -111,6 +20,7 @@ $(document).ready(() => {
 			display: "none" 
 		});
 	});
+
 	// Context menu actions
 	$(".dropdown-item.copy-link").click((e) => {
 		copyLink(e);
@@ -130,27 +40,114 @@ $(document).ready(() => {
 			display: "none"
 		});
 	});
-	// Header button actions
-	$('#header-logoutButton').click((e) => {
+
+	// Handle login form update on submit
+	$("#loginForm").submit((e) => {
+		// Prevent default submit
+		e.preventDefault();
+		console.log("Login form submitted...");
+		let un = $('#username');
+		let pw = $('#password');
+		// Send data using post
+		console.log("Checking credentials...");
+		let post = $.ajax({
+			type: 'POST',
+			url: '/api/v1/auth/',
+			data: { 
+				obj: 'auth',
+				action: 'check_creds',
+				username: un.val(),
+				password: pw.val(),
+			}
+		});
+		// Check response when done
+		post.done((authRes) => {
+			authRes = JSON.parse(authRes);
+			if (authRes.status == 'success' && authRes.msg == 'Credentials valid') {
+				// Request token if creds are valid
+				console.log("Credentials valid, requesting token...");
+				let token = $.ajax({
+					type: 'POST',
+					url: '/api/v1/auth/',
+					data: {
+						action: 'request_token',
+						obj: 'auth',
+						username: un.val(),
+						password: pw.val(),
+						type: 'login',
+					}
+				});
+				// Check response when done
+				token.done((tokenRes) => {
+					tokenRes = JSON.parse(tokenRes);
+					// If token was generated and returned
+					if (tokenRes.status == 'success' && tokenRes.msg == 'Token generated') {	
+						console.log("Token generated, setting cookie...");
+						// Set login_token cookie with expiry of 6 hours
+						Cookies.set('shadow_login_token', tokenRes.data, { expires: .25 });
+						console.log("Cookie set, redirecting...");
+						window.location.href = '/home/';
+					}
+					// If not generated or returned, log error and redirect to index.php
+					else {
+						console.warn("Failed to get token, server responded with error: " + tokenRes.msg);
+						window.location.href = '/login/?error=token';
+					}
+				});
+				// On fail, log error and redirect to index.php with error
+				token.fail(() => {
+					console.error("Error requesting token, server failed to respond");
+					window.location.href = '/login/?error=token';
+				});
+			}
+			else if (authRes.status == 'success' && authRes.msg == 'Credentials invalid') {
+				// Log error and redirect to index.php with error
+				window.location.href = '/login/?error=creds';
+			}
+			// If 'status' is 'error', then display error message
+			else if (authRes.status == 'error') {
+				// Display error message from 'msg' field
+				console.error("Failed to auth, server responded with error: " + authRes.msg);
+				window.location.href = '/login/?error=server';
+			}
+			else {
+				console.error("Failed to auth, server responded with unknown response: " + authRes.msg + " (status: " + authRes.status + ")");
+				window.location.href = '/login/?error=server';
+			}
+		});
+		// On fail
+		post.fail(() => {
+			console.error('Failed to auth, server failed to respond');
+			window.location.href = '/login/?error=server';
+		});
+	});
+
+	// Logout button
+	$('#logoutButton').click((e) => {
 		e.preventDefault();
 		// Remove shadow_login_token cookie
 		Cookies.remove('shadow_login_token');
 		// Redirect to index
+		window.location.href = '/login/';
+	});
+
+	// Header button actions
+	$("#header-loginButton").click((e) => {
+		e.preventDefault();
 		window.location.href = '/login';
 	});
-	$('#header-settingsButton').click((e) => {
-		openLink(e, false);
+	$('#header-logoutButton').click((e) => {
+		e.preventDefault();
+		Cookies.remove('shadow_login_token');
+		window.location.href = '/login';
 	});
-	$('#header-accountButton').click((e) => {
-		openLink(e, false);
-	});
-	$('#header-uploadButton').click((e) => {
+	$('#header-settingsButton,#header-accountButton,#header-uploadButton').click((e) => {
 		openLink(e, false);
 	});
 	$('#header-backButton').click(() => {
-		// Navigate back a page in history
 		window.history.back();
 	});
+
 	// Menu bar button actions
 	$("#menuBar-copyLink").click((e) => {
 		copyLink(e);
@@ -161,8 +158,9 @@ $(document).ready(() => {
 	$("#menuBar-download").click((e) => {
 		download(e);
 	});
+
 	// Upload table button actions
-	$(".fileButtonOpen").click((e) => {
+	$(".fileButtonOpen,.fileButtonDownload").click((e) => {
 		openLink(e, true);
 	});
 	$(".fileButtonCopy").click((e) => {
@@ -185,9 +183,10 @@ $(document).ready(() => {
 		}
 		// Request to toggle visibility
 		let post = $.ajax({
-			url: '/api/v1/file.php',
+			url: '/api/v1/file/',
 			type: 'POST',
 			data: {
+				obj: 'file',
 				action: 'set_visibility',
 				token: Cookies.get('shadow_login_token'),
 				fileID: fileID,
@@ -196,7 +195,7 @@ $(document).ready(() => {
 		});
 		// On success
 		post.done((visRes) => {
-			console.log("Vis set to: " + visRes.data);
+			console.warn(visRes.msg + " (" + visRes.data + ")");
 			// If 'status' is 'success', then toggle visibility
 			if (visRes.status == 'success') {
 				// Toggle visibility
@@ -222,34 +221,18 @@ $(document).ready(() => {
 			// If 'status' is 'error', then display error message
 			else if (visRes.status == 'error') {
 				// Display error message from 'msg' field
-				console.log("Failed to toggle visibility, server responded with error: " + visRes.msg);
+				console.warn("Failed to toggle visibility, server responded with error: " + visRes.msg);
 			}
 			else {
-				console.log("Failed to toggle visibility, server responded with unknown error");
+				console.error("Failed to set file visibility, server responded with unknown response: " + authRes.msg + " (status: " + authRes.status + ")");
 			}
 		});
-	});
-	$(".fileButtonDownload").click((e) => {
-		openLink(e, true);
 	});
 	$(".fileButtonDelete").click((e) => {
 		let button = $(e.delegateTarget);
 		let fileID = button.attr('data-id');
 	});
-	$("#sortName").click((e) => {
-		openLink(e, false);
-	});
-	$("#sortSize").click((e) => {
-		openLink(e, false);
-	});
-	$("#sortDate").click((e) => {
-		openLink(e, false);
-	});
-	// Pagination button actions
-	$(".buttonPrevPage").click((e) => {
-		openLink(e, false);
-	});
-	$(".buttonNextPage").click((e) => {
+	$(".sortName,.sortSize,.sortDate,.buttonPrevPage,.buttonNextPage").click((e) => {
 		openLink(e, false);
 	});
 });

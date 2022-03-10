@@ -20,11 +20,6 @@ header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 
-// Funcs:
-// - get uploads
-// - get account info
-// - set account info
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	if (isset($_POST['token'])) {
 		$token = $_POST['token'];
@@ -35,73 +30,101 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 			echo Res::fail(500, 'Failed to get UID from token');
 		}
 		if ($auth) {
-			// Continue to action
-			if (isset($_POST['action'])) {
-				$action = $_POST['action'];
-				switch ($action) {
-					// Get uploader uid from filename, this func is public as it is used to view files
-					case 'get_uploads':
-						if (!isset($_POST['start'])) {
-							echo Res::fail(401, 'Start index not provided');
-							break;
-						}
-						$start = $_POST['start'];
-						if ($start < 0) $start = 0;
-						switch ($_POST['sort']) {
-							case 'n':
-								$sort = 'og_name';
+			// Continue to obj
+			if (isset($_POST['obj']) && isset($_POST['action'])) {
+				switch($_POST['obj']) {
+					case 'auth':
+						switch ($_POST['action']) {
+							// Print token payload
+							case 'print_payload':
+								if (!isset($_POST['token'])) {
+									echo Res::fail(401, 'Token not provided');
+									break;
+								}
+								echo Auth::print_token($_POST['token']);
 								break;
-							case 't':
-								$sort = 'time';
+							// Get user id from token
+							case 'get_uid':
+								if (!isset($_POST['token'])) {
+									echo Res::fail(401, 'Token not provided');
+									break;
+								}
+								echo Auth::get_uid($_POST['token']);
 								break;
-							case 's':
-								$sort = 'size';
-								break;
-							default:
-								$sort = 'time';
-								break;
-						}
-						switch ($_POST['order']) {
-							case 'a':
-								$order = 'ASC';
-								break;
-							case 'd':
-								$order = 'DESC';
-								break;
-							default:
-								$order = 'DESC';
-								break;
-						}
-						$arr = User::get_uploads($uid, $start, $sort, $order);
-						if ($arr != false) {
-							echo Res::success(200, 'Uploads retrieved', $arr);
-						}
-						else {
-							echo Res::fail(404, 'No uploads found');
 						}
 						break;
-					case 'get_upload_count':
-						$count = User::get_upload_count($uid);
-						if ($count != false) {
-							echo Res::success(200, 'Upload count retrieved', $count);
-						}
-						else {
-							echo Res::fail(404, 'No uploads found');
+					case 'account':
+						switch ($_POST['action']) {
+							// Get user role
+							case 'get_role':
+								$role = User::get_role($uid);
+								if ($role != false) {
+									echo Res::success(200, 'Role retrieved', $role);
+								}
+								else {
+									echo Res::fail(404, 'No role or user found');
+								}
+								break;
 						}
 						break;
-					case 'get_role':
-						$role = User::get_role($uid);
-						if ($role != false) {
-							echo Res::success(200, 'Role retrieved', $role);
-						}
-						else {
-							echo Res::fail(404, 'No role or user found');
+					case 'uploads':
+						switch ($_POST['action']) {
+							// Get uploader uid from filename, this func is public as it is used to view files
+							case 'get_uploads':
+								if (!isset($_POST['start'])) {
+									echo Res::fail(401, 'Start index not provided');
+									break;
+								}
+								$start = $_POST['start'];
+								if ($start < 0) $start = 0;
+								switch ($_POST['sort']) {
+									case 'n':
+										$sort = 'og_name';
+										break;
+									case 't':
+										$sort = 'time';
+										break;
+									case 's':
+										$sort = 'size';
+										break;
+									default:
+										$sort = 'time';
+										break;
+								}
+								switch ($_POST['order']) {
+									case 'a':
+										$order = 'ASC';
+										break;
+									case 'd':
+										$order = 'DESC';
+										break;
+									default:
+										$order = 'DESC';
+										break;
+								}
+								$arr = User::get_uploads($uid, $start, $sort, $order);
+								if ($arr != false) {
+									echo Res::success(200, 'Uploads retrieved', $arr);
+								}
+								else {
+									echo Res::fail(404, 'No uploads found');
+								}
+								break;
+							case 'get_upload_count':
+								$count = User::get_upload_count($uid);
+								if ($count != false) {
+									echo Res::success(200, 'Upload count retrieved', $count);
+								}
+								else {
+									echo Res::fail(404, 'No uploads found');
+								}
+								break;
 						}
 						break;
 				}
 			}
 			else {
-				echo Res::fail(400, 'Action not provided');
+				echo Res::fail(400, 'Object or action not provided');
 			}
 		}
 		// If token is invalid
