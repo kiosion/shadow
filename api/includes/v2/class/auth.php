@@ -1,64 +1,11 @@
 <?php
 
 // Prevent direct access
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+if (!isset($include)) {
 	header('Content-Type: application/json; charset=utf-8');
-	include_once 'utils/res.php';
+	include_once '../../../utils/res.php';
 	echo Res::fail(403, 'Forbidden');
 	exit();
-}
-
-$include = true;
-
-// Include files
-require_once 'utils/res.php';
-require_once 'utils/jwt.php';
-require_once 'utils/db.php';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	if (isset($_POST['obj']) && isset($_POST['action'])) {
-		if ($_POST['obj'] == 'auth') {
-			switch ($_POST['action']) {
-				// Generate token
-				case 'request_token':
-					echo Auth::generate_token($conn, $_POST['username'], $_POST['password'], $_POST['type']);
-					break;
-				// Check token
-				case 'check_token':
-					if (!isset($_POST['token']) || !isset($_POST['type'])) {
-						echo Res::fail(401, 'Token or type not provided');
-						break;
-					}
-					if (!($_POST['type'] == 'api' || $_POST['type'] == 'login')) {
-						echo Res::fail(401, 'Invalid token type');
-						break;
-					}
-					if (Auth::check_token($_POST['token'], $_POST['type'])) {
-						echo Res::success(200, 'Token valid', null);
-					}
-					else {
-						echo Res::success(200, 'Token invalid', null);
-					}
-					break;
-				// Check user credentials on login
-				case 'check_creds':
-					if (!isset($_POST['username']) || !isset($_POST['password'])) {
-						echo Res::fail(401, 'Username or password not provided');
-						break;
-					}
-					if (Auth::check_credentials($conn, $_POST['username'], $_POST['password'])) {
-						echo Res::success(200, 'Credentials valid', null);
-					}
-					else {
-						echo Res::success(200, 'Credentials invalid', null);
-					}
-					break;
-			}
-		}
-	}
-	else {
-		echo Res::fail(400, 'Object or action not provided');
-	}
 }
 
 class Auth {

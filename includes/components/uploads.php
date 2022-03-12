@@ -2,7 +2,7 @@
 
 // Prevent direct access
 if (!isset($include)) {
-	header("Location: ../../");
+	header("Location: /");
 }
 
 // Include files
@@ -13,13 +13,13 @@ class RowItem {
 	public static function fetchUploads($token, $start, $sort, $order) {
 		$c = $start+1;
 		// Get number of uploads from user
-		$arr = array("token"=>"$token","obj"=>"uploads","action"=>"get_upload_count");
-		$res = post('api/v1/user.php', $arr);
+		$arr = array("token"=>"$token");
+		$res = post('api/v2/user/get-upload-count/', $arr);
 		$uploads_count = json_decode($res, true)['data'];
 
 		// If number of uploads is > 0, get uploads
-		$arr = array("token"=>"$token","obj"=>"uploads","action"=>"get_uploads","start"=>"$start","sort"=>"$sort","order"=>"$order");
-		$res = post('api/v1/user.php', $arr);
+		$arr = array("token"=>"$token","start"=>"$start","sort"=>"$sort","order"=>"$order");
+		$res = post('api/v2/user/get-uploads/', $arr);
 		$uploads = json_decode($res, true)['data'];
 
 		// If no uploads, return empty array

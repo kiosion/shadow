@@ -1,73 +1,9 @@
 <?php
 
 // Prevent direct access
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-	header('Content-Type: application/json; charset=utf-8');
-	include_once 'utils/res.php';
+if (!isset($include)) {
 	echo Res::fail(403, 'Forbidden');
 	exit();
-}
-
-$include = true;
-
-// Include files
-require_once 'utils/res.php';
-require_once 'utils/db.php';
-
-// Set HTTP headers
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	if (isset($_POST['action'])) {
-		$action = $_POST['action'];
-		switch ($action) {
-			// Get uploader uid from filename, this func is public as it is used to view files
-			case 'get_uid':
-				if (!isset($_POST['filename'])) {
-					echo Res::fail(401, 'Filename not provided');
-					break;
-				}
-				// Check for file extension
-				$ext = pathinfo($_POST['filename'], PATHINFO_EXTENSION);
-				if ($ext == '') {
-					$res = File::get_uid($_POST['filename']);
-				}
-				else {
-					// Remove file extension
-					$filename = substr($_POST['filename'], 0, -strlen($ext) - 1);
-					$res = File::get_uid($filename);
-				}
-				echo $res;
-				break;
-			case 'get_info':
-				if ((!isset($_POST['filename']) && !isset($_POST['file_id'])) || !isset($_POST['token'])) {
-					echo Res::fail(401, 'Filename, ID, or token not provided');
-					break;
-				}
-				// Check for file extension
-				$ext = pathinfo($_POST['filename'], PATHINFO_EXTENSION);
-				if ($ext != '') {
-					// Remove file extension
-					$filename = substr($_POST['filename'], 0, -strlen($ext) - 1);
-				}
-				echo File::get_info($filename, $token);
-				break;
-			case 'set_visibility':
-				if (!isset($_POST['fileID']) || !isset($_POST['token']) || !isset($_POST['vis'])) {
-					echo Res::fail(401, 'FileID, token, or visibility not provided');
-					break;
-				}
-				// Call set_visibility with fileID and token
-				echo File::set_visibility($_POST['fileID'], $_POST['token'], $_POST['vis']);
-				break;
-			// Not a valid action
-			default:
-				echo Res::fail(400, 'Invalid action');
-				break;
-		}
-	}
 }
 
 class File {

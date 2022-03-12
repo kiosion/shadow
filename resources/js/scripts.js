@@ -6,17 +6,74 @@ $(document).ready(() => {
 	$("html").contextmenu((e) => {
 		e.preventDefault();
 	});
+	$("html").mouseleave(function(){
+		$(".contextMenu_obj").css({
+			"display": "none"
+		});
+		$(".contextMenu_link").css({
+			"display": "none"
+		});
+		$("div.tooltip").remove();
+	});
 	$(".file-card-file").contextmenu((e) => {
 		e.preventDefault();
-		$("#contextMenu").css({
+		$(".contextMenu_obj").css({
 			position: "absolute", 
 			top: e.pageY, 
 			left: e.pageX, 
 			display: "block",
 		});
+		$(".contextMenu_link").css({
+			display: "none",
+		});
+	});
+	$("a").contextmenu((e) => {
+		e.preventDefault();
+		let clicked = $(e.delegateTarget);
+		let link = clicked.attr('href');
+		// If link doesn't contain http or https, add it
+		if (link.indexOf('http') == -1) {
+			window.location.protocol + '//' + window.location.host + link;
+		}
+		$(".contextMenu_obj").css({
+			display: "none",
+		});
+		$(".contextMenu_link").css({
+			position: "absolute", 
+			top: e.pageY, 
+			left: e.pageX, 
+			display: "block",
+		});
+		$(".contextMenu_link").find("a.open-link").attr("data-link", link);
+		$(".contextMenu_link").find("a.copy-link").attr("data-link", link);
 	});
 	$("html").click(() => {
-		$("#contextMenu").css({
+		$(".contextMenu_obj,.contextMenu_link").css({
+			display: "none" 
+		});
+	});
+	$("button.data-link").contextmenu((e) => {
+		e.preventDefault();
+		let clicked = $(e.delegateTarget);
+		let link = clicked.attr('data-link');
+		// If link doesn't contain http or https, add it
+		if (link.indexOf('http') == -1) {
+			window.location.protocol + '//' + window.location.host + link;
+		}
+		$(".contextMenu_obj").css({
+			display: "none",
+		});
+		$(".contextMenu_link").css({
+			position: "absolute", 
+			top: e.pageY, 
+			left: e.pageX, 
+			display: "block",
+		});
+		$(".contextMenu_link").find("a.open-link").attr("data-link", link);
+		$(".contextMenu_link").find("a.copy-link").attr("data-link", link);
+	});
+	$("html").click(() => {
+		$(".contextMenu_obj,.contextMenu_link").css({
 			display: "none" 
 		});
 	});
@@ -24,19 +81,25 @@ $(document).ready(() => {
 	// Context menu actions
 	$(".dropdown-item.copy-link").click((e) => {
 		copyLink(e);
-		$("#contextMenu").css({
+		$(".contextMenu_obj,.contextMenu_link").css({
+			display: "none"
+		});
+	});
+	$(".dropdown-item.open-link").click((e) => {
+		openLink(e, true);
+		$(".contextMenu_obj,.contextMenu_link").css({
 			display: "none"
 		});
 	});
 	$(".dropdown-item.view-raw").click((e) => {
 		viewRaw(e);
-		$("#contextMenu").css({
+		$(".contextMenu_obj,.contextMenu_link").css({
 			display: "none"
 		});
 	});
 	$(".dropdown-item.download").click((e) => {
 		download(e);
-		$("#contextMenu").css({
+		$(".contextMenu_obj,.contextMenu_link").css({
 			display: "none"
 		});
 	});
@@ -52,10 +115,8 @@ $(document).ready(() => {
 		console.log("Checking credentials...");
 		let post = $.ajax({
 			type: 'POST',
-			url: '/api/v1/auth/',
+			url: '/api/v2/auth/check-creds/',
 			data: { 
-				obj: 'auth',
-				action: 'check_creds',
 				username: un.val(),
 				password: pw.val(),
 			}
@@ -68,10 +129,8 @@ $(document).ready(() => {
 				console.log("Credentials valid, requesting token...");
 				let token = $.ajax({
 					type: 'POST',
-					url: '/api/v1/auth/',
+					url: '/api/v2/auth/request-token/',
 					data: {
-						action: 'request_token',
-						obj: 'auth',
 						username: un.val(),
 						password: pw.val(),
 						type: 'login',
@@ -183,11 +242,9 @@ $(document).ready(() => {
 		}
 		// Request to toggle visibility
 		let post = $.ajax({
-			url: '/api/v1/file/',
+			url: '/api/v2/file/set-visibility/',
 			type: 'POST',
 			data: {
-				obj: 'file',
-				action: 'set_visibility',
 				token: Cookies.get('shadow_login_token'),
 				fileID: fileID,
 				vis: vis,
@@ -267,5 +324,5 @@ function viewRaw(e) {
 function download(e) {
 	e.preventDefault();
 	let linkText = $(e.delegateTarget).attr('data-link');
-	window.location.href = ("File/"+linkText);
+	window.location.href = (linkText);
 }

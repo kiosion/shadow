@@ -1,74 +1,14 @@
 <?php
 
 // Prevent direct access
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-	header('Content-Type: application/json; charset=utf-8');
-	include_once 'utils/res.php';
+if (!isset($include)) {
 	echo Res::fail(403, 'Forbidden');
-	exit();
-}
-
-$include = true;
-
-// Include files
-require_once 'utils/res.php';
-require_once 'utils/db.php';
-require_once 'auth.php';
-
-// Set HTTP headers
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-
-// Get token from header and check if it is valid
-if (!Auth::check_token(JWT::get_bearer_token(), 'api')) {
-	echo Res::fail(401, 'Unauthorized');
-	exit();
-}
-
-// Set some vars
-$res = array();
-
-// If POST is used
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-	if (isset($_FILES['file'])) {
-		// Fetch user id from token
-		$uid = json_decode(Auth::get_uid(JWT::get_bearer_token()), true);
-		if ($uid['status'] == 'success') {
-			$uid = $uid['data'];
-		}
-		else {
-			echo Res::fail(500, 'File upload failed');
-			exit();
-		}
-		// Create new upload object
-		$upload = new Upload($_FILES['file'], $uid);
-		// Upload file
-		if ($res = $upload->upload_file()) {
-			// Return response
-			echo $res;
-		}
-		else {
-			// Return error
-			echo Res::fail(500, 'File upload failed');
-		}
-		exit();
-	}
-	// If no file provided
-	else {
-		echo Res::fail(405, 'No file provided');
-		exit();
-	}
-}
-// If GET is used
-else {
-	echo Res::fail(405, 'Method not allowed');
 	exit();
 }
 
 class Upload {
 	public function __construct($file, $uid) {
-		$this->dir = '../../uploads/users/'.$uid.'/'; // Upload directory
+		$this->dir = '../uploads/users/'.$uid.'/'; // Upload directory
 		$this->file = $file; // File object to uplaod
 		$this->uid = $uid; // User ID initiating upload
 	}

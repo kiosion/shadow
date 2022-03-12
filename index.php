@@ -31,8 +31,8 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 	$og_name = $res['og_name'];
 	$uid = $res['uid'];
 	// Check if requested file is private
-	$arr = array("action"=>"get_info","filename"=>"$filename", "token"=>"$_COOKIE[shadow_login_token]");
-	$res = post('api/v1/file.php', $arr);
+	$arr = array("filename"=>"$filename", "token"=>"$_COOKIE[shadow_login_token]");
+	$res = post('api/v2/file/get-info/', $arr);
 	$res_decoded = json_decode($res);
 	$priv_file = false;
 	// If file is hidden
