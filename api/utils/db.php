@@ -12,7 +12,7 @@ if (!isset($include)) {
 require_once 'dotenv.php';
 
 // Load .env file
-$env = new DotEnv('.env');
+$env = new DotEnv('/utils/.env');
 $env->load();
 
 // Set vars for db

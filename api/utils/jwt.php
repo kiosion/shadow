@@ -16,7 +16,7 @@ require_once 'dotenv.php';
 class JWT {
 	// Get JWT secret from .env file
 	private static function get_secret() {
-		$env = new DotEnv('.env');
+		$env = new DotEnv('/utils/.env');
 		$env->load();
 		return getenv('JWT_SECRET');
 	}
