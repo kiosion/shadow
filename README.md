@@ -8,12 +8,14 @@ I wasn't happy with any self-hosted file manager / file sharing solution out the
 
 #### Features:
 - Supports any file format, but images, videos, and text files will display a preview in the web UI
-- Beautiful & easy-to-navigate interface with custom context menus, dropdowns, dark & light modes, and file previews
-- Image/video files embed in Twitter, Discord, Telegram and other socials
-- Supports multiple storage backends - local storage, AWS S3 buckets, Google Cloud, etc
+- Beautiful & easy-to-navigate interface with custom context menus, dropdowns, and colour themes
+- Image/video files embed nicely with Twitter, Discord, Telegram and other socials
 - User & file managment with customizable permissions
 - Privacy settings for uploads - Public, private, or registered users only
-- API that supports direct downloads, uploads, and fetching user/file info
+- Supports multiple storage backends - local storage, AWS S3 buckets, Google Cloud, etc
+- Backend can be run seperately from frontend UI
+- API supports direct downloads, uploads, and fetching user/file info
+- More to come as I work on this project over the next few months :)
 
 ### SCREENSHOTS
 
