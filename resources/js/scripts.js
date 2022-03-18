@@ -123,7 +123,7 @@ $(document).ready(() => {
 		});
 		// Check response when done
 		post.done((authRes) => {
-			authRes = JSON.parse(authRes);
+			//authRes = JSON.parse(m);
 			if (authRes.status == 'success' && authRes.msg == 'Credentials valid') {
 				// Request token if creds are valid
 				console.log("Credentials valid, requesting token...");
@@ -138,7 +138,7 @@ $(document).ready(() => {
 				});
 				// Check response when done
 				token.done((tokenRes) => {
-					tokenRes = JSON.parse(tokenRes);
+					//tokenRes = JSON.parse(tokenRes);
 					// If token was generated and returned
 					if (tokenRes.status == 'success' && tokenRes.msg == 'Token generated') {	
 						console.log("Token generated, setting cookie...");

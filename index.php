@@ -34,7 +34,7 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 	$arr = array("filename"=>"$filename", "token"=>"$_COOKIE[shadow_login_token]");
 	$res = post('api/v2/file/get-info/', $arr);
 	$res_decoded = json_decode($res);
-	$priv_file = false;
+	$priv_file = '';
 	// If file is hidden
 	if ($res_decoded->data->vis == 1) {
 		//Check if user is logged in
@@ -45,7 +45,7 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 		else {
 			// Verify login token
 			if (verify_login_token($app_route, $token)['status'] != 'valid') $app_route = '403';
-			else $priv_file = true;
+			else $priv_file = 'hidden';
 		}
 	}
 	// If file is private
@@ -60,7 +60,7 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 					var_dump(verify_access($filename, $token));
 					$app_route = '403';
 				}
-				else $priv_file = true;
+				else $priv_file = 'private';
 			}
 		}
 	}

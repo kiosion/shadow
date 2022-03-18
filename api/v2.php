@@ -22,13 +22,16 @@ require_once 'utils/db.php';
 $url = parse_url($_SERVER['REQUEST_URI']);
 // Explode path into array, delimiter is /
 $path_arr = explode('/', $url['path']);
+// Search array, remove keys before key with value 'v1.php'
+$key = array_search('v2', $path_arr);
+$path_arr = array_slice($path_arr, $key + 1);
 // Check if object is empty
-if (!isset($path_arr[3]) || empty($path_arr[2])) { 
+if (!isset($path_arr[3]) || empty($path_arr[3])) { 
 	echo Res::fail(400, 'Object not provided');
 	exit();
 }
 // Check if action is empty
-if (!isset($path_arr[4]) || empty($path_arr[3])) {
+if (!isset($path_arr[4]) || empty($path_arr[4])) {
 	echo Res::fail(400, 'Action not provided');
 	exit();
 }

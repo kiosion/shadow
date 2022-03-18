@@ -71,15 +71,19 @@ class Auth {
 	public static function check_credentials($conn, $username, $password) {
 		// If username or password is not set, return false
 		if (!isset($username) || !isset($password)) return false;
+		$un = mysqli_real_escape_string($conn, $username);
+		$pw = $password;
 		// Check if username and password are valid
-		$sql = "SELECT * FROM users WHERE (username = '".mysqli_real_escape_string($conn, $_POST['username'])."') AND (password = '".mysqli_real_escape_string($conn, $_POST['password'])."') LIMIT 1;";
+		$sql = "SELECT * FROM users WHERE username = '$un' LIMIT 1;";
 		// Run query
 		$result = runQuery($sql);
 		if (numRows($result) < 1) {
 			return false;
 		}
-		else {
+		$row = fetchAssoc($result);
+		if (password_verify($pw, $row['password'])) {
 			return true;
 		}
+		return false;
 	}
 }

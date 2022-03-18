@@ -73,8 +73,8 @@ if (!file_exists($filepath) || !is_readable($filepath)) {
 		</div>
 		<div class="file-card-info pb-3">
 			<pre class="fs-6 fw-bold text-light my-0"><?php 
-				if ($priv_file) { 
-					echo '<i class="fas fa-lock ps-2 pe-3" data-bs-toggle="tooltip" data-bs-placement="left" title="You\'re viewing a private file"></i>'; 
+				if (!empty($priv_file)) { 
+					echo '<i class="fas fa-lock ps-2 pe-3" data-bs-toggle="tooltip" data-bs-placement="left" title="You\'re viewing a '.$priv_file.' file"></i>'; 
 				} 
 				echo htmlspecialchars($og_name);
 			?></pre>
