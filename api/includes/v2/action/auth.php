@@ -6,7 +6,7 @@ if (!isset($include)) {
 	exit();
 }
 
-switch ($path_arr[4]) {
+switch ($path_arr[1]) {
 	// Generate token
 	case 'request-token':
 		if (!isset($_POST['username']) || !isset($_POST['password']) || !isset($_POST['type'])) {

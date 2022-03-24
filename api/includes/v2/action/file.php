@@ -6,7 +6,7 @@ if (!isset($include)) {
 	exit();
 }
 
-switch ($path_arr[4]) {
+switch ($path_arr[1]) {
 	case 'get-uid':
 		if (!isset($_POST['filename'])) {
 			echo Res::fail(401, 'Filename not provided');

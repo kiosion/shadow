@@ -25,7 +25,7 @@ else {
 	exit();
 }
 
-switch ($path_arr[4]) {
+switch ($path_arr[1]) {
 	// Get payload from token
 	case 'get-payload':
 		if (!isset($_POST['token'])) {

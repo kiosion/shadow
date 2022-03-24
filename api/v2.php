@@ -26,12 +26,12 @@ $path_arr = explode('/', $url['path']);
 $key = array_search('v2', $path_arr);
 $path_arr = array_slice($path_arr, $key + 1);
 // Check if object is empty
-if (!isset($path_arr[3]) || empty($path_arr[3])) { 
+if (!isset($path_arr[0]) || empty($path_arr[0])) { 
 	echo Res::fail(400, 'Object not provided');
 	exit();
 }
 // Check if action is empty
-if (!isset($path_arr[4]) || empty($path_arr[4])) {
+if (!isset($path_arr[1]) || empty($path_arr[1])) {
 	echo Res::fail(400, 'Action not provided');
 	exit();
 }
@@ -52,7 +52,7 @@ require_once 'includes/v2/class/upload.php';
 require_once 'includes/v2/class/user.php';
 
 // Switch for object
-switch ($path_arr[3]) {
+switch ($path_arr[0]) {
 	case 'app':
 		//require_once 'includes/v2/action/app.php';
 		break;
@@ -69,6 +69,6 @@ switch ($path_arr[3]) {
 		require_once 'includes/v2/action/user.php';
 		break;
 	default:
-		echo Res::fail(400, 'Invalid object \''.$path_arr[3].'\' provided');
+		echo Res::fail(400, 'Invalid object \''.$path_arr[0].'\' provided');
 		break;
 }

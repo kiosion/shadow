@@ -13,7 +13,8 @@ function verify_login_token($app_route, $token) {
 	if (empty($token)) {
 		return array(
 			'status' => 'invalid',
-			'route' => 'login'
+			'route' => 'login',
+			'redir' => $app_route
 		);
 	}
 	// Check if the token is valid via POST req to API auth endpoint
@@ -33,7 +34,8 @@ function verify_login_token($app_route, $token) {
 	else {
 		return array(
 			'status' => 'invalid',
-			'route' => 'login'
+			'route' => 'login',
+			'redir' => $app_route
 		);
 	}
 }
