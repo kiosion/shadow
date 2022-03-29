@@ -38,4 +38,4 @@ Install instructions & install script are a WIP :)
 - MariaDB 10.4.22
 
 ### TODO
-Read TODO.md.
+Read [TODO.md](TODO.md).
