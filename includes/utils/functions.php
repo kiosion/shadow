@@ -19,16 +19,17 @@ function verify_login_token($app_route, $token) {
 	}
 	// Check if the token is valid via POST req to API auth endpoint
 	$arr = array("token"=>"$token");
-	$res = post('api/v2/user/get-payload/', $arr);
+	$res = post($_SHADOW_API_URL.'/api/v2/user/get-payload/', $arr);
 	if (json_decode($res)->data->expired == false && json_decode($res)->data->type == 'login') {
 		// TODO: Check that the token is valid for the given app route
-		$arr2 = array("token"=>"$token");
-		$res2 = post('api/v2/user/get-role/', $arr2);
+		$res2 = post($_SHADOW_API_URL.'/api/v2/user/get-role/', $arr);
+		$res3 = post($_SHADOW_API_URL.'/api/v2/user/get-uid/', $arr);
 		return array(
 			'status' => 'valid',
 			'token' => $token,
 			'role' => json_decode($res2)->data,
 			'username' => json_decode($res)->data->username,
+			'uid' => json_decode($res3)->data,
 		);
 	}
 	else {
@@ -50,14 +51,14 @@ function verify_access($file, $token) {
 	}
 	// Check if the token is valid via POST req to API auth endpoint
 	$arr = array("token"=>"$token");
-	$res = post('api/v2/user/get-payload/', $arr);
+	$res = post($_SHADOW_API_URL.'/api/v2/user/get-payload/', $arr);
 	if (json_decode($res)->data->expired == false && json_decode($res)->data->type == 'login') {
 		$arr2 = array("token"=>"$token");
-		$res2 = post('api/v2/user/get-uid/', $arr2);
+		$res2 = post($_SHADOW_API_URL.'/api/v2/user/get-uid/', $arr2);
 		$uid = json_decode($res2)->data;
 		// Check if uid is owner of file
 		$arr3 = array("token"=>"$token","filename"=>"$file");
-		$res3 = post('api/v2/file/get-info/', $arr3);
+		$res3 = post($_SHADOW_API_URL.'/api/v2/file/get-info/', $arr3);
 		if (json_decode($res3)->data->uid == $uid) {
 			return array(
 				'status' => 'valid',
@@ -114,7 +115,7 @@ function handle_url_paths($url) {
 			// Remove extension from end of filename
 			if (!empty($ext)) $filename = substr($filename, 0, - strlen($ext) - 1);
 			$arr = array("filename"=>"$filename");
-			$res = post('api/v2/file/get-uid/', $arr);
+			$res = post($_SHADOW_API_URL.'/api/v2/file/get-uid/', $arr);
 			$res_decoded = json_decode($res);
 			if ($res_decoded->status == 'success') {
 				$uid = $res_decoded->data->uid;

@@ -1,13 +1,22 @@
 <?php
 
-// TODO: Import config from .json file, split out of index.php
-// $config_array = json_decode(file_get_contents('config/app.json'), true);
-// if ($config_array['ssl']) $app_url = 'https://'.$config_array['host'];
-// else $app_url = 'http://'.$config_array['host'];
-// $app_name = $config_array['name'];
-//$app_route = 'login';
-//$page_title = 'Shadow - Login';
 $include = true;
+
+// Load sys config
+$_SHADOW_SYS_CONFIG = include('config/system.php');
+if (!$_SHADOW_SYS_CONFIG) {
+	die('Error: Could not load system config.');
+}
+if ($_SHADOW_SYS_CONFIG['ssl'] == true) {
+	$_SHADOW_APP_URL = 'https://'.$_SHADOW_SYS_CONFIG['host'];
+	$_SHADOW_API_URL = 'https://'.$_SHADOW_SYS_CONFIG['apiroot'];
+}
+else {
+	$_SHADOW_APP_URL = 'http://'.$_SHADOW_SYS_CONFIG['host'];
+	$_SHADOW_API_URL = 'http://'.$_SHADOW_SYS_CONFIG['apiroot'];
+}
+GLOBAL $_SHADOW_APP_URL;
+GLOBAL $_SHADOW_API_URL;
 
 // Include files
 require_once 'includes/utils/post.php';
@@ -16,6 +25,13 @@ require_once 'includes/utils/functions.php';
 // Set token if user is logged in
 if (isset($_COOKIE['shadow_login_token'])) {
 	$token = $_COOKIE['shadow_login_token'];
+	// Verify token
+	$res = verify_login_token('any', $token);
+	if ($res['status'] == 'valid') {
+		$_SHADOW_USER_UID = $res['uid'];
+	}
+	// Load user config
+	$_SHADOW_USER_CONFIG = include('config/user/'.$_SHADOW_USER_UID.'.php');
 }
 else {
 	$token = '';
@@ -24,7 +40,7 @@ else {
 // Handle URL paths
 $res = handle_url_paths(parse_url($_SERVER['REQUEST_URI']));
 $app_route = $res['app_route'];
-$page_title = 'Shadow - '.$res['title'];
+$page_title = $_SHADOW_SYS_CONFIG['name'].' - '.$res['title'];
 if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 	$content_type = get_mimetype($res['ext']);
 	$filename = $res['filename'];
@@ -32,7 +48,7 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 	$uid = $res['uid'];
 	// Check if requested file is private
 	$arr = array("filename"=>"$filename", "token"=>"$_COOKIE[shadow_login_token]");
-	$res = post('api/v2/file/get-info/', $arr);
+	$res = post($_SHADOW_API_URL.'/api/v2/file/get-info/', $arr);
 	$res_decoded = json_decode($res);
 	$priv_file = '';
 	// If file is hidden
@@ -84,6 +100,7 @@ if ($app_route != 'raw' && $app_route != 'file' && $app_route != 'download' && $
 // Show HTML content
 switch ($app_route) {
 	case 'raw':
+		//echo $_SHADOW_API_URL.'/uploads/users/'.$uid.'/'.$filename;
 		// Set HTTP headers
 		header('Content-Type: '.$content_type);
 		header('Content-Length: '.filesize('uploads/users/'.$uid.'/'.$filename));

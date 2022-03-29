@@ -7,10 +7,10 @@ if (!isset($include)) {
 }
 
 class User {
-	public static function get_uploads($uid, $start, $sort, $order) {
-		if (!isset($uid) || !isset($start)) return false;
+	public static function get_uploads($uid, $start, $limit, $sort, $order) {
+		if (!isset($uid) || !isset($start) || !isset($limit)) return false;
 		// Set query
-		$sql = "SELECT * FROM files WHERE uid = $uid ORDER BY $sort $order LIMIT $start, 10";
+		$sql = "SELECT * FROM files WHERE uid = $uid ORDER BY $sort $order LIMIT $start, $limit";
 		// Get results
 		$res = runQuery($sql);
 		$rows = array();

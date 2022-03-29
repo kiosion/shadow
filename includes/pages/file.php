@@ -12,7 +12,7 @@ if (!file_exists($filepath) || !is_readable($filepath)) {
 	$app_route = '404';
 }
 ?>
-<main class="container-fluid my-auto pb-5">
+<main id="page-file" class="container-fluid my-auto pb-5">
 	<div class="file-card shadow">
 		<div class="file-card-file pb-3">
 			<?php

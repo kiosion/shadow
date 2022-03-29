@@ -58,7 +58,12 @@ switch ($path_arr[1]) {
 			echo Res::fail(401, 'Start index not provided');
 			break;
 		}
+		if (!isset($_POST['limit'])) {
+			echo Res::fail(401, 'Limit index not provided');
+			break;
+		}
 		$start = $_POST['start'];
+		$limit = $_POST['limit'];
 		if ($start < 0) $start = 0;
 		switch ($_POST['sort']) {
 			case 'n':
@@ -85,7 +90,7 @@ switch ($path_arr[1]) {
 				$order = 'DESC';
 				break;
 		}
-		$arr = User::get_uploads($uid, $start, $sort, $order);
+		$arr = User::get_uploads($uid, $start, $limit, $sort, $order);
 		if ($arr != false) {
 			echo Res::success(200, 'Uploads retrieved', $arr);
 		}

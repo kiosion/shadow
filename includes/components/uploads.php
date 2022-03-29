@@ -10,16 +10,17 @@ require_once 'includes/utils/post.php';
 
 class RowItem {
 	// Function to list range of uploads from set uid
-	public static function fetchUploads($token, $start, $sort, $order) {
+	public static function fetchUploads($token, $start, $limit, $sort, $order) {
 		$c = $start+1;
 		// Get number of uploads from user
 		$arr = array("token"=>"$token");
-		$res = post('api/v2/user/get-upload-count/', $arr);
+		$res = post($_SHADOW_API_URL.'/api/v2/user/get-upload-count/', $arr);
 		$uploads_count = json_decode($res, true)['data'];
-
+		// If number of uploads is greater than limit, set limit to number of uploads
+		if ($uploads_count > $limit) $limit = $uploads_count;
 		// If number of uploads is > 0, get uploads
-		$arr = array("token"=>"$token","start"=>"$start","sort"=>"$sort","order"=>"$order");
-		$res = post('api/v2/user/get-uploads/', $arr);
+		$arr = array("token"=>"$token","start"=>"$start","limit"=>"$limit","sort"=>"$sort","order"=>"$order");
+		$res = post($_SHADOW_API_URL.'/api/v2/user/get-uploads/', $arr);
 		$uploads = json_decode($res, true)['data'];
 
 		// If no uploads, return empty array
@@ -30,6 +31,7 @@ class RowItem {
 			$end = $start+count($uploads);
 			return array(
 				"start" => $start,
+				"limit" => $limit,
 				"end" => $end,
 				"uploads_count" => $uploads_count,
 				"uploads" => $uploads,
@@ -123,10 +125,13 @@ if (isset($_GET['o'])) {
 else {
 	$order = 'd';
 }
+// Get limit from user config, TODO: if not defined fall back to system default
+$limit = $_SHADOW_USER_CONFIG['itemsperpage'];
+
 // Fetch token from cookie
 $token = $_COOKIE['shadow_login_token'];
 // Fetch uploads
-$rowItems = RowItem::fetchUploads($token, $start, $sort, $order);
+$rowItems = RowItem::fetchUploads($token, $start, $limit, $sort, $order);
 
 if ($rowItems['uploads_count'] > 0) {
 
@@ -134,7 +139,7 @@ if ($rowItems['uploads_count'] > 0) {
 	$start = $rowItems['start'];
 	$end = $rowItems['end'];
 	$count = $rowItems['uploads_count'];
-	$itemsPerPage = 10;
+	$itemsPerPage = $rowItems['limit'];
 	// Calculate number of pages to display given total items ($count) and items per page ($itemsPerPage)
 	$pages = ceil($count / $itemsPerPage);
 	// Calculate indexes required to display page buttons (prev, next)
@@ -238,7 +243,7 @@ if ($rowItems['uploads_count'] > 0) {
 										$prev = 0;
 										echo '<a href="'.$prevLink.'" class="btn btn-action-light btn-group-child" data-bs-toggle="tooltip" data-bs-placement="top" title="Previous"><i class="fas fa-angle-left"></i></a>';
 									}
-									if ($next > $count) {
+									if ($next >= $count) {
 										echo '<a class="btn btn-action-light btn-group-child disabled" data-bs-toggle="tooltip" data-bs-placement="top" title="Next"><i class="fas fa-angle-right"></i></a>';
 									}
 									else {

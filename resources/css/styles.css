@@ -2,7 +2,7 @@
 
 /* Import fonts */
 html, body { font-family: 'Roboto', sans-serif !important; overflow-x: hidden !important; }
-h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display-1 { font-family: 'Ubuntu', sans-serif !important; }
+h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display-1, .h1, .h2, .h3, .h4, .h5 { font-family: 'Ubuntu', sans-serif !important; font-weight: bold !important; }
 
 /* Set colour vars */
 :root {
@@ -54,7 +54,10 @@ div.contextMenu_obj, div.contextMenu_obj>ul, div.contextMenu_link, div.contextMe
 }
 /* Main content */
 main#page-index {
-	padding-top: 30vh !important;
+	padding-top: 10vh !important;
+}
+main#page-file {
+	margin-top: 70px !important;
 }
 .nosel {
 	-webkit-user-select: none;
@@ -93,6 +96,10 @@ input:active, input:focus {
 }
 .bg-black {
 	background-color: var(--background-1) !important;
+}
+.bg-dark-blur {
+	background-color: rgba(40, 42, 54, 0.75);
+	backdrop-filter: blur(5px);
 }
 /* Buttons */
 button:not(.btn-group-child), button:not(.btn-group-child):active, button:not(.btn-group-child):focus {
@@ -286,7 +293,7 @@ button:not(.btn-group-child), button:not(.btn-group-child):active, button:not(.b
 	overflow: hidden;
 }
 .file-card-file>img {
-	max-height: 80vh;
+	max-height: calc(80vh - 70px);
 	max-width: 80vw;
 }
 .file-card-file>audio {

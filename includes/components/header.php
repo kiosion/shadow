@@ -5,7 +5,7 @@ if (!isset($include)) {
 	header("Location: ../../");
 }
 ?>
-<header class="p-3 bg-black text-white fixed-top nosel">
+<header class="p-3 bg-dark-blur text-white fixed-top nosel">
 	<div class="container-fluid">
 		<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-sm-start">
 			<div class="col-12 col-sm-auto me-sm-auto mb-2 justify-content-center mb-sm-0">
