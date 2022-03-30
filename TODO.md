@@ -15,6 +15,9 @@
 - Admin UI
   - View/Manage users
   - View/Manage all files
+- More robust file handling
+  - Using api rather than relative paths
+    - file/get-file, need to finish, handle serving images, audio, video, text, and add param for resource stream response
 
 #### Todo later:
 
