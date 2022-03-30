@@ -8,6 +8,13 @@
   - Config (JSON?) files - user + system
   - Settings frontend UI - user + system
   - Read values onload for user (layout, sort/order, etc)
+- Dashboard UI
+  - Inline image file previews
+  - Sorting (Done, mostly)
+  - Search by name
+- Admin UI
+  - View/Manage users
+  - View/Manage all files
 
 #### Todo later:
 
