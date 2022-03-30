@@ -12,8 +12,6 @@ I wasn't happy with any self-hosted file manager / file sharing solution out the
 - Image/video files embed nicely with Twitter, Discord, Telegram and other socials
 - User & file managment with customizable permissions
 - Privacy settings for uploads - Public, private, or registered users only
-- Supports multiple storage backends - local storage, AWS S3 buckets, Google Cloud, etc
-- Backend can be run seperately from frontend UI
 - API supports direct downloads, uploads, and fetching user/file info
 - More to come as I work on this project over the next few months :)
 

@@ -16,8 +16,8 @@
   - View/Manage users
   - View/Manage all files
 - More robust file handling
-  - Using api rather than relative paths
-    - file/get-file, need to finish, handle serving images, audio, video, text, and add param for resource stream response
+  - Use .htaccess to deny access to uploads dir, so we can keep it in webroot
+  - Finish permission levels & checks
 
 #### Todo later:
 
