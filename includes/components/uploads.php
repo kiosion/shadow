@@ -142,7 +142,13 @@ else {
 	$order = 'd';
 }
 // Get limit from user config, TODO: if not defined fall back to system default
-$limit = $_SHADOW_USER_CONFIG['itemsperpage'];
+if (isset($_SHADOW_USER_CONFIG['itemsperpage'])) {
+	$limit = $_SHADOW_USER_CONFIG['itemsperpage'];
+}
+else {
+	$limit = $_SHADOW_SYS_CONFIG['itemsperpage'];
+}
+
 
 // Fetch uploads
 $rowItems = RowItem::fetchUploads($_SHADOW_USER_TOKEN, $start, $limit, $sort, $order);

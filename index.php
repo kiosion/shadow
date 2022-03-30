@@ -7,6 +7,14 @@ $_SHADOW_SYS_CONFIG = include('config/system.php');
 if (!$_SHADOW_SYS_CONFIG) {
 	die('Error: Could not load system config.');
 }
+
+// Check install status
+if ($_SHADOW_SYS_CONFIG['installed'] == false) {
+	header('Location: /install');
+	exit();
+}
+
+// Set app and api urls
 if ($_SHADOW_SYS_CONFIG['ssl'] == true) {
 	$_SHADOW_APP_URL = 'https://'.$_SHADOW_SYS_CONFIG['webroot'];
 	$_SHADOW_API_URL = 'https://'.$_SHADOW_SYS_CONFIG['apiroot'];

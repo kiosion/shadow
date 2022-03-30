@@ -68,9 +68,6 @@ switch ($path_arr[0]) {
 	case 'user':
 		require_once 'includes/v2/action/user.php';
 		break;
-	case 'get-file-test':
-		require_once 'includes/v2/action/get-file-test.php';
-		break;
 	default:
 		echo Res::fail(400, 'Invalid object \''.$path_arr[0].'\' provided');
 		break;

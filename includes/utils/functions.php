@@ -191,68 +191,6 @@ function handle_url_paths($url) {
 	}
 }
 
-// Get image from api using cURL, encode, and return
-function get_file($filename) {
-	GLOBAL $_SHADOW_API_URL;
-
-	// Get image extension using file get-info
-	$res = post('api/v2/file/get-info/', array('filename'=>$filename));
-	$res_decoded = json_decode($res);
-	if ($res_decoded->status == 'success') {
-		$ext = $res_decoded->data->ext;
-	}
-	else {
-		return false;
-	}
-
-	// Get mime type
-	$mimetype = get_mimetype($ext);
-
-	// cURL request to get file
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $_SHADOW_API_URL.'/api/v2/file/get-file/'.$filename);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	// Set authorization header
-	$headers = array(
-		'Authorization: '.$_COOKIE['shadow_login_token'],
-	);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-	// Get result and close cURL
-	$data = curl_exec($ch);
-	curl_close($ch);
-	return 'data:image/'.$ext.';base64,'.base64_encode($data);
-
-	// switch($mimetype) {
-	// 	// Case for contains 'image'
-	// 	case stristr($mimetype, 'image'):
-	// 		// Encode and return result as b64 encoded string
-	// 		return 'data:image/'.$ext.';base64,'.base64_encode($data);
-	// 		break;
-	// 	// Case for contains 'video'
-	// 	case stristr($mimetype, 'video'):
-	// 		break;
-	// 	// Case for contains 'audio'
-	// 	case stristr($mimetype, 'audio'):
-	// 		break;
-	// }
-}
-
-// Get audio from api using cURL, encode, and return
-function get_audio($filename) {
-	// TODO:
-}
-
-// Get text-file from api using cURL, encode, and return
-function get_text($filename) {
-
-}
-
-// Get other file from api using cURL, encode, and return
-function get_other($filename) {
-
-}
-
 // Get filetype from ext
 function get_mimetype($ext) {
 	$ext = strtolower($ext);
