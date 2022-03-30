@@ -8,15 +8,13 @@ if (!$_SHADOW_SYS_CONFIG) {
 	die('Error: Could not load system config.');
 }
 if ($_SHADOW_SYS_CONFIG['ssl'] == true) {
-	$_SHADOW_APP_URL = 'https://'.$_SHADOW_SYS_CONFIG['host'];
+	$_SHADOW_APP_URL = 'https://'.$_SHADOW_SYS_CONFIG['webroot'];
 	$_SHADOW_API_URL = 'https://'.$_SHADOW_SYS_CONFIG['apiroot'];
 }
 else {
-	$_SHADOW_APP_URL = 'http://'.$_SHADOW_SYS_CONFIG['host'];
+	$_SHADOW_APP_URL = 'http://'.$_SHADOW_SYS_CONFIG['webroot'];
 	$_SHADOW_API_URL = 'http://'.$_SHADOW_SYS_CONFIG['apiroot'];
 }
-
-//echo 'API url: '.$_SHADOW_API_URL.'<br>';
 
 // Include files
 require_once 'includes/utils/post.php';
@@ -24,17 +22,17 @@ require_once 'includes/utils/functions.php';
 
 // Set token if user is logged in
 if (isset($_COOKIE['shadow_login_token'])) {
-	$token = $_COOKIE['shadow_login_token'];
+	$_SHADOW_USER_TOKEN = $_COOKIE['shadow_login_token'];
 	// Verify token
-	$res = verify_login_token('any', $token, $_SHADOW_API_URL);
+	$res = verify_login_token('any', $_SHADOW_USER_TOKEN, $_SHADOW_API_URL);
 	if ($res['status'] == 'valid') {
 		$_SHADOW_USER_UID = $res['uid'];
+		// Load user config
+		$_SHADOW_USER_CONFIG = include('config/user/'.$_SHADOW_USER_UID.'.php');
 	}
-	// Load user config
-	$_SHADOW_USER_CONFIG = include('config/user/'.$_SHADOW_USER_UID.'.php');
 }
 else {
-	$token = '';
+	$_SHADOW_USER_TOKEN = '';
 }
 
 // Handle URL paths
@@ -60,7 +58,7 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 		}
 		else {
 			// Verify login token
-			if (verify_login_token($app_route, $token)['status'] != 'valid') $app_route = '403';
+			if (verify_login_token($app_route, $_SHADOW_USER_TOKEN)['status'] != 'valid') $app_route = '403';
 			else $priv_file = 'hidden';
 		}
 	}
@@ -70,10 +68,10 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 		if (!isset($_COOKIE['shadow_login_token'])) $app_route = '403';
 		else {
 			// Verify login token
-			if (verify_login_token($app_route, $token)['status'] != 'valid') $app_route = '403';
+			if (verify_login_token($app_route, $_SHADOW_USER_TOKEN)['status'] != 'valid') $app_route = '403';
 			else {
-				if (verify_access($filename, $token)['status'] != 'valid') {
-					var_dump(verify_access($filename, $token));
+				if (verify_access($filename, $_SHADOW_USER_TOKEN)['status'] != 'valid') {
+					var_dump(verify_access($filename, $_SHADOW_USER_TOKEN));
 					$app_route = '403';
 				}
 				else $priv_file = 'private';
@@ -84,7 +82,7 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 
 // Verify login state only if not viewing public page
 if ($app_route != 'raw' && $app_route != 'file' && $app_route != 'download' && $app_route != '404' && $app_route != '403') {
-	$res = verify_login_token($app_route, $token);
+	$res = verify_login_token($app_route, $_SHADOW_USER_TOKEN);
 	if ($res['status'] == 'valid') {
 		if ($app_route == 'login') header('Location: /home');
 		$user_auth_token = $res['token'];
@@ -100,11 +98,11 @@ if ($app_route != 'raw' && $app_route != 'file' && $app_route != 'download' && $
 // Show HTML content
 switch ($app_route) {
 	case 'raw':
-		//echo $_SHADOW_API_URL.'/uploads/users/'.$uid.'/'.$filename;
 		// Set HTTP headers
 		header('Content-Type: '.$content_type);
 		header('Content-Length: '.filesize('uploads/users/'.$uid.'/'.$filename));
-		// Display file using fpassthru
+		//header('Content-Length: '.filesize(get_file($filename)));
+		//Display file using fpassthru
 		fpassthru(fopen('uploads/users/'.$uid.'/'.$filename, 'r'));
 		break;
 	case 'download':
@@ -116,6 +114,9 @@ switch ($app_route) {
 		break;
 	default:
 		require_once 'includes/components/head.php';
+		// Display image
+		//echo '<img src="'.get_file('uxowVt').'" alt="img" class="img-fluid">';
+
 		switch ($app_route) {
 			// Login page
 			case 'login':

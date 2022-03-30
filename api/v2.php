@@ -3,12 +3,12 @@
 // Set HTTP headers
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Methods: POST, GET');
 
 // Prevent direct access
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-	require_once 'utils/res.php';
-	echo Res::fail(403, 'Forbidden');
+if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_SERVER['REQUEST_METHOD'] !== 'GET') {
+	//require_once 'utils/res.php';
+	echo 'Shoo, nothing for you here!';
 	exit();
 }
 	
@@ -67,6 +67,9 @@ switch ($path_arr[0]) {
 		break;
 	case 'user':
 		require_once 'includes/v2/action/user.php';
+		break;
+	case 'get-file-test':
+		require_once 'includes/v2/action/get-file-test.php';
 		break;
 	default:
 		echo Res::fail(400, 'Invalid object \''.$path_arr[0].'\' provided');

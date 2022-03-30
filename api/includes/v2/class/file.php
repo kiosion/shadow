@@ -53,6 +53,77 @@ class File {
 			return Res::fail(404, 'File "'.$filename.'" not found');
 		}
 	}
+	// Function to get content-type from file extension
+	public static function get_mimetype($ext) {
+		$ext = strtolower($ext);
+		// Set content type
+		switch ($ext) {
+			case 'txt':
+			case 'asc':
+				return 'text/plain';
+				break;
+			case 'html':
+				return 'text/html';
+				break;
+			case 'css':
+				return 'text/css';
+				break;
+			case 'js':
+				return 'application/js';
+				break;
+			case 'php':
+				return 'application/php';
+				break;
+			case 'jpg':
+				return 'image/jpeg';
+				break;
+			case 'png':
+				return 'image/png';
+				break;
+			case 'gif':
+				return 'image/gif';
+				break;
+			case 'pdf':
+				return 'application/pdf';
+				break;
+			case 'zip':
+				return 'application/zip';
+				break;
+			case 'rar':
+				return 'application/rar';
+				break;
+			case '7z':
+				return 'application/7z';
+				break;
+			case 'gz':
+				return 'application/gzip';
+				break;
+			case 'mp3':
+				return 'audio/mpeg';
+				break;
+			case 'wav':
+				return 'audio/wav';
+				break;
+			case 'mp4':
+				return 'video/mp4';
+				break;
+			case 'webm':
+				return 'video/webm';
+				break;
+			case 'mkv':
+				return 'video/mkv';
+				break;
+			case 'mov':
+				return 'video/mov';
+				break;
+			case 'flac':
+				return 'audio/flac';
+				break;
+			default:
+				return 'application/octet-stream';
+				break;
+		}
+	}
 	// Function to toggle file visibility
 	public static function set_visibility($fileID, $token, $vis) {
 		if (!isset($fileID) || !isset($token) || !isset($vis)) return Res::fail(401, 'FileID, token, or visibility not provided');

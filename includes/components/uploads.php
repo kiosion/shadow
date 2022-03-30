@@ -88,12 +88,12 @@ class RowItem {
 			case 'jpg':
 			case 'jpeg':
 			case 'png':
+			case 'webp':
 			case 'gif':
-				$item_prev = '<img class="img-fluid itemprev" src="'.$currentLink.'/file/'.$item['item_ul_name'].'/raw" alt="'.$item['item_type'].'" />';
 				$item_url = $currentLink.'/file/'.$item['item_ul_name'].'/raw';
 				break;
 			default:
-				$item_prev = '<span> </span>';
+				$item_url = '';
 		}
 		echo '
 			<div class="row d-flex justify-content-between row-item bg-dark text-light" id="'.$item['item_id'].'">
@@ -144,10 +144,8 @@ else {
 // Get limit from user config, TODO: if not defined fall back to system default
 $limit = $_SHADOW_USER_CONFIG['itemsperpage'];
 
-// Fetch token from cookie
-$token = $_COOKIE['shadow_login_token'];
 // Fetch uploads
-$rowItems = RowItem::fetchUploads($token, $start, $limit, $sort, $order);
+$rowItems = RowItem::fetchUploads($_SHADOW_USER_TOKEN, $start, $limit, $sort, $order);
 
 if ($rowItems['uploads_count'] > 0) {
 

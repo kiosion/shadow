@@ -404,7 +404,7 @@ div.contextMenu {
 }
 .col-name {
 	cursor: default !important;
-	text-shadow: #191b24 0 0 14px;
+	text-shadow: #191b24 0 0 10px;
 	padding-left: .5rem;
 	align-self: center;
 	font-weight: bold;
@@ -425,9 +425,6 @@ div.contextMenu {
 	white-space: nowrap;
 	background-repeat: no-repeat;
 	background-size:cover;
-}
-.col-preview>img {
-	height: fit-content !important;
 }
 .col-size {
 	min-width: 100px !important;
