@@ -364,19 +364,18 @@ div.contextMenu {
 #uploads-table>.row-container>.row-item:first-of-type {
 	border-top-left-radius: var(--radius-1) !important;
 	border-top-right-radius: var(--radius-1) !important;
-	height: 4.5rem;
-	padding-top: .5rem;
+	padding-top: 1rem;
 }
 #uploads-table>.row-container>.row-item{
 	padding-left: 1rem;
 	padding-right: 1rem;
-	height: 4rem !important;
+	padding-top: .5rem;
+	padding-bottom: .5rem;
 }
 #uploads-table>.row-container>.row-item:last-of-type {
 	border-bottom-left-radius: var(--radius-1) !important;
 	border-bottom-right-radius: var(--radius-1) !important;
-	height: 4.5rem;
-	padding-bottom: .5rem;
+	padding-bottom: 1rem;
 }
 .row-header>div {
 	text-align: left;
@@ -400,8 +399,35 @@ div.contextMenu {
 	width: 50px !important;
 	cursor: default !important;
 }
+.col-head-name {
+	cursor: default !important;
+}
 .col-name {
 	cursor: default !important;
+	text-shadow: #191b24 0 0 14px;
+	padding-left: .5rem;
+	align-self: center;
+	font-weight: bold;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 10px;
+}
+.col-preview {
+	height: 100px;
+	cursor: default !important;
+	overflow: hidden;
+	justify-content: center;
+	margin: 0 !important;
+	padding: 0 !important;
+	border-radius: var(--radius-2);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	background-repeat: no-repeat;
+	background-size:cover;
+}
+.col-preview>img {
+	height: fit-content !important;
 }
 .col-size {
 	min-width: 100px !important;

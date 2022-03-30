@@ -14,13 +14,13 @@ class RowItem {
 		$c = $start+1;
 		// Get number of uploads from user
 		$arr = array("token"=>"$token");
-		$res = post($_SHADOW_API_URL.'/api/v2/user/get-upload-count/', $arr);
+		$res = post('api/v2/user/get-upload-count/', $arr);
 		$uploads_count = json_decode($res, true)['data'];
 		// If number of uploads is greater than limit, set limit to number of uploads
 		if ($uploads_count > $limit) $limit = $uploads_count;
 		// If number of uploads is > 0, get uploads
 		$arr = array("token"=>"$token","start"=>"$start","limit"=>"$limit","sort"=>"$sort","order"=>"$order");
-		$res = post($_SHADOW_API_URL.'/api/v2/user/get-uploads/', $arr);
+		$res = post('api/v2/user/get-uploads/', $arr);
 		$uploads = json_decode($res, true)['data'];
 
 		// If no uploads, return empty array
@@ -83,11 +83,27 @@ class RowItem {
 	}
 	// Function to print individual upload item
 	private static function printItem($item) {
-		$currentLink = 'http://'.$_SERVER['HTTP_HOST'];
+		$currentLink = "http://".$_SERVER['HTTP_HOST'];
+		switch ($item['item_type']) {
+			case 'jpg':
+			case 'jpeg':
+			case 'png':
+			case 'gif':
+				$item_prev = '<img class="img-fluid itemprev" src="'.$currentLink.'/file/'.$item['item_ul_name'].'/raw" alt="'.$item['item_type'].'" />';
+				$item_url = $currentLink.'/file/'.$item['item_ul_name'].'/raw';
+				break;
+			default:
+				$item_prev = '<span> </span>';
+		}
 		echo '
-			<div class="row d-flex justify-content-between flex-nowrap row-item bg-dark text-light" id="'.$item['item_id'].'">
+			<div class="row d-flex justify-content-between row-item bg-dark text-light" id="'.$item['item_id'].'">
 				<div class="col-1 col-num">'.$item['item_num'].'</div>
-				<div class="col col-md col-name text-truncate">'.htmlspecialchars($item['item_og_name']).'</div>
+				<div class="col d-flex">
+					<div class="col d-flex justify-content-start col-preview bg-black" style="background-image:url('.$item_url.');">
+						<span class="col col-name">'.htmlspecialchars($item['item_og_name']).'</span>
+					</div>
+				</div>
+				
 				<div class="col-1 d-none col-size d-md-block">'.$item['item_size'].'</div>
 				<div class="col-2 d-none col-date d-md-block" data-bs-toggle="tooltip" data-bs-position="top" title="'.$item['item_time'].'">'.$item['item_date'].'</div>
 				<div class="col d-flex col-actions justify-content-between btn-group" role="group">
@@ -178,8 +194,8 @@ if ($rowItems['uploads_count'] > 0) {
 			<div class="col-fluid" id="uploads-table">
 				<div class="row row-header ps-3 text-light fw-bold nosel">
 					<div class="col-1 col-num">#</div>';
-					if ($sort == 'n' && $order == 'a') echo '<div class="col col-md col-name text-truncate sortName" data-link="'.$sortLinkNameDesc.'">Name<i class="fas fa-sort-up ps-2"></i></div>';
-					else if ($sort == 'n' && $order == 'd') echo '<div class="col col-md col-name text-truncate sortName" data-link="'.$sortLinkNameAsc.'">Name<i class="fas fa-sort-down ps-2"></i></div>';
+					if ($sort == 'n' && $order == 'a') echo '<div class="col col-md col-head-name text-truncate sortName" data-link="'.$sortLinkNameDesc.'">Name<i class="fas fa-sort-up ps-2"></i></div>';
+					else if ($sort == 'n' && $order == 'd') echo '<div class="col col-md col-head-name text-truncate sortName" data-link="'.$sortLinkNameAsc.'">Name<i class="fas fa-sort-down ps-2"></i></div>';
 					else echo '<div class="col col-md col-name text-truncate sortName" data-link="'.$sortLinkName.'">Name</div>';
 					if ($sort == 's' && $order == 'a') echo '<div class="col-1 d-none col-size d-md-block sortSize" data-link="'.$sortLinkSizeDesc.'">Size<i class="fas fa-sort-up ps-2"></i></div>';
 					else if ($sort == 's' && $order == 'd') echo '<div class="col-1 d-none col-size d-md-block sortSize" data-link="'.$sortLinkSizeAsc.'">Size<i class="fas fa-sort-down ps-2"></i></div>';

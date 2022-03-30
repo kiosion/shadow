@@ -8,7 +8,7 @@ if (!isset($include)) {
 
 class File {
 	// Function to get info about given file
-	public static function get_info($filename, $token) {
+	public static function get_info($filename) {
 		if (!isset($filename)) return Res::fail(401, 'Filename not provided');
 		// Query database for user id given username
 		$sql = "SELECT * FROM files WHERE BINARY ul_name = '$filename';";

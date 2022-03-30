@@ -25,15 +25,16 @@ switch ($path_arr[1]) {
 		echo $res;
 		break;
 	case 'get-info':
-		if ((!isset($_POST['filename']) && !isset($_POST['file_id'])) || !isset($_POST['token'])) {
-			echo Res::fail(401, 'Filename, ID, or token not provided');
+		if (!isset($_POST['filename']) && !isset($_POST['file_id'])) {
+			echo Res::fail(401, 'Filename or ID not provided');
 			break;
 		}
+		$filename = $_POST['filename'];
 		// Check for file extension
 		$ext = pathinfo($_POST['filename'], PATHINFO_EXTENSION);
-		if ($ext != '') {
+		if (!empty($ext)) {
 			// Remove file extension
-			$filename = substr($_POST['filename'], 0, -strlen($ext) - 1);
+			$filename = substr($filename, 0, -strlen($ext) - 1);
 		}
 		echo File::get_info($filename, $token);
 		break;

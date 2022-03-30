@@ -10,9 +10,10 @@ if (!isset($include)) {
 
 // Function to handle POST requests and responses
 function post($url, $data) {
+	GLOBAL $_SHADOW_API_URL;
 	// Set authorization as an appended field to the data array with a bearer token
 	$data['authorization'] = 'token-blank-for-now';
-	$url = 'http://localhost/'.$url; // Set url to current server address, plus the given url. TODO: Read from config file
+	$url = $_SHADOW_API_URL.'/'.$url; // Set url to current server address, plus the given url. TODO: Read from config file
 	// Set curl POST data
 	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_POST, true);
@@ -21,8 +22,4 @@ function post($url, $data) {
 	$result = curl_exec($ch);
 	curl_close($ch);
 	return $result;
-}
-
-function get_api_token() {
-	// TODO: Implement api tokens for read-only actions, use one here to fetch user id from db.
-} 
+};

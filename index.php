@@ -15,8 +15,8 @@ else {
 	$_SHADOW_APP_URL = 'http://'.$_SHADOW_SYS_CONFIG['host'];
 	$_SHADOW_API_URL = 'http://'.$_SHADOW_SYS_CONFIG['apiroot'];
 }
-GLOBAL $_SHADOW_APP_URL;
-GLOBAL $_SHADOW_API_URL;
+
+//echo 'API url: '.$_SHADOW_API_URL.'<br>';
 
 // Include files
 require_once 'includes/utils/post.php';
@@ -26,7 +26,7 @@ require_once 'includes/utils/functions.php';
 if (isset($_COOKIE['shadow_login_token'])) {
 	$token = $_COOKIE['shadow_login_token'];
 	// Verify token
-	$res = verify_login_token('any', $token);
+	$res = verify_login_token('any', $token, $_SHADOW_API_URL);
 	if ($res['status'] == 'valid') {
 		$_SHADOW_USER_UID = $res['uid'];
 	}
@@ -47,8 +47,8 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 	$og_name = $res['og_name'];
 	$uid = $res['uid'];
 	// Check if requested file is private
-	$arr = array("filename"=>"$filename", "token"=>"$_COOKIE[shadow_login_token]");
-	$res = post($_SHADOW_API_URL.'/api/v2/file/get-info/', $arr);
+	$arr = array("filename"=>"$filename");
+	$res = post('api/v2/file/get-info/', $arr);
 	$res_decoded = json_decode($res);
 	$priv_file = '';
 	// If file is hidden
@@ -92,7 +92,7 @@ if ($app_route != 'raw' && $app_route != 'file' && $app_route != 'download' && $
 		$user_auth_username = $res['username'];
 	}
 	else if ($app_route != 'login') {
-		header('Location: /login'.$res['redir'].'');
+		header('Location: /login');
 		exit();
 	}
 }
