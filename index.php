@@ -10,7 +10,16 @@ if (!$_SHADOW_SYS_CONFIG) {
 
 // Check install status
 if ($_SHADOW_SYS_CONFIG['installed'] == false) {
-	header('Location: /install');
+	// If first part of URL is not 'install', redirect to install
+	if (explode('/', parse_url($_SERVER['REQUEST_URI'])['path'])[1] != 'install') {
+		header('Location: /install/');
+		exit();
+	}
+	require 'install/index.php';
+	exit();
+}
+if ($_SHADOW_SYS_CONFIG['post_install'] == true) {
+	require 'install/post.php';
 	exit();
 }
 

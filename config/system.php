@@ -21,7 +21,8 @@ return array(
 		"dateformat" => "Y-m-d",
 		"itemsperpage" => "20",
 	),
-	"installed" => true,
+	"installed" => false,
+	"post_install" => false,
 	// Following values are pulled from .env on initial install and are not editable through the UI
 	"db_host" => "localhost",
 	"db_name" => "shadow",
