@@ -6,23 +6,37 @@ if (!isset($include)) {
 	exit();
 }
 
+// Check provided token
+if (isset($_POST['token']) && !empty($_POST['token'])) {
+	$token = $_POST['token'];
+}
+if (!empty($bearer_token)) {
+	$token = $bearer_token;
+}
+$auth = Auth::check_token($token, 'login'); // For now, only check for login token
+if (!$auth) {
+	echo Res::fail(401, 'Invalid token');
+	exit();
+}
+// Get UID from token
+$uid = json_decode(Auth::get_uid($token))->data;
+if (empty($uid)) {
+	echo Res::fail(500, 'Failed to get UID from token');
+}
+
 switch ($path_arr[1]) {
 	case 'get-uid':
 		if (!isset($_POST['filename'])) {
 			echo Res::fail(401, 'Filename not provided');
 			break;
 		}
+		$filename = $_POST['filename'];
 		// Check for file extension
 		$ext = pathinfo($_POST['filename'], PATHINFO_EXTENSION);
-		if ($ext == '') {
-			$res = File::get_uid($_POST['filename']);
-		}
-		else {
-			// Remove file extension
+		if (!empty($ext)) {
 			$filename = substr($_POST['filename'], 0, -strlen($ext) - 1);
-			$res = File::get_uid($filename);
 		}
-		echo $res;
+		echo File::get_uid($filename, $token);
 		break;
 	case 'get-info':
 		if (!isset($_POST['filename']) && !isset($_POST['file_id'])) {
@@ -31,21 +45,19 @@ switch ($path_arr[1]) {
 		}
 		$filename = $_POST['filename'];
 		// Check for file extension
-		$ext = pathinfo($_POST['filename'], PATHINFO_EXTENSION);
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
 		if (!empty($ext)) {
-			// Remove file extension
 			$filename = substr($filename, 0, -strlen($ext) - 1);
 		}
-		echo File::get_info($filename);
+		echo File::get_info($filename, $token);
 		break;
 	case 'get-file':
-		// TODO: Handle serving files, images, audio, video, text, and add param for resource stream response
 		if (empty ($path_arr[2])) {
 			echo Res::fail(401, 'Filename not provided');
 			break;
 		}
 		$filename = $path_arr[2];
-		$res = File::get_info($filename);
+		$res = File::get_info($filename, $token);
 		$res_decoded = json_decode($res);
 		if ($res_decoded->status != 'success') {
 			echo Res::fail(404, 'File "'.$filename.'" not found');
@@ -111,12 +123,12 @@ switch ($path_arr[1]) {
 
 		break;
 	case 'set-visibility':
-		if (!isset($_POST['fileID']) || !isset($_POST['token']) || !isset($_POST['vis'])) {
-			echo Res::fail(401, 'FileID, token, or visibility not provided');
+		if (!isset($_POST['fileID']) || !isset($_POST['vis'])) {
+			echo Res::fail(401, 'File ID or visibility not provided');
 			break;
 		}
 		// Call set_visibility with fileID and token
-		echo File::set_visibility($_POST['fileID'], $_POST['token'], $_POST['vis']);
+		echo File::set_visibility($_POST['fileID'], $token, $_POST['vis']);
 		break;
 	// Not a valid action
 	default:

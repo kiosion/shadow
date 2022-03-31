@@ -115,7 +115,7 @@ function handle_url_paths($url) {
 			// Remove extension from end of filename
 			if (!empty($ext)) $filename = substr($filename, 0, - strlen($ext) - 1);
 			$arr = array("filename"=>"$filename");
-			$res = post('api/v2/file/get-uid/', $arr);
+			$res = post('api/v2/file/get-info/', $arr);
 			$res_decoded = json_decode($res);
 			if ($res_decoded->status == 'success') {
 				$uid = $res_decoded->data->uid;

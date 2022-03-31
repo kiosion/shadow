@@ -16,7 +16,7 @@ class Auth {
 		// Check if username and password are valid
 		$auth = self::check_credentials($conn, $username, $password);
 		if (!$auth) {
-			return Res::fail(403, 'Username or password is incorrect');
+			return Res::fail(403, 'Invalid credentials');
 		}
 		else {
 			$tz = new DateTimeZone('America/Halifax');

@@ -244,8 +244,10 @@ $(document).ready(() => {
 		let post = $.ajax({
 			url: '/api/v2/file/set-visibility/',
 			type: 'POST',
+			headers: {
+				"Authorization": "Bearer " + Cookies.get('shadow_login_token'),
+			},
 			data: {
-				token: Cookies.get('shadow_login_token'),
 				fileID: fileID,
 				vis: vis,
 			}

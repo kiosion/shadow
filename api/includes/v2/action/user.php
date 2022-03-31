@@ -7,11 +7,24 @@ if (!isset($include)) {
 }
 
 // Check provided token
-if (isset($_POST['token'])) {
+if (!empty($bearer_token)) {
+	$token = $bearer_token;
+	$auth = Auth::check_token($token, 'login'); // For now, only check for login token
+	if (!$auth) {
+		echo Res::fail(401, 'Invalid token');
+		exit();
+	}
+	// Get UID from token
+	$uid = json_decode(Auth::get_uid($token))->data;
+	if (empty($uid)) {
+		echo Res::fail(500, 'Failed to get UID from token');
+	}
+}
+else if (isset($_POST['token'])) {
 	$token = $_POST['token'];
 	$auth = Auth::check_token($token, 'login'); // For now, only check for login token
 	if (!$auth) {
-		echo Res::fail(401, 'Unauthorized, invalid token');
+		echo Res::fail(401, 'Invalid token');
 		exit();
 	}
 	// Get UID from token
@@ -49,17 +62,13 @@ switch ($path_arr[1]) {
 			echo Res::success(200, 'Role retrieved', $role);
 		}
 		else {
-			echo Res::fail(404, 'No role or user found');
+			echo Res::fail(404, 'No user found');
 		}
 		break;
 	// Get all uploads from user
 	case 'get-uploads':
-		if (!isset($_POST['start'])) {
-			echo Res::fail(401, 'Start index not provided');
-			break;
-		}
-		if (!isset($_POST['limit'])) {
-			echo Res::fail(401, 'Limit index not provided');
+		if (!isset($_POST['start']) || !isset($_POST['limit'])) {
+			echo Res::fail(401, 'Start or limit index not provided');
 			break;
 		}
 		$start = $_POST['start'];

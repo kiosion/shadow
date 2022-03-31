@@ -8,13 +8,26 @@ if (!isset($include)) {
 
 class File {
 	// Function to get info about given file
-	public static function get_info($filename) {
+	public static function get_info($filename, $token) {
 		if (!isset($filename)) return Res::fail(401, 'Filename not provided');
 		// Query database for user id given username
 		$sql = "SELECT * FROM files WHERE BINARY ul_name = '$filename';";
 		$result = runQuery($sql);
 		$row = fetchAssoc($result);
 		if ($row) { 
+			if (empty($token) || !Auth::check_token($token, 'login')) {
+				if ($row['vis'] != 0) {
+					return Res::fail(401, 'File is private');
+					exit();
+				}
+			}
+			else if ($row['uid'] != json_decode(Auth::get_uid($token))->data) {
+				if ($row['vis'] == 2) {
+					return Res::fail(401, 'File is not owned by user');
+					exit();
+				}
+			}
+
 			return Res::success(
 				200, 
 				'File info retrieved', 
@@ -32,20 +45,32 @@ class File {
 		}
 	}
 	// Function to get user id from token
-	public static function get_uid($filename) {
+	public static function get_uid($filename, $token) {
 		//if (!isset($filename)) return Res::fail(401, 'Filename not provided');
 		// Query database for user id given username
 		$sql = "SELECT * FROM files WHERE BINARY ul_name = '$filename';";
 		$result = runQuery($sql);
 		$row = fetchAssoc($result);
 		if ($row) {
+			if (empty($token) || !Auth::check_token($token, 'login')) {
+				if ($row['vis'] != 0) {
+					return Res::fail(401, 'File is private');
+					exit();
+				}
+			}
+			else if ($row['uid'] != json_decode(Auth::get_uid($token))->data) {
+				if ($row['vis'] == 2) {
+					return Res::fail(401, 'File is not owned by user');
+					exit();
+				}
+			}
+			
 			return Res::success(
 				200, 
-				'File info retrieved', 
+				'UID retrieved', 
 				array(
-					"uid" => $row['uid'], 
-					"og_name" => $row['og_name'], 
-					"ext" => $row['ext']
+					"uid" => $row['uid'],
+					"ul_name" => $row['ul_name'],
 				)
 			); 
 		}
@@ -126,10 +151,21 @@ class File {
 	}
 	// Function to toggle file visibility
 	public static function set_visibility($fileID, $token, $vis) {
-		if (!isset($fileID) || !isset($token) || !isset($vis)) return Res::fail(401, 'FileID, token, or visibility not provided');
+		if (!isset($token) || empty($token)) {
+			return Res::fail(401, 'Token not provided');
+			exit();
+		}
+		if (!Auth::check_token($token, 'login')) {
+			return Res::fail(401, 'Invalid token');
+			exit();
+		}
+		if (!isset($fileID) || !isset($vis)) {
+			return Res::fail(401, 'File ID or visibility not provided');
+			exit();
+		}
 		// Get UID from token
 		require_once 'auth.php';
-		$uid = json_decode(Auth::get_uid($_POST['token']))->data;
+		$uid = json_decode(Auth::get_uid($token))->data;
 		if (empty($uid)) {
 			return Res::fail(500, 'Failed to get UID from token');
 			exit();

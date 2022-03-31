@@ -35,7 +35,7 @@ switch ($path_arr[1]) {
 	// Check user credentials on login
 	case 'check-creds':
 		if (!isset($_POST['username']) || !isset($_POST['password'])) {
-			echo Res::fail(401, 'Username or password not provided');
+			echo Res::fail(401, 'Credentials not provided');
 			break;
 		}
 		if (Auth::check_credentials($conn, $_POST['username'], $_POST['password'])) {

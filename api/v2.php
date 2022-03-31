@@ -36,6 +36,9 @@ if (!isset($path_arr[1]) || empty($path_arr[1])) {
 	exit();
 }
 
+// Get bearer token from authorization header
+$bearer_token = JWT::get_bearer_token();
+
 // App class
 // require_once 'includes/v2/action/app.php';
 
