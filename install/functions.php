@@ -9,8 +9,7 @@ if (!isset($include)) {
 }
 
 // Handle URL paths
-function handle_url_paths($url) {
-	// Get request URL
+function handle_url_paths($url, $return = 'path') {
 	// Explode path into array, delimiter is /
 	$path_arr = explode('/', $url['path']);
 	$key = array_search('install', $path_arr);
@@ -20,12 +19,19 @@ function handle_url_paths($url) {
 		return 0;
 		exit();
 	}
-	else return $path_arr[0];
+	switch ($return) {
+		case 'step':
+			return $path_arr[0];
+			break;
+		case 'path':
+			return $path_arr;
+			break;
+	}
+	 
 }
 
 // Validate db credentials
-function validate_db_creds($db_host, $db_user, $db_pass, $db_name, $db_port) {
-	// TODO
+function validate_db_creds($db_host, $db_user, $db_pass, $db_name, $db_port) : string {
 	if (empty($db_host) || empty($db_user) || empty($db_pass) || empty($db_name) || empty($db_port)) {
 		return 'Error: Please fill in all the fields.';
 		exit();
@@ -41,10 +47,35 @@ function validate_db_creds($db_host, $db_user, $db_pass, $db_name, $db_port) {
 		else return 'Connection successful.';
 	} catch (Exception $e) {
 		return 'Error: ' . $e->getMessage();
+		exit();
+	}
+}
+
+// Create env file
+function create_env(array $env_arr) : string {
+	if (empty($env_arr)) {
+		return 'Error: Please fill in all the fields.';
+		exit();
+	}
+	try {
+		// Create .env file
+		$env_file = fopen('/api/utils/demo.env', 'w');
+		// Write to file
+		foreach ($env_arr as $key => $value) {
+			fwrite($env_file, $key . '=' . $value . PHP_EOL);
+		}
+		// Generate random phrase for JWT
+		fwrite($env_file, 'JWT_SECRET=' . bin2hex(random_bytes(32)) . PHP_EOL);
+		fclose($env_file);
+		// Return success
+		return 'Success: .env file created.';
+	} catch (Exception $e) {
+		return 'Error: ' . $e->getMessage();
+		exit();
 	}
 }
 
 // Create tables
-function create_table() {
-	
+function create_table(array $table_arr) : string {
+	return ''; // TODO
 }
