@@ -4,24 +4,26 @@
 
 #### Working on:
 
-- Settings pages
-  - Config (JSON?) files - user + system
-  - Settings frontend UI - user + system
-  - Read values onload for user (layout, sort/order, etc)
 - Dashboard UI
-  - Inline image file previews
-  - Sorting (Done, mostly)
-  - Search by name
+  - [x] Inline image file previews
+  - [x] Sorting (Done, mostly)
+  - [ ] Search by file name
 - Admin UI
-  - View/Manage users
-  - View/Manage all files
-- More robust file handling
-  - Use .htaccess to deny access to uploads dir, so we can keep it in webroot
-  - Finish permission levels & checks
-
-#### Todo later:
-
+  - [ ] View/manage users
+  - [ ] View/manage all files
+- Misc
+  - [ ] More robust file handling
+  - [x] Use .htaccess to deny access to uploads dir, so we can keep it in webroot
+  - [ ] Finish permission levels & checks
 - Installer script
-  - Display on first load
-  - Should create DB, tables, populate inital values
-  - Prompt to create initial administrator account, add to login db
+  - [x] Display on first load
+  - [x] Create DB, tables, populate inital values
+  - [ ] Prompt to create initial administrator account, add to login db
+
+#### Planned:
+- Settings pages
+  - [ ] Config (JSON?) files - user + system
+  - [ ] Settings frontend UI - user + system
+- Misc
+  - [ ] Read values onload for user (layout, sort/order, etc)
+
