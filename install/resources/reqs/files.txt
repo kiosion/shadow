@@ -1,0 +1,5 @@
+./api/utils/demo.env
+./.htaccess
+./app/.htaccess
+./uploads/.htaccess
+./api/utils/.htaccess

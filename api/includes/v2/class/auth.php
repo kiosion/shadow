@@ -56,12 +56,14 @@ class Auth {
 	}
 	// Function to get user id from token
 	public static function get_uid($token) {
+		GLOBAL $DB_PREFIX;
 		if (!isset($token)) return false;
 		$payload = JWT::get_info($token);
 		if (!$payload) echo Res::fail(401, 'Invalid token');
 		else {
 			// Query database for user id given username
-			$sql = "SELECT * FROM users WHERE username = '$payload[username]'";
+			$table = $DB_PREFIX . 'users';
+			$sql = "SELECT * FROM $table WHERE username = '$payload[username]'";
 			$result = runQuery($sql);
 			$row = fetchAssoc($result);
 			return Res::success(200, 'User ID retrieved', $row['id']);
@@ -69,12 +71,14 @@ class Auth {
 	}
 	// Function to check user credentials on login
 	public static function check_credentials($conn, $username, $password) {
+		GLOBAL $DB_PREFIX;
 		// If username or password is not set, return false
 		if (!isset($username) || !isset($password)) return false;
 		$un = mysqli_real_escape_string($conn, $username);
 		$pw = $password;
 		// Check if username and password are valid
-		$sql = "SELECT * FROM users WHERE username = '$un' LIMIT 1;";
+		$table = $DB_PREFIX . 'users';
+		$sql = "SELECT * FROM $table WHERE username = '$un' LIMIT 1;";
 		// Run query
 		$result = runQuery($sql);
 		if (numRows($result) < 1) {

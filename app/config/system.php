@@ -2,7 +2,7 @@
 // Prevent direct access
 if (!isset($include)) {
 	header('Content-Type: application/json; charset=utf-8');
-	include_once '../includes/utils/res.php';
+	include_once '../app/utils/res.php';
 	echo Res::fail(403, 'Unauthorized');
 	exit();
 }
@@ -26,5 +26,6 @@ return array(
 	// Following values are pulled from .env on initial install and are not editable through the UI
 	"db_host" => "localhost",
 	"db_name" => "shadow",
+	"db_prefix" => "",
 	"db_user" => "root",
 );

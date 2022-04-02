@@ -6,7 +6,7 @@ if (!isset($include)) {
 }
 
 // Include files
-require_once 'includes/utils/post.php';
+require_once 'app/utils/post.php';
 
 class RowItem {
 	// Function to list range of uploads from set uid

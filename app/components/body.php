@@ -63,8 +63,8 @@ $currentHost = 'http://'.$_SERVER['HTTP_HOST'];
 				);
 				break;
 		}
-		include_once 'includes/components/context-menu.php'; 
+		include_once 'app/components/context-menu.php'; 
 	?>
 	</body>
-	<?php require_once 'includes/scripts.php'; ?>
+	<?php require_once 'app/scripts.php'; ?>
 </html>

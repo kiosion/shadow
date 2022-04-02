@@ -1,9 +1,55 @@
-/* Custom styles */
+:root {
+	--bs-primary: #6272a4 !important;
+}
+.bg-dark {
+	background-color: #282a36 !important;
+}
+button, .btn, a.btn {
+	border-radius: 12px !important;
+}
+.btn-primary {
+	background-color: var(--bs-primary) !important;
+	border-color: var(--bs-primary) !important;
+}
+.btn-outline-primary {
+	color: var(--bs-primary) !important;
+	border-color: var(--bs-primary) !important;
+}
+.btn-outline-primary:hover {
+	color: white !important;
+	background-color: var(--bs-primary) !important;
+	border-color: var(--bs-primary) !important;
+}
+.progress-bar {
+	background-color: var(--bs-primary) !important;
+}
 input, input:hover, input:active, input:focus {
-	background-color: var(--bs-dark) !important;
+	background-color: #282a36 !important;
 	color: white !important;
 }
 .progress {
 	background-color: unset !important;
 	border: 1px solid var(--bs-gray-700) !important;
+}
+.pointer {
+	cursor: pointer !important;
+}
+.disabled, .btn.disabled, .btn[disabled], fieldset[disabled], input[disabled] {
+	cursor: not-allowed !important;
+	pointer-events: all;
+}
+input[disabled], textarea[disabled], select[disabled] {
+	background-color: var(--bs-gray-800) !important;
+}
+.progress .progress-bar{
+    box-shadow: none;
+    position: relative;
+    -webkit-animation: animate-positive 2s;
+    animation: animate-positive 2s;
+}
+@-webkit-keyframes animate-positive{
+    0% { width: 0; }
+}
+@keyframes animate-positive{
+    0% { width: 0; }
 }

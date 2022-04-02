@@ -32,8 +32,8 @@ Check out [&nearr;&nbsp;TODO.md](TODO.md) for a list of in-progress tasks and pl
 ## Screenshots
 
 #### Sign-in:
-<img src="resources/imgs/ss-0.jpg" alt="Screenshot 1" width="800px"></img>
+<img src=".github/imgs/ss-0.jpg" alt="Screenshot 1" width="800px"></img>
 #### Dashboard:
-<img src="resources/imgs/ss-1.jpg" alt="Screenshot 2" width="800px"></img>
+<img src=".github/imgs/ss-1.jpg" alt="Screenshot 2" width="800px"></img>
 #### File preview:
-<img src="resources/imgs/ss-3.jpg" alt="Screenshot 4" width="800px"></img>
+<img src=".github/imgs/ss-3.jpg" alt="Screenshot 4" width="800px"></img>

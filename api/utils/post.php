@@ -21,7 +21,3 @@ function post($url, $data) {
 	curl_close($ch);
 	return $result;
 }
-
-function get_api_token() {
-	// TODO: Implement api tokens for read-only actions, use one here to fetch user id from db.
-} 

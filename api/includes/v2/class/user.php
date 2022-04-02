@@ -8,9 +8,11 @@ if (!isset($include)) {
 
 class User {
 	public static function get_uploads($uid, $start, $limit, $sort, $order) {
+		GLOBAL $DB_PREFIX;
 		if (!isset($uid) || !isset($start) || !isset($limit)) return false;
 		// Set query
-		$sql = "SELECT * FROM files WHERE uid = $uid ORDER BY $sort $order LIMIT $start, $limit";
+		$table = $DB_PREFIX . 'files';
+		$sql = "SELECT * FROM $table WHERE uid = $uid ORDER BY $sort $order LIMIT $start, $limit";
 		// Get results
 		$res = runQuery($sql);
 		$rows = array();
@@ -30,9 +32,11 @@ class User {
 		}
 	}
 	public static function get_upload_count($uid) {
+		GLOBAL $DB_PREFIX;
 		if (!isset($uid)) return false;
 		// Set query
-		$sql = "SELECT COUNT('id') AS count FROM files WHERE uid = '$uid'";
+		$table = $DB_PREFIX . 'files';
+		$sql = "SELECT COUNT('id') AS count FROM $table WHERE uid = '$uid'";
 		// Get results
 		$res = runQuery($sql);
 		// If results are found
@@ -46,9 +50,11 @@ class User {
 		}
 	}
 	public static function get_role($uid) {
+		GLOBAL $DB_PREFIX;
 		if (!isset($uid)) return false;
 		// Run query
-		$sql = "SELECT role FROM users WHERE id = '$uid'";
+		$table = $DB_PREFIX . 'users';
+		$sql = "SELECT role FROM $table WHERE id = '$uid'";
 		$res = runQuery($sql);
 		if ($res) {
 			return $res->fetch_assoc()['role'];

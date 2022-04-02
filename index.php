@@ -3,7 +3,7 @@
 $include = true;
 
 // Load sys config
-$_SHADOW_SYS_CONFIG = include('config/system.php');
+$_SHADOW_SYS_CONFIG = include('app/config/system.php');
 if (!$_SHADOW_SYS_CONFIG) {
 	die('Error: Could not load system config.');
 }
@@ -34,8 +34,8 @@ else {
 }
 
 // Include files
-require_once 'includes/utils/post.php';
-require_once 'includes/utils/functions.php';
+require_once 'app/utils/post.php';
+require_once 'app/utils/functions.php';
 
 // Set token if user is logged in
 if (isset($_COOKIE['shadow_login_token'])) {
@@ -45,7 +45,7 @@ if (isset($_COOKIE['shadow_login_token'])) {
 	if ($res['status'] == 'valid') {
 		$_SHADOW_USER_UID = $res['uid'];
 		// Load user config
-		$_SHADOW_USER_CONFIG = include('config/user/'.$_SHADOW_USER_UID.'.php');
+		$_SHADOW_USER_CONFIG = include('app/config/user/'.$_SHADOW_USER_UID.'.php');
 	}
 }
 else {
@@ -130,59 +130,59 @@ switch ($app_route) {
 		readfile('uploads/users/'.$uid.'/'.$filename);
 		break;
 	default:
-		require_once 'includes/components/head.php';
+		require_once 'app/components/head.php';
 		// Display image
 		//echo '<img src="'.get_file('uxowVt').'" alt="img" class="img-fluid">';
 
 		switch ($app_route) {
 			// Login page
 			case 'login':
-				$includeBody = 'includes/pages/login.php';
-				$includeFooter = 'includes/components/footer.php';
+				$includeBody = 'app/pages/login.php';
+				$includeFooter = 'app/components/footer.php';
 				break;
 			// Home page
 			case 'index':
-				$includeHeader = 'includes/components/header.php';
-				$includeBody = 'includes/pages/index.php';
-				$includeFooter = 'includes/components/footer.php';
+				$includeHeader = 'app/components/header.php';
+				$includeBody = 'app/pages/index.php';
+				$includeFooter = 'app/components/footer.php';
 				break;
 			// Upload page
 			case 'upload':
-				$includeHeader = 'includes/components/header.php';
-				$includeBody = 'includes/pages/upload.php';
-				$includeFooter = 'includes/components/footer.php';
+				$includeHeader = 'app/components/header.php';
+				$includeBody = 'app/pages/upload.php';
+				$includeFooter = 'app/components/footer.php';
 				break;
 			// File view page
 			case 'file':
-				$includeHeader  = 'includes/components/header.php';
-				$includeBody = 'includes/pages/file.php';
-				$includeFooter = 'includes/components/footer.php';
+				$includeHeader  = 'app/components/header.php';
+				$includeBody = 'app/pages/file.php';
+				$includeFooter = 'app/components/footer.php';
 				break;
 			// Admin UI
 			case 'admin':
-				$includeHeader = 'includes/components/header.php';
-				$includeBody = 'includes/pages/admin.php';
-				$includeFooter = 'includes/components/footer.php';
+				$includeHeader = 'app/components/header.php';
+				$includeBody = 'app/pages/admin.php';
+				$includeFooter = 'app/components/footer.php';
 				break;
 			// App settings
 			case 'settings':
-				$includeHeader = 'includes/components/header.php';
-				$includeBody = 'includes/pages/settings.php';
-				$includeFooter = 'includes/components/footer.php';
+				$includeHeader = 'app/components/header.php';
+				$includeBody = 'app/pages/settings.php';
+				$includeFooter = 'app/components/footer.php';
 				break;
 			// Account page
 			case 'account':
-				$includeHeader = 'includes/components/header.php';
-				$includeBody = 'includes/pages/account.php';
-				$includeFooter = 'includes/components/footer.php';
+				$includeHeader = 'app/components/header.php';
+				$includeBody = 'app/pages/account.php';
+				$includeFooter = 'app/components/footer.php';
 				break;
 			// Error pages
 			default:
-				$includeHeader = 'includes/components/header.php';
-				$includeBody = 'includes/pages/error/'.$app_route.'.php';
-				$includeFooter = 'includes/components/footer.php';
+				$includeHeader = 'app/components/header.php';
+				$includeBody = 'app/pages/error/'.$app_route.'.php';
+				$includeFooter = 'app/components/footer.php';
 				break;
 		}
-		require_once 'includes/components/body.php';
+		require_once 'app/components/body.php';
 		break;
 }

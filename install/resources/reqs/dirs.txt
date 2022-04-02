@@ -1,0 +1,14 @@
+./api
+./api/includes
+./api/utils
+./app
+./app/components
+./app/config
+./app/config/user
+./app/pages
+./app/utils
+./app/resources
+./app/resources/css
+./app/resources/js
+./uploads
+./uploads/users

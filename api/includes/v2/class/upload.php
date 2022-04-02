@@ -14,12 +14,14 @@ class Upload {
 	}
 	// Generate random string
 	private static function random_string($len) {
+		GLOBAL $DB_PREFIX;
 		if (!isset($len)) $len = 10;
 		$chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 		$str = '';
 		for ($i = 0; $i < $len; $i++) $str .= $chars[mt_rand(0, strlen($chars)-1)];
 		// Check name isn't in use
-		$sql = "SELECT * FROM files WHERE BINARY ul_name = '$str'";
+		$table = $DB_PREFIX . 'files';
+		$sql = "SELECT * FROM $table WHERE BINARY ul_name = '$str'";
 		if (numRows(runQuery($sql)) > 0) {
 			$str = self::random_string($len);
 		}
@@ -27,6 +29,7 @@ class Upload {
 	}
 	// Upload file, add to db if successful
 	public function upload_file() {
+		GLOBAL $DB_PREFIX;
 		$file = $this->file;
 		$dir = $this->dir;
 		$file_name = $file['name'];
@@ -54,7 +57,8 @@ class Upload {
 			$tz = new DateTimeZone('America/Halifax');
 			$time = ((new DateTimeImmutable("now", $tz))->setTimezone($tz))->getTimestamp();
 			// Format: UID, filename, timestamp
-			$sql = "INSERT INTO files (uid, og_name, ul_name, ext, time, size, vis) VALUES ('$uid', '$og_name', '$ul_name', '$file_ext', '$time', '$file_size', 0)";
+			$table = $DB_PREFIX . 'files';
+			$sql = "INSERT INTO $table (uid, og_name, ul_name, ext, time, size, vis) VALUES ('$uid', '$og_name', '$ul_name', '$file_ext', '$time', '$file_size', 0)";
 			// Run query
 			if(runQuery($sql)) {
 				return $this->upload_success($ul_name.'.'.$file_ext);

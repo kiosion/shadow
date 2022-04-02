@@ -1,0 +1,8 @@
+curl
+gd
+json
+mbstring
+mysqli
+openssl
+session
+zip

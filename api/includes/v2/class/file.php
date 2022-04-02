@@ -9,9 +9,11 @@ if (!isset($include)) {
 class File {
 	// Function to get info about given file
 	public static function get_info($filename, $token) {
+		GLOBAL $DB_PREFIX;
 		if (!isset($filename)) return Res::fail(401, 'Filename not provided');
 		// Query database for user id given username
-		$sql = "SELECT * FROM files WHERE BINARY ul_name = '$filename';";
+		$table = $DB_PREFIX . 'files';
+		$sql = "SELECT * FROM $table WHERE BINARY ul_name = '$filename';";
 		$result = runQuery($sql);
 		$row = fetchAssoc($result);
 		if ($row) { 
@@ -46,9 +48,10 @@ class File {
 	}
 	// Function to get user id from token
 	public static function get_uid($filename, $token) {
-		//if (!isset($filename)) return Res::fail(401, 'Filename not provided');
+		GLOBAL $DB_PREFIX;
 		// Query database for user id given username
-		$sql = "SELECT * FROM files WHERE BINARY ul_name = '$filename';";
+		$table = $DB_PREFIX . 'files';
+		$sql = "SELECT * FROM $table WHERE BINARY ul_name = '$filename';";
 		$result = runQuery($sql);
 		$row = fetchAssoc($result);
 		if ($row) {
@@ -151,6 +154,7 @@ class File {
 	}
 	// Function to toggle file visibility
 	public static function set_visibility($fileID, $token, $vis) {
+		GLOBAL $DB_PREFIX;
 		if (!isset($token) || empty($token)) {
 			return Res::fail(401, 'Token not provided');
 			exit();
@@ -185,11 +189,13 @@ class File {
 				break;
 		}
 		// Query database to check if user is owner of file
-		$sql = "SELECT * FROM files WHERE id = '$fileID';";
+		$table = $DB_PREFIX . 'files';
+		$sql = "SELECT * FROM $table WHERE id = '$fileID';";
 		$result = runQuery($sql);
 		$row = fetchAssoc($result);
 		// Also query database to check if user is administrator
-		$sql = "SELECT * FROM users WHERE id = '$uid';";
+		$table = $DB_PREFIX . 'users';
+		$sql = "SELECT * FROM $table WHERE id = '$uid';";
 		$result = runQuery($sql);
 		$row2 = fetchAssoc($result);
 		if ($row && $row2) {
@@ -199,7 +205,8 @@ class File {
 				}
 				else {
 					// Query database to set file to public
-					$sql = "UPDATE files SET vis = '$vis' WHERE id = '$fileID';";
+					$table = $DB_PREFIX . 'files';
+					$sql = "UPDATE $table SET vis = '$vis' WHERE id = '$fileID';";
 					runQuery($sql);
 					return Res::success(200, 'File visibility set', $vis);
 				}

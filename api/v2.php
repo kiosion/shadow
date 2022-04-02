@@ -11,9 +11,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_SERVER['REQUEST_METHOD'] !== 'GET
 	echo 'Shoo, nothing for you here!';
 	exit();
 }
+
+// Load sys config
+$include = true;
+$_SHADOW_SYS_CONFIG = include('../app/config/system.php');
+if (!$_SHADOW_SYS_CONFIG) {
+	die('Error: Could not load system config.');
+}
+$DB_PREFIX = $_SHADOW_SYS_CONFIG['db_prefix'];
 	
 // Include files
-$include = true;
 require_once 'utils/res.php';
 require_once 'utils/jwt.php';
 require_once 'utils/db.php';

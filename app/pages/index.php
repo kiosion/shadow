@@ -14,5 +14,5 @@ $username = $user_auth_username;
 			</div>
 		</div>
 	</div>
-	<?php include 'includes/components/uploads.php'; ?>
+	<?php include 'app/components/uploads.php'; ?>
 </main>
