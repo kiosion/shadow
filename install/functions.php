@@ -8,32 +8,71 @@ if (!isset($include)) {
 	exit();
 }
 
-// Function to read from ENV file
-function readEnv(string $loc) : array {
-	$lines = file(realpath(dirname(__FILE__)).'/..'.$loc, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-	$res = array();
-	foreach ($lines as $line) {
-		if (strpos($line, '#') === 0) continue;
-		list($name, $value) = explode('=', $line, 2);
-		$name = trim($name);
-		$value = trim($value);
-		if (!array_key_exists($name, $res)) {
-			$res[$name] = $value;
+// Create temp file
+function create_temp($loc) {
+	try {
+		if (file_exists($loc)) {
+			unlink($loc);
 		}
+		$file = fopen($loc, 'w');
+		fclose($file);
+		return true;
+	} catch (Exception $e) {
+		return false;
 	}
-	return $res;
+}
+
+// Get contents of temp file
+function get_temp(string $loc, string $key) {
+	if (file_exists($loc) && is_readable($loc)) {
+		$lines = file($loc, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		foreach ($lines as $line) {
+			if (strpos($line, '#') === 0) continue;
+			list($name, $value) = explode('=', $line, 2);
+			$name = trim($name);
+			$value = trim($value);
+			if ($name == $key) return $value;
+		}
+		return false;
+	}
+	else return false;
+}
+
+// Append to temp file
+function append_temp(string $loc, array $values) {
+	if (file_exists($loc) && is_readable($loc)) {
+		$tmpArr = array();
+		// Read file into array
+		$lines = file($loc, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		foreach ($lines as $line) {
+			if (strpos($line, '#') === 0) continue;
+			list($name, $value) = explode('=', $line, 2);
+			$name = trim($name);
+			$value = trim($value);
+			if (!array_key_exists($name, $tmpArr)) {
+				$tmpArr[$name] = $value;
+			}
+		}
+		// Append new values, if values exist overwrite
+		foreach ($values as $key => $value) $tmpArr[$key] = $value;
+		file_put_contents($loc, '');
+		$file = fopen($loc, 'a');
+		foreach ($tmpArr as $key => $value) {
+			fwrite($file, $key . '=' . $value . "\n");
+		}
+		fclose($file);
+		return true;
+	}
+	else return false;
 }
 
 // Handle URL paths
 function handle_url_paths($url, $return = 'path') {
-	// Explode path into array, delimiter is /
 	$path_arr = explode('/', $url['path']);
-	$key = array_search('install', $path_arr);
+	$key = array_search('setup', $path_arr);
 	$path_arr = array_slice($path_arr, $key + 1);
-	// Check if object is empty
 	if (!isset($path_arr[0]) || empty($path_arr[0])) { 
 		return 0;
-		exit();
 	}
 	switch ($return) {
 		case 'step':
@@ -50,11 +89,9 @@ function validate_db_creds($db_host, $db_user, $db_pass, $db_port) : string {
 	if (empty($db_host) || empty($db_user) || empty($db_pass) || empty($db_port)) {
 		return 'Error: Empty field provided.';
 	}
-	// Test connection
 	try {
-		$conn = new mysqli($db_host, $db_user, $db_pass, null, $db_port);
+		$conn = new mysqli("$db_host", $db_user, $db_pass, null, $db_port);
 		if ($conn->connect_error) {
-			// Return error
 			return 'Error: ' . $conn->connect_error;
 		}
 		else {
@@ -76,27 +113,37 @@ function create_env(string $loc, array $env_arr) : string {
 	if (empty($env_arr)) {
 		return 'Error: Empty array provided.';
 	}
-	$loc =  realpath(dirname(__FILE__)).'/..'.$loc;
 	try {
-		// If file exists
 		if (file_exists($loc)) {
-			// Delete file
 			file_put_contents($loc, '');
 		}
-		// Create .env file
 		$env_file = fopen($loc, 'w');
-		// Write to file
 		foreach ($env_arr as $key => $value) {
 			fwrite($env_file, $key . '=' . $value . PHP_EOL);
 		}
 		// Generate random phrase for JWT
 		fwrite($env_file, 'JWT_SECRET=' . bin2hex(random_bytes(32)) . PHP_EOL);
 		fclose($env_file);
-		// Return success
 		return 'Success: '.$loc.' created.';
 	} catch (Exception $e) {
 		return 'Error: ' . $e->getMessage();
 	}
+}
+
+// Read from ENV file
+function get_env(string $loc) : array {
+	$lines = file($loc, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+	$res = array();
+	foreach ($lines as $line) {
+		if (strpos($line, '#') === 0) continue;
+		list($name, $value) = explode('=', $line, 2);
+		$name = trim($name);
+		$value = trim($value);
+		if (!array_key_exists($name, $res)) {
+			$res[$name] = $value;
+		}
+	}
+	return $res;
 }
 
 // Append to .env file
@@ -104,16 +151,12 @@ function append_env(string $loc, array $env_arr) : string {
 	if (empty($env_arr)) {
 		return 'Error: Empty array provided.';
 	}
-	$loc =  realpath(dirname(__FILE__)).'/..'.$loc;
 	try {
-		// Open .env file
 		$env_file = fopen($loc, 'a');
-		// Write to file
 		foreach ($env_arr as $key => $value) {
 			fwrite($env_file, $key . '=' . $value . PHP_EOL);
 		}
 		fclose($env_file);
-		// Return success
 		return 'Success: '.$loc.' updated.';
 	} catch (Exception $e) {
 		return 'Error: ' . $e->getMessage();
@@ -122,7 +165,6 @@ function append_env(string $loc, array $env_arr) : string {
 
 // Create .htaccess files
 function write_file(string $loc, string $src) : array {
-	//$src = realpath(dirname(__FILE__)).'/..'.$src;
 	$contents = "";
 	if ($file = fopen($src, 'r')) {
 		while (!feof($file)) {
@@ -160,8 +202,8 @@ function write_file(string $loc, string $src) : array {
 	}
 }
 
+// Read file and return as array
 function read_arr(string $loc) : array {
-	$loc = realpath(dirname(__FILE__)).'/..'.$loc;
 	$arr = array();
 	if ($file = fopen($loc, 'r')) {
 		while (!feof($file)) {
@@ -175,8 +217,7 @@ function read_arr(string $loc) : array {
 
 // Create database
 function create_db(string $loc, string $db_name) : string {
-	// Read values from env file
-	$ENV = readEnv($loc);
+	$ENV = get_env($loc);
 	// If array is empty, return false
 	if (empty($ENV)) {
 		return 'Error: Could not read .env file.';
@@ -205,7 +246,7 @@ function create_db(string $loc, string $db_name) : string {
 // Create tables
 function create_tables(string $loc, string $db_prefix) : string {
 	// Read values from env file
-	$ENV = readEnv($loc);
+	$ENV = get_env($loc);
 	// If array is empty, return false
 	if (empty($ENV)) {
 		return 'Error: Could not read .env file.';
@@ -256,7 +297,7 @@ function create_tables(string $loc, string $db_prefix) : string {
 // Create admin user
 function create_admin(string $loc, string $username, string $password) : string {
 	// Read values from env file
-	$ENV = readEnv($loc);
+	$ENV = get_env($loc);
 	// If array is empty, return false
 	if (empty($ENV)) {
 		return 'Error: Could not read .env file.';
@@ -271,7 +312,19 @@ function create_admin(string $loc, string $username, string $password) : string 
 			$password = password_hash($password, PASSWORD_BCRYPT);
 			$sql = "INSERT INTO ".$ENV['DB_PREFIX']."users VALUES (null, 1, '', '".$username."', '".$password."')";
 			if ($conn->query($sql) === TRUE) {
-				return 'Success: Admin user created.';
+				if ($sel = $conn->query("SELECT * FROM ".$ENV['DB_PREFIX']."users WHERE username = '".$username."'")) {
+					$row = $sel->fetch_assoc();
+					$res = create_user_config("./app/config/user/default.php", "./app/config/user/".$row['id'].".php", array("USER_UN" => $row['username'], "USER_UID" => $row['id']));
+					if (stripos($res, 'success') !== false) {
+						return 'Success: Admin user created.';
+					}
+					else {
+						return 'Error: Couldn\'t create admin user config';
+					}
+				}
+				else {
+					return 'Error: ' . $conn->error;
+				}
 			}
 			else {
 				return 'Error: ' . $conn->error;
@@ -282,11 +335,70 @@ function create_admin(string $loc, string $username, string $password) : string 
 	}
 }
 
+// Create app config file
+function update_app_config(string $loc, array $params) : string {
+	if (!is_writable($loc)) return 'Error: '.$loc.' is not writable.';
+	// Break up file
+	$exp1 = explode('return array(', file_get_contents($loc));
+	$exp2 = explode(');', $exp1[1]);
+	$fS = $exp1[0];
+	$fE = $exp2[1];
+	// For each line in $fileArr
+	$initArr = explode(",\n", $exp2[0]);
+	$tmpArr = array();
+	foreach ($initArr as $line) {
+		if (!empty($line)) {
+			$line = explode(' => ', $line);
+			$tmpArr[trim(str_replace('"', '', $line[0]))] = trim(str_replace('"', '', $line[1]));
+		}
+	}
+	foreach ($params as $key => $value) {
+		if (array_key_exists($key, $tmpArr)) $tmpArr[$key] = $value;
+		else $tmpArr[$key] = $value;
+	}
+	// Write new array to file by combining split parts
+	$fS .= "return array(\n";
+	foreach ($tmpArr as $key => $value) {
+		if ($value == 'true' || $value == 'false') $fS .= "\t".'"'.$key.'" => '.$value.','."\n";
+		else $fS .= "\t".'"'.$key.'" => "'.$value.'",'."\n";
+	}
+	file_put_contents($loc, $fS.');'.$fE);
+	return 'Success: App config file created.';
+}
+
+// Create user config file
+function create_user_config(string $src, string $loc, array $params) : string {
+	if (!is_readable($src)) return 'Error: '.$src.' is not readable.';
+	// Break up file
+	$exp1 = explode('return array(', file_get_contents($src));
+	$exp2 = explode(');', $exp1[1]);
+	$fS = $exp1[0];
+	$fE = $exp2[1];
+	// For each line in $fileArr
+	$initArr = explode(",\n", $exp2[0]);
+	$tmpArr = array();
+	foreach ($initArr as $line) {
+		if (!empty($line)) {
+			$line = explode(' => ', $line);
+			$tmpArr[trim(str_replace('"', '', $line[0]))] = trim(str_replace('"', '', $line[1]));
+		}
+	}
+	foreach ($params as $key => $value) {
+		if (array_key_exists($key, $tmpArr)) $tmpArr[$key] = $value;
+		else $tmpArr[$key] = $value;
+	}
+	// Write new array to file by combining split parts
+	$fS .= "return array(\n";
+	foreach ($tmpArr as $key => $value) $fS .= "\t".'"'.$key.'" => "'.$value.'",'."\n";
+	file_put_contents($loc, $fS.');'.$fE);
+	return 'Success: User config file created.';
+}
+
 // Check if env exists
 function env_exists(string $loc) : array {
-	if (file_exists(realpath(dirname(__FILE__)).'/..'.$loc)) {
+	if (file_exists($loc)) {
 		// Get values from env file
-		$ENV = readEnv($loc);
+		$ENV = get_env($loc);
 		// If array is empty, return false
 		if (empty($ENV)) {
 			return array(true, array('Error: Could not read .env file.'));
@@ -312,7 +424,7 @@ function env_exists(string $loc) : array {
 // Check if database exists
 function db_exists(string $loc) : string {
 	// Get values from env file
-	$ENV = readEnv($loc);
+	$ENV = get_env($loc);
 	// If array is empty
 	if (empty($ENV)) {
 		return 'Error: Could not read .env file.';
@@ -338,7 +450,7 @@ function db_exists(string $loc) : string {
 // Check if tables exist
 function tables_exists(string $loc) : string {
 	// Get values from env file
-	$ENV = readEnv($loc);
+	$ENV = get_env($loc);
 	// If array is empty
 	if (empty($ENV)) {
 		return 'Error: Could not read .env file.';
@@ -371,7 +483,7 @@ function tables_exists(string $loc) : string {
 // Check if admin user exists
 function admin_exists(string $loc) : string {
 	// Get values from env file
-	$ENV = readEnv($loc);
+	$ENV = get_env($loc);
 	// If array is empty
 	if (empty($ENV)) {
 		return 'Error: Could not read .env file.';
@@ -400,4 +512,20 @@ function admin_exists(string $loc) : string {
 	} catch (Exception $e) {
 		return 'Error: ' . $e->getMessage();
 	}
+}
+
+// Finish setup
+function finish_setup(string $envLoc, string $tempLoc, string $configLoc) : string {
+	// Get values from ENV file
+	$ENV = get_env($envLoc);
+	// Remove temp file
+	unlink($tempLoc);
+	return update_app_config($configLoc, array(
+		'APP_IS_INSTALLED' => 'true', 
+		'APP_IS_POST_INSTALL' => 'true',
+		'APP_DB_NAME' => $ENV['DB_NAME'],
+		'APP_DB_PREFIX' => $ENV['DB_PREFIX'],
+		'APP_DB_HOST' => $ENV['DB_HOST'],
+		'APP_DB_USER' => $ENV['DB_USER'],
+	));
 }

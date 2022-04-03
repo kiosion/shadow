@@ -392,6 +392,9 @@ div.contextMenu {
 .row-item:hover {
 	background-color: var(--background-lighter) !important;
 }
+div.col.d-flex:hover>.col-preview {
+	height: 180px;
+}
 .row-footer>div {
 	text-align: left;
 }
@@ -414,7 +417,7 @@ div.contextMenu {
 	width: 10px;
 }
 .col-preview {
-	height: 100px;
+	height: 80px;
 	cursor: default !important;
 	overflow: hidden;
 	justify-content: center;
@@ -425,6 +428,7 @@ div.contextMenu {
 	white-space: nowrap;
 	background-repeat: no-repeat;
 	background-size:cover;
+	transition: height .2s cubic-bezier(0.86, 0, 0.07, 1);
 }
 .col-size {
 	min-width: 100px !important;

@@ -18,7 +18,7 @@ $_SHADOW_SYS_CONFIG = include('../app/config/system.php');
 if (!$_SHADOW_SYS_CONFIG) {
 	die('Error: Could not load system config.');
 }
-$DB_PREFIX = $_SHADOW_SYS_CONFIG['db_prefix'];
+$DB_PREFIX = $_SHADOW_SYS_CONFIG['APP_DB_PREFIX'];
 	
 // Include files
 require_once 'utils/res.php';

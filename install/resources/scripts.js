@@ -1,7 +1,7 @@
 // On DOM ready
 $(document).ready(() => {
-	// Step 3: If URL contains /install/3/
-	if (window.location.href.indexOf('/install/3/') > -1) {
+	// Step 3
+	if (window.location.href.indexOf('/setup/3') > -1) {
 		let res = check_env();
 		if (res.status == 'success') {
 			// Fill in form with env values
@@ -14,7 +14,7 @@ $(document).ready(() => {
 			btn_state('db-creds-check', true);
 		}
 		// On keyup of any form field, check if fields are valid
-		$(document).on('keyup', '#db-creds-form input', (e) => {
+		$(document).on('keyup', '#db-creds-setup input', (e) => {
 			validate_db_creds();
 		});
 		// Handle db credentials checking
@@ -22,8 +22,8 @@ $(document).ready(() => {
 			check_db_creds(e);
 		});
 	}
-	// Step 4: If URL contains /install/4/
-	if (window.location.href.indexOf('/install/4/') > -1) {
+	// Step 4
+	if (window.location.href.indexOf('/setup/4') > -1) {
 		// Check stuff
 		let envres = check_env();
 		if (envres.status != 'success') {
@@ -53,12 +53,12 @@ $(document).ready(() => {
 				return;
 			}
 			if ($('#db-name-create').text() == 'Created' && $('#db-tables-create').text() == 'Created') {
-				window.location.href = '/install/5';
+				window.location.href = '/setup/5';
 			}
 		});
 	}
-	// Step 5: If URL contains /install/5/
-	if (window.location.href.indexOf('/install/5/') > -1) {
+	// Step 5
+	if (window.location.href.indexOf('/setup/5') > -1) {
 		// Check stuff
 		let envres = check_env();
 		if (envres.status != 'success') {
@@ -83,27 +83,51 @@ $(document).ready(() => {
 				create_admin(e);
 			}
 			else if ($('#continue-btn').text() == 'Continue') {
-				window.location.href = '/install/6';
+				window.location.href = '/setup/6';
 			}
+		});
+	}
+	// Step 6
+	if (window.location.href.indexOf('/setup/6') > -1) {
+		// On keyup of #app-config-setup input
+		$(document).on('keyup', '#app-config-setup', () => {
+			validate_app_config();
+		});
+		// On click of 'continue' button
+		$(document).on('click', '#continue-btn', () => {
+			if ($('#continue-btn').hasClass('disabled')) {
+				return;
+			}
+			else if ($('#continue-btn').text() == 'Create app config') {
+				create_app_config();
+			}
+			else if ($('#continue-btn').text() == 'Continue') {
+				window.location.href = '/setup/7';
+			}
+		});
+	}
+	// Step 7
+	if (window.location.href.indexOf('/setup/7') > -1) {
+		// On click of 'continue' button
+		$(document).on('click', '#continue-btn', () => {
+			finish_setup();
 		});
 	}
 });
 
-function create_db(e) {
-	e.preventDefault();
+function create_db() {
 	if ($('#db-name-create').text() == 'Created') {
 		return;
 	}
 	validate_db_setup();
 	if (!($('#db-name').hasClass('is-invalid')) && $('#db-name').val().length > 0 && /^[a-zA-Z0-9_-]+$/.test($('#db-name').val())) {
-		let post = $.ajax({
+		$.ajax({
 			type: 'POST',
-			url: '/install/create/db/',
+			url: '/setup/create/db/',
 			data: {
 				db_name: $('#db-name').val()
 			}
-		});
-		post.done((res) => {
+		}).done((res) => {
 			if (JSON.parse(res).status == 'success') {
 				console.log('Create: Database created');
 				btn_state('db-name-create', false);
@@ -121,21 +145,19 @@ function create_db(e) {
 	}
 }
 
-function create_db_tables(e) {
-	e.preventDefault();
+function create_db_tables() {
 	if ($('#db-tables-create').text() == 'Created') {
 		return;
 	}
 	validate_db_setup();
 	if (!($('#db-prefix').hasClass('is-invalid')) && $('#db-prefix').val().length > 0 && /^[a-zA-Z0-9_-]+$/.test($('#db-prefix').val())) {
-		let post = $.ajax({
+		$.ajax({
 			type: 'POST',
-			url: '/install/create/tables/',
+			url: '/setup/create/tables/',
 			data: {
 				db_prefix: $('#db-prefix').val()
 			}
-		});
-		post.done((res) => {
+		}).done((res) => {
 			res = JSON.parse(res);
 			if (res.status == 'success') {
 				console.log('Create: Tables created');
@@ -155,23 +177,24 @@ function create_db_tables(e) {
 	}
 }
 
-function create_admin(e) {
-	e.preventDefault();
+function create_admin() {
 	validate_admin_setup();
 	if (!($('#acc-un').hasClass('is-invalid')) && !($('#acc-pw').hasClass('is-invalid'))) {
-		let post = $.ajax({
+		$.ajax({
 			type: 'POST',
-			url: '/install/create/admin/',
+			url: '/setup/create/admin/',
 			data: {
 				acc_un: $('#acc-un').val(),
 				acc_pass: $('#acc-pass').val()
 			}
-		});
-		post.done((res) => {
+		}).done((res) => {
 			res = JSON.parse(res);
 			console.log(res);
 			if (res.status == 'success') {
 				console.log('Create: Account created');
+				$('#acc-un').attr('disabled', true);
+				$('#acc-pass').attr('disabled', true);
+				$('#acc-pass-c').attr('disabled', true);
 				btn_state('continue-btn', true);
 				$('#continue-btn').text('Continue');
 			}
@@ -184,14 +207,43 @@ function create_admin(e) {
 	}
 }
 
+function create_app_config() {
+	validate_app_config();
+	if (!($('#app-name').hasClass('is-invalid')) && !($('#app-url').hasClass('is-invalid'))) {
+		$.ajax({
+			type: 'POST',
+			url: '/setup/create/app-config/',
+			data: {
+				app_name: $('#app-name').val(),
+				app_url: $('#app-url').val()
+			}
+		}).done((res) => {
+			res = JSON.parse(res);
+			console.log(res);
+			if (res.status == 'success') {
+				console.log('Create: App config created');
+				$('#app-name').attr('disabled', true);
+				$('#app-webroot').attr('disabled', true);
+				$('#app-lang').attr('disabled', true);
+				btn_state('continue-btn', true);
+				$('#continue-btn').text('Continue');
+			}
+			else {
+				console.error('Create: App config creation failed');
+				$('#app-config-setup-error').removeClass('d-none');
+				$('#app-config-setup-error').text('Fatal error: Couldn\'t create app config file.');
+			}
+		});
+	}
+}
+
 function check_env() {
 	let data;
-	let post = $.ajax({
+	$.ajax({
 		type: 'POST',
 		async: false,
-		url: '/install/check/env/'
-	});
-	post.done((res) => {
+		url: '/setup/check/env/'
+	}).done((res) => {
 		res = JSON.parse(res);
 		if (res.status == 'success') {
 			console.log('Check: ENV file exists');
@@ -205,11 +257,10 @@ function check_env() {
 }
 
 function check_db() {
-	let post = $.ajax({
+	$.ajax({
 		type: 'POST',
-		url: '/install/check/db/'
-	});
-	post.done((res) => {
+		url: '/setup/check/db/'
+	}).done((res) => {
 		res = JSON.parse(res);
 		if (res.status == 'success') {
 			if (res.data == true) {
@@ -234,11 +285,10 @@ function check_db() {
 }
 
 function check_tables() {
-	let post = $.ajax({
+	$.ajax({
 		type: 'POST',
-		url: '/install/check/tables/'
-	});
-	post.done((res) => {
+		url: '/setup/check/tables/'
+	}).done((res) => {
 		res = JSON.parse(res);
 		if (res.status == 'success') {
 			if (res.data == true) {
@@ -262,7 +312,6 @@ function check_tables() {
 }
 
 function check_db_creds(e) {
-	e.preventDefault();
 	let host = $('#db-host').val();
 	let user = $('#db-user').val();
 	let pass = $('#db-pass').val();
@@ -271,21 +320,20 @@ function check_db_creds(e) {
 		return;
 	}
 	if ($(e.target).text() == 'Continue') {
-		window.location.href = '/install/4/';
+		window.location.href = '/setup/4/';
 		return;
 	}
 	if ($(e.target).text() == 'Add to .env') {
-		let post = $.ajax({
+		$.ajax({
 			type: 'POST',
-			url: "/install/create/env/",
+			url: "/setup/create/env/",
 			data: {
 				db_host: host,
 				db_user: user,
 				db_pass: pass,
 				db_port: port,
 			}
-		});
-		post.done((res) => {
+		}).done((res) => {
 			res = JSON.parse(res);
 			if (res.status == 'success') {
 				$(e.target).text('Continue');
@@ -302,17 +350,16 @@ function check_db_creds(e) {
 		});
 		return;
 	}
-	let post = $.ajax({
+	$.ajax({
 		type: 'POST',
-		url: '/install/check/creds/',
+		url: '/setup/check/creds/',
 		data: {
 			db_host: host,
 			db_user: user,
 			db_pass: pass,
 			db_port: port,
 		}
-	});
-	post.done((res) => {
+	}).done((res) => {
 		res = JSON.parse(res);
 		if (res.status == 'success') {
 			console.log('Valid: ' + res.data);
@@ -323,6 +370,7 @@ function check_db_creds(e) {
 		}
 		else {
 			console.warn('Invalid: ' + res.msg);
+			$('#db-creds-success').addClass('d-none');
 			$('#db-creds-error').removeClass('d-none');
 			$('#db-creds-error').text(res.msg);
 			$(e.target).text('Retry');
@@ -331,11 +379,10 @@ function check_db_creds(e) {
 }
 
 function check_admin() {
-	let post = $.ajax({
+	$.ajax({
 		type: 'POST',
-		url: '/install/check/admin/'
-	});
-	post.done((res) => {
+		url: '/setup/check/admin/'
+	}).done((res) => {
 		res = JSON.parse(res);
 		if (res.status == 'success') {
 			if (res.data == true) {
@@ -437,7 +484,6 @@ function validate_admin_setup() {
 	let acc_un = $('#acc-un').val();
 	let acc_pass = $('#acc-pass').val();
 	let acc_pass_c = $('#acc-pass-c').val();
-	// Check account username has no spaces or special characters
 	if (!/^[a-zA-Z0-9_-]+$/.test(acc_un) || acc_un.length == 0) {
 		$('#acc-un').addClass('is-invalid');
 		btn_state('continue-btn', false);
@@ -445,7 +491,6 @@ function validate_admin_setup() {
 	else if (acc_un.length > 0) {
 		$('#acc-un').removeClass('is-invalid');
 	}
-	// Check account password has no spaces or special characters
 	if (!/^[a-zA-Z0-9_-]+$/.test(acc_pass) || acc_pass.length == 0) {
 		$('#acc-pass').addClass('is-invalid');
 		btn_state('continue-btn', false);
@@ -453,7 +498,6 @@ function validate_admin_setup() {
 	else if (acc_pass.length > 0) {
 		$('#acc-pass').removeClass('is-invalid');
 	}
-	// Check account password confirmation matches password
 	if (acc_pass != acc_pass_c || acc_pass_c.length == 0) {
 		$('#acc-pass-c').addClass('is-invalid');
 		btn_state('continue-btn', false);
@@ -461,13 +505,52 @@ function validate_admin_setup() {
 	else if (acc_pass == acc_pass_c && acc_pass_c.length > 0) {
 		$('#acc-pass-c').removeClass('is-invalid');
 	}
-
-	// If all fields are complete, remove 'disabled' from continue button
 	if (!$('#acc-un').hasClass('is-invalid') && acc_un.length > 0 &&
 		!$('#acc-pass').hasClass('is-invalid') && acc_pass.length > 0 &&
 		!$('#acc-pass-c').hasClass('is-invalid') && acc_pass_c.length > 0) {
 		btn_state('continue-btn', true);
 	}
+}
+
+function validate_app_config() {
+	let app_name = $('#app-name').val();
+	let app_url = $('#app-webroot').val();
+	if (!/^[a-zA-Z0-9\ _-]+$/.test(app_name) || app_name.length == 0 || app_name.length > 20) {
+		$('#app-name').addClass('is-invalid');
+		btn_state('continue-btn', false);
+	}
+	else if (app_name.length > 0) {
+		$('#app-name').removeClass('is-invalid');
+	}
+	if (!/^[a-zA-Z0-9-.]+$/.test(app_url) || app_url.length == 0) {
+		$('#app-webroot').addClass('is-invalid');
+		btn_state('continue-btn', false);
+	}
+	else if (app_url.length > 0) {
+		$('#app-webroot').removeClass('is-invalid');
+	}
+	if (!$('#app-name').hasClass('is-invalid') && app_name.length > 0 &&
+		!$('#app-webroot').hasClass('is-invalid') && app_url.length > 0) {
+		btn_state('continue-btn', true);
+	}
+}
+
+function finish_setup() {
+	$.ajax({
+		url: '/setup/finish-setup/',
+		type: 'POST',
+	}).done(function(res) {
+		res = JSON.parse(res);
+		if (res.status == 'success') {
+			window.location.href = '/';
+		}
+		else {
+			// Show error div
+			$('#setup-error').text(res.msg);
+			$('#setup-error').removeClass('d-none');
+			$('#continue-btn').text('Retry');
+		}
+	});
 }
 
 function btn_state(name, state) {

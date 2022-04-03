@@ -9,28 +9,28 @@ if (!$_SHADOW_SYS_CONFIG) {
 }
 
 // Check install status
-if ($_SHADOW_SYS_CONFIG['installed'] == false) {
+if ($_SHADOW_SYS_CONFIG['APP_IS_INSTALLED'] == false) {
 	// If first part of URL is not 'install', redirect to install
-	if (explode('/', parse_url($_SERVER['REQUEST_URI'])['path'])[1] != 'install') {
-		header('Location: /install/');
+	if (explode('/', parse_url($_SERVER['REQUEST_URI'])['path'])[1] != 'setup') {
+		header('Location: /setup/');
 		exit();
 	}
 	require 'install/index.php';
 	exit();
 }
-if ($_SHADOW_SYS_CONFIG['post_install'] == true) {
-	require 'install/post.php';
-	exit();
-}
+// if ($_SHADOW_SYS_CONFIG['APP_IS_POST_INSTALL'] == true) {
+// 	require 'install/post.php';
+// 	exit();
+// }
 
 // Set app and api urls
-if ($_SHADOW_SYS_CONFIG['ssl'] == true) {
-	$_SHADOW_APP_URL = 'https://'.$_SHADOW_SYS_CONFIG['webroot'];
-	$_SHADOW_API_URL = 'https://'.$_SHADOW_SYS_CONFIG['apiroot'];
+if ($_SHADOW_SYS_CONFIG['APP_SSL'] == true) {
+	$_SHADOW_APP_URL = 'https://'.$_SHADOW_SYS_CONFIG['APP_URL'];
+	$_SHADOW_API_URL = 'https://'.$_SHADOW_SYS_CONFIG['APP_API_URL'];
 }
 else {
-	$_SHADOW_APP_URL = 'http://'.$_SHADOW_SYS_CONFIG['webroot'];
-	$_SHADOW_API_URL = 'http://'.$_SHADOW_SYS_CONFIG['apiroot'];
+	$_SHADOW_APP_URL = 'http://'.$_SHADOW_SYS_CONFIG['APP_URL'];
+	$_SHADOW_API_URL = 'http://'.$_SHADOW_SYS_CONFIG['APP_API_URL'];
 }
 
 // Include files
@@ -45,7 +45,12 @@ if (isset($_COOKIE['shadow_login_token'])) {
 	if ($res['status'] == 'valid') {
 		$_SHADOW_USER_UID = $res['uid'];
 		// Load user config
-		$_SHADOW_USER_CONFIG = include('app/config/user/'.$_SHADOW_USER_UID.'.php');
+		try {
+			$_SHADOW_USER_CONFIG = include('app/config/user/'.$_SHADOW_USER_UID.'.php');
+		}
+		catch (Exception $e) {
+			die('Error: Could not load user config.');
+		}
 	}
 }
 else {
@@ -55,7 +60,7 @@ else {
 // Handle URL paths
 $res = handle_url_paths(parse_url($_SERVER['REQUEST_URI']));
 $app_route = $res['app_route'];
-$page_title = $_SHADOW_SYS_CONFIG['name'].' - '.$res['title'];
+$page_title = $_SHADOW_SYS_CONFIG['APP_NAME'].' - '.$res['title'];
 if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 	$content_type = get_mimetype($res['ext']);
 	$filename = $res['filename'];
@@ -84,7 +89,6 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 		//Check if user is logged in
 		if (!isset($_COOKIE['shadow_login_token'])) $app_route = '403';
 		else {
-			// Verify login token
 			if (verify_login_token($app_route, $_SHADOW_USER_TOKEN)['status'] != 'valid') $app_route = '403';
 			else {
 				if (verify_access($filename, $_SHADOW_USER_TOKEN)['status'] != 'valid') {
@@ -97,10 +101,12 @@ if ($app_route == 'file' || $app_route == 'raw' || $app_route == 'download') {
 	}
 }
 
-// Verify login state only if not viewing public page
+// Verify login state only if not viewing public page TODO: Make this more efficient, array of allowed pages
 if ($app_route != 'raw' && $app_route != 'file' && $app_route != 'download' && $app_route != '404' && $app_route != '403') {
 	$res = verify_login_token($app_route, $_SHADOW_USER_TOKEN);
 	if ($res['status'] == 'valid') {
+		// echo "App route: ".$app_route;
+		// echo "Res status: ".$res['status'];
 		if ($app_route == 'login') header('Location: /home');
 		$user_auth_token = $res['token'];
 		$user_auth_role = $res['role'];
@@ -108,6 +114,8 @@ if ($app_route != 'raw' && $app_route != 'file' && $app_route != 'download' && $
 	}
 	else if ($app_route != 'login') {
 		header('Location: /login');
+		// echo "App route: ".$app_route;
+		// echo "Res status: ".$res['status'];
 		exit();
 	}
 }
@@ -118,8 +126,6 @@ switch ($app_route) {
 		// Set HTTP headers
 		header('Content-Type: '.$content_type);
 		header('Content-Length: '.filesize('uploads/users/'.$uid.'/'.$filename));
-		//header('Content-Length: '.filesize(get_file($filename)));
-		//Display file using fpassthru
 		fpassthru(fopen('uploads/users/'.$uid.'/'.$filename, 'r'));
 		break;
 	case 'download':

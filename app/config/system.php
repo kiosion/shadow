@@ -6,26 +6,22 @@ if (!isset($include)) {
 	echo Res::fail(403, 'Unauthorized');
 	exit();
 }
-
 return array(
-	"name" => "Shadow",
-	"desc" => "A simple, lightweight, and secure web-based file manager.",
-	"ssl" => false,
-	"webroot" => "localhost",
-	"apiroot" => "localhost",
-	"version" => "0.0.1",
-	"defaults" => array(
-		"theme" => "shadow",
-		"lang" => "en",
-		"timezone" => "UTC",
-		"dateformat" => "Y-m-d",
-		"itemsperpage" => "20",
-	),
-	"installed" => false,
-	"post_install" => false,
-	// Following values are pulled from .env on initial install and are not editable through the UI
-	"db_host" => "localhost",
-	"db_name" => "shadow",
-	"db_prefix" => "",
-	"db_user" => "root",
+	"APP_NAME" => "Shadow",
+	"APP_DESC" => "A simple, lightweight, and secure web-based file manager.",
+	"APP_SSL" => false,
+	"APP_URL" => "localhost",
+	"APP_API_URL" => "localhost",
+	"APP_VERSION" => "0.0.1",
+	"APP_THEME" => "shadow",
+	"APP_LANG" => "en",
+	"APP_TIMEZONE" => "UTC",
+	"APP_D_FORMAT" => "Y-m-d",
+	"APP_I_PP" => "20",
+	"APP_IS_INSTALLED" => false,
+	"APP_IS_POST_INSTALL" => false,
+	"APP_DB_NAME" => "shadow",
+	"APP_DB_PREFIX" => "",
+	"APP_DB_HOST" => "localhost",
+	"APP_DB_USER" => "root",
 );

@@ -106,12 +106,10 @@ $(document).ready(() => {
 
 	// Handle login form update on submit
 	$("#loginForm").submit((e) => {
-		// Prevent default submit
 		e.preventDefault();
 		console.log("Login form submitted...");
 		let un = $('#username');
 		let pw = $('#password');
-		// Send data using post
 		console.log("Checking credentials...");
 		let post = $.ajax({
 			type: 'POST',
@@ -184,9 +182,7 @@ $(document).ready(() => {
 	// Logout button
 	$('#logoutButton').click((e) => {
 		e.preventDefault();
-		// Remove shadow_login_token cookie
 		Cookies.remove('shadow_login_token');
-		// Redirect to index
 		window.location.href = '/login/';
 	});
 

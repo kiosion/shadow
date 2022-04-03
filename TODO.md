@@ -6,9 +6,10 @@
 
 - Dashboard UI
   - [x] Inline image file previews
-    - [ ] Hover to enlarge
+    - [x] Hover to enlarge
   - [x] Sorting (Done, mostly)
   - [ ] Search/filter by file name (or other attrs)
+    - Re-work homepage structure, search field, filters, upload table as components
   - [ ] Select items + bulk item actions
 - Admin UI
   - [ ] View/manage users
@@ -18,13 +19,6 @@
   - [ ] More robust file handling
   - [x] Use .htaccess to deny access to uploads dir
   - [ ] Finish permission levels & checks
-- Installer script
-  - [x] Display on first load
-  - [x] Check required deps are installed (php ver, php extensions, dir/file permissions)
-  - [x] Get DB credentials from user, populate .ENV, create JWT secret phrase
-  - [x] Prompt user for DB name, table prefixes, create DB, tables
-  - [ ] Prompt to create initial administrator account
-  - [ ] Post-install checks, updater config
 
 #### Planned:
 - Settings pages

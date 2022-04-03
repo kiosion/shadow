@@ -22,8 +22,6 @@ class RowItem {
 		$arr = array("token"=>"$token","start"=>"$start","limit"=>"$limit","sort"=>"$sort","order"=>"$order");
 		$res = post('api/v2/user/get-uploads/', $arr);
 		$uploads = json_decode($res, true)['data'];
-
-		// If no uploads, return empty array
 		if (empty($uploads) || count($uploads) < 1) {
 			return array();
 		}
@@ -42,9 +40,7 @@ class RowItem {
 	public static function printUploads($items) {
 		$c = $items['start']+1;
 		$uploads = $items['uploads'];
-		// Loop through each upload
 		foreach ($uploads as $upload) {
-			// Create array of data
 			$item = array(
 				"item_num" => $c,
 				"item_id" => $upload['id'],
@@ -76,7 +72,6 @@ class RowItem {
 			else {
 				$item['item_size'] .= ' KB';
 			}
-			// Print item
 			self::printItem($item);
 			$c++;
 		}
@@ -103,16 +98,15 @@ class RowItem {
 						<span class="col col-name">'.htmlspecialchars($item['item_og_name']).'</span>
 					</div>
 				</div>
-				
 				<div class="col-1 d-none col-size d-md-block">'.$item['item_size'].'</div>
 				<div class="col-2 d-none col-date d-md-block" data-bs-toggle="tooltip" data-bs-position="top" title="'.$item['item_time'].'">'.$item['item_date'].'</div>
 				<div class="col d-flex col-actions justify-content-between btn-group" role="group">
-					<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonOpen" data-bs-toggle="tooltip" data-bs-placement="top" title="Open"><i class="fas fa-external-link-square"></i></a>
-					<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonCopy" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link"><i class="fas fa-link"></i></a>'; 
-					if ($item['item_vis'] == '1') { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to private"><i class="fas fa-eye-slash"></i></a>'; } 
-					else if ($item['item_vis'] == '2') { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to public"><i class="fas fa-low-vision"></i></a>'; }
-					else { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-cyan btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to hidden"><i class="fas fa-eye"></i></a>'; } 
-					echo '<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'/download" class="btn btn-action-dark-cyan btn-group-child fileButtonDownload" data-bs-toggle="tooltip" data-bs-placement="top" title="Download"><i class="fas fa-download"></i></a>
+					<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark btn-group-child fileButtonOpen" data-bs-toggle="tooltip" data-bs-placement="top" title="Open"><i class="fas fa-external-link-square"></i></a>
+					<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark btn-group-child fileButtonCopy" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link"><i class="fas fa-link"></i></a>'; 
+					if ($item['item_vis'] == '1') { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to private"><i class="fas fa-eye-slash"></i></a>'; } 
+					else if ($item['item_vis'] == '2') { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to public"><i class="fas fa-low-vision"></i></a>'; }
+					else { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to hidden"><i class="fas fa-eye"></i></a>'; } 
+					echo '<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'/download" class="btn btn-action-dark btn-group-child fileButtonDownload" data-bs-toggle="tooltip" data-bs-placement="top" title="Download"><i class="fas fa-download"></i></a>
 					<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-danger btn-group-child fileButtonDelete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"><i class="fas fa-trash"></i></a>
 				</div>
 			</div>
@@ -142,11 +136,11 @@ else {
 	$order = 'd';
 }
 // Get limit from user config, TODO: if not defined fall back to system default
-if (isset($_SHADOW_USER_CONFIG['itemsperpage'])) {
-	$limit = $_SHADOW_USER_CONFIG['itemsperpage'];
+if (isset($_SHADOW_USER_CONFIG['USER_I_PP'])) {
+	$limit = $_SHADOW_USER_CONFIG['USER_I_PP'];
 }
 else {
-	$limit = $_SHADOW_SYS_CONFIG['itemsperpage'];
+	$limit = $_SHADOW_SYS_CONFIG['APP_I_PP'];
 }
 
 
