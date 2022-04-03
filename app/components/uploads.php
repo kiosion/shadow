@@ -1,8 +1,9 @@
 <?php
-
-// Prevent direct access
 if (!isset($include)) {
-	header("Location: /");
+	header('Content-Type: application/json; charset=utf-8');
+	include_once '../utils/res.php';
+	echo Res::fail(403, 'Unauthorized');
+	exit();
 }
 
 // Include files
@@ -78,35 +79,39 @@ class RowItem {
 	}
 	// Function to print individual upload item
 	private static function printItem($item) {
-		$currentLink = "http://".$_SERVER['HTTP_HOST'];
+		GLOBAL $_SHADOW_APP_URL;
+		//$currentLink = $_SHADOW_SYS_CONFIG[''].$_SERVER['HTTP_HOST'];
 		switch ($item['item_type']) {
 			case 'jpg':
 			case 'jpeg':
 			case 'png':
 			case 'webp':
 			case 'gif':
-				$item_url = $currentLink.'/file/'.$item['item_ul_name'].'/raw';
+				$item_img = '<img class="col-preview-img" src="'.$_SHADOW_APP_URL.'/file/'.$item['item_ul_name'].'/raw'.'" alt="'.$item['item_og_name'].'"/>';
+				$on_click = 'open-modal ';
 				break;
 			default:
 				$item_url = '';
+				$on_click = 'open-file ';
 		}
 		echo '
 			<div class="row d-flex justify-content-between row-item bg-dark text-light" id="'.$item['item_id'].'">
 				<div class="col-1 col-num">'.$item['item_num'].'</div>
-				<div class="col d-flex">
-					<div class="col d-flex justify-content-start col-preview bg-black" style="background-image:url('.$item_url.');">
-						<span class="col col-name">'.htmlspecialchars($item['item_og_name']).'</span>
+				<div class="col d-flex item-preview-container '.$on_click.'pointer" data-link="'.$_SHADOW_APP_URL.'/file/'.$item['item_ul_name'].'" data-fn="'.trim(htmlspecialchars($item['item_og_name'])).'">
+					<div class="col d-flex justify-content-start col-preview bg-black" '.$item_url.'>
+						'.$item_img.'
+						<span class="col col-name">'.trim(htmlspecialchars($item['item_og_name'])).'</span>
 					</div>
 				</div>
 				<div class="col-1 d-none col-size d-md-block">'.$item['item_size'].'</div>
 				<div class="col-2 d-none col-date d-md-block" data-bs-toggle="tooltip" data-bs-position="top" title="'.$item['item_time'].'">'.$item['item_date'].'</div>
 				<div class="col d-flex col-actions justify-content-between btn-group" role="group">
-					<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark btn-group-child fileButtonOpen" data-bs-toggle="tooltip" data-bs-placement="top" title="Open"><i class="fas fa-external-link-square"></i></a>
-					<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark btn-group-child fileButtonCopy" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link"><i class="fas fa-link"></i></a>'; 
+					<!--a type="button" data-link="'.$_SHADOW_APP_URL.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark btn-group-child fileButtonOpen" data-bs-toggle="tooltip" data-bs-placement="top" title="Open"><i class="fas fa-external-link-square"></i></a-->
+					<a type="button" data-link="'.$_SHADOW_APP_URL.'/file/'.$item['item_ul_name'].'" class="btn btn-action-dark btn-group-child fileButtonCopy" data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link"><i class="fas fa-link"></i></a>'; 
 					if ($item['item_vis'] == '1') { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to private"><i class="fas fa-eye-slash"></i></a>'; } 
 					else if ($item['item_vis'] == '2') { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to public"><i class="fas fa-low-vision"></i></a>'; }
 					else { echo '<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark btn-group-child fileButtonVis" data-bs-toggle="tooltip" data-bs-placement="top" title="Change visibility to hidden"><i class="fas fa-eye"></i></a>'; } 
-					echo '<a type="button" data-link="'.$currentLink.'/file/'.$item['item_ul_name'].'/download" class="btn btn-action-dark btn-group-child fileButtonDownload" data-bs-toggle="tooltip" data-bs-placement="top" title="Download"><i class="fas fa-download"></i></a>
+					echo '<a type="button" data-link="'.$_SHADOW_APP_URL.'/file/'.$item['item_ul_name'].'/download" class="btn btn-action-dark btn-group-child fileButtonDownload" data-bs-toggle="tooltip" data-bs-placement="top" title="Download"><i class="fas fa-download"></i></a>
 					<a type="button" data-id="'.$item['item_id'].'" class="btn btn-action-dark-danger btn-group-child fileButtonDelete" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"><i class="fas fa-trash"></i></a>
 				</div>
 			</div>

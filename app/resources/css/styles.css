@@ -30,6 +30,10 @@ h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display
 	cursor: not-allowed !important;
 	pointer-events: all !important;
 }
+.pointer {
+	cursor: pointer !important;
+	pointer-events: all !important;
+}
 /* Header */
 .fixed-top {
 	z-index: 990 !important;
@@ -57,7 +61,9 @@ main#page-index {
 	padding-top: 10vh !important;
 }
 main#page-file {
-	margin-top: 70px !important;
+	padding-top: 70px !important;
+	margin-top: auto;
+	margin-bottom: auto;
 }
 .nosel {
 	-webkit-user-select: none;
@@ -286,7 +292,6 @@ button:not(.btn-group-child), button:not(.btn-group-child):active, button:not(.b
 .file-card {
 	border-radius: 8px !important;
 	background-color: var(--background-darker) !important;
-	min-width: 400px !important;
 	max-width: fit-content;
 	margin-left: auto;
 	margin-right: auto;
@@ -355,6 +360,15 @@ div.contextMenu {
 #contextMenu {
 	transition: opacity .2s ease-in-out;
 }
+/* Modals */
+.modal, .modal.fade, .modal-dialog {
+	transition: all .2s ease-in-out !important;
+	transform: none !important;
+}
+.modal-dialog {
+	max-width: calc(100vw - 2rem) !important;
+	max-height: calc(100vh - 2rem) !important;
+}
 /* Uploads table */
 #uploads-table-container {
 	max-width: 1400px;
@@ -392,9 +406,6 @@ div.contextMenu {
 .row-item:hover {
 	background-color: var(--background-lighter) !important;
 }
-div.col.d-flex:hover>.col-preview {
-	height: 180px;
-}
 .row-footer>div {
 	text-align: left;
 }
@@ -405,20 +416,26 @@ div.col.d-flex:hover>.col-preview {
 .col-head-name {
 	cursor: default !important;
 }
+.item-preview-container {
+	transition: filter .3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.item-preview-container:hover {
+	filter: drop-shadow(0 0 0.5rem var(--background-2));
+}
 .col-name {
-	cursor: default !important;
 	text-shadow: #191b24 0 0 10px;
-	padding-left: .5rem;
+	padding-left: 1rem;
+	padding-right: 1rem;
 	align-self: center;
 	font-weight: bold;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	width: 10px;
+	z-index: 1;
 }
 .col-preview {
 	height: 80px;
-	cursor: default !important;
 	overflow: hidden;
 	justify-content: center;
 	margin: 0 !important;
@@ -428,7 +445,16 @@ div.col.d-flex:hover>.col-preview {
 	white-space: nowrap;
 	background-repeat: no-repeat;
 	background-size:cover;
-	transition: height .2s cubic-bezier(0.86, 0, 0.07, 1);
+	transition: height .3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.col-preview-img {
+	width: 100%;
+	height: fit-content;
+	margin-right: -100%;
+	z-index: 0;
+}
+.col-preview:hover {
+	height: 180px;
 }
 .col-size {
 	min-width: 100px !important;

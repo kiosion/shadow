@@ -1,6 +1,4 @@
 <?php
-
-// Prevent direct access
 if (!isset($include)) {
 	header('Content-Type: application/json; charset=utf-8');
 	include_once 'res.php';
@@ -129,7 +127,7 @@ function handle_url_paths($url) {
 						return array(
 							'app_route' => 'raw',
 							'title' => '',
-							'filename' => $ul_name.'.'.$ext,
+							'filename' => $ul_name,
 							'ext' => $ext,
 							'uid' => $uid,
 						);
@@ -139,7 +137,7 @@ function handle_url_paths($url) {
 						return array(
 							'app_route' => 'download',
 							'title' => '',
-							'filename' => $ul_name.'.'.$ext,
+							'filename' => $ul_name,
 							'og_name' => $og_name,
 							'ext' => $ext,
 							'uid' => $uid,
@@ -150,7 +148,7 @@ function handle_url_paths($url) {
 						return array(
 							'app_route' => 'file',
 							'title' => $ul_name,
-							'filename' => $ul_name.'.'.$ext,
+							'filename' => $ul_name,
 							'og_name' => $og_name,
 							'ext' => $ext,
 							'uid' => $uid,

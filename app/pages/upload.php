@@ -1,7 +1,9 @@
 <?php
-
 if (!isset($include)) {
-	header("Location: ../../");
+	header('Content-Type: application/json; charset=utf-8');
+	include_once '../utils/res.php';
+	echo Res::fail(403, 'Unauthorized');
+	exit();
 }
 ?>
 <main id="page-index" class="container-fluid pb-5">

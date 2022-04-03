@@ -15,18 +15,6 @@ $(document).ready(() => {
 		});
 		$("div.tooltip").remove();
 	});
-	$(".file-card-file").contextmenu((e) => {
-		e.preventDefault();
-		$(".contextMenu_obj").css({
-			position: "absolute", 
-			top: e.pageY, 
-			left: e.pageX, 
-			display: "block",
-		});
-		$(".contextMenu_link").css({
-			display: "none",
-		});
-	});
 	$("a").contextmenu((e) => {
 		e.preventDefault();
 		let clicked = $(e.delegateTarget);
@@ -215,9 +203,21 @@ $(document).ready(() => {
 	});
 
 	// Upload table button actions
-	$(".fileButtonOpen,.fileButtonDownload").click((e) => {
+	$(".open-file,.fileButtonOpen,.fileButtonDownload").click((e) => {
 		openLink(e, true);
 	});
+	// Open modal on click
+	$(".open-modal").click((e) => {
+		e.preventDefault();
+		let link = $(e.delegateTarget).attr('data-link');
+		$('#modal-content').attr('src', link+'/raw');
+		$('#modal-fn').text($(e.delegateTarget).attr('data-fn'));
+		$('#file-modal').modal('show');
+	});
+	
+	// $(".item-preview-container").click((e) => {
+	// 	openLink(e, true);
+	// });
 	$(".fileButtonCopy").click((e) => {
 		copyLink(e);
 	});
@@ -289,6 +289,19 @@ $(document).ready(() => {
 	});
 	$(".sortName,.sortSize,.sortDate,.buttonPrevPage,.buttonNextPage").click((e) => {
 		openLink(e, false);
+	});
+});
+
+$(document).on('contextmenu', '.file-card-file', (e) => {
+	e.preventDefault();
+	$(".contextMenu_obj").css({
+		position: "absolute", 
+		top: e.pageY, 
+		left: e.pageX, 
+		display: "block",
+	});
+	$(".contextMenu_link").css({
+		display: "none",
 	});
 });
 
