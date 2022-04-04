@@ -23,6 +23,8 @@ h1, h2, h3, h4, h5, h6, .display-5, .display-4, .display-3, .display-2, .display
 
 	--radius-1: 8px;
 	--radius-2: 12px;
+
+	--shadow-med: 0 0 14px;
 }
 
 /* Not-allowed cursor */
@@ -387,6 +389,7 @@ form#searchFilter>div>input {
 	color: var(--white);
 	border: none;
 	border-radius: var(--radius-1);
+	box-shadow: var(--shadow-med) var(--background-darker);
 }
 form#searchFilter>div>label {
 	color: var(--white);
@@ -424,6 +427,7 @@ form#searchFilter>div>label {
 .row-item {
 	align-content: center !important;
 	min-height: 60px;
+	z-index: 1;
 }
 .row-item:hover {
 	background-color: var(--background-lighter) !important;

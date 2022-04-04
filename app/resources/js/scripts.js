@@ -180,7 +180,7 @@ $(document).ready(() => {
 		window.location.href = '/login/';
 	});
 
-	// Header button actions
+	// Button actions
 	$("#header-loginButton").click((e) => {
 		e.preventDefault();
 		window.location.href = '/login';
@@ -190,15 +190,13 @@ $(document).ready(() => {
 		Cookies.remove('shadow_login_token');
 		window.location.href = '/login';
 	});
-	$('#header-settingsButton,#header-accountButton,#header-uploadButton').click((e) => {
+	$('#header-settingsButton,#header-accountButton,#header-uploadButton,.open-file,.fileButtonOpen,.fileButtonDownload').click((e) => {
 		openLink(e, false);
 	});
 	$('#header-backButton').click(() => {
 		window.history.back();
 	});
-
-	// Menu bar button actions
-	$("#menuBar-copyLink").click((e) => {
+	$("#menuBar-copyLink,.fileButtonCopy").click((e) => {
 		copyLink(e);
 	});
 	$("#menuBar-viewRaw").click((e) => {
@@ -207,9 +205,6 @@ $(document).ready(() => {
 	$("#menuBar-download").click((e) => {
 		download(e);
 	});
-
-	// Upload table button actions
-	// Open modal on click
 	$(".open-modal").click((e) => {
 		e.preventDefault();
 		let link = $(e.delegateTarget).attr('data-link');
@@ -217,12 +212,7 @@ $(document).ready(() => {
 		$('#modal-fn').text($(e.delegateTarget).attr('data-fn'));
 		$('#file-modal').modal('show');
 	});
-	$(".open-file,.fileButtonOpen,.fileButtonDownload").click((e) => {
-		openLink(e, true);
-	});
-	$(".fileButtonCopy").click((e) => {
-		copyLink(e);
-	});
+	
 	$(".fileButtonVis").click((e) => {
 		let button = $(e.delegateTarget);
 		let i = button.find('i').eq(0);

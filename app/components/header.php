@@ -26,8 +26,23 @@ if (!isset($include)) {
 						case 'settings':
 						case 'account':
 						case 'upload':
+							echo '
+								<button id="header-uploadButton" data-link="'.$currentHost.'/upload" type="button" class="btn btn-light me-3 data-link" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Upload" style="width:60px;"><i class="fas fa-upload"></i></button>
+								<button id="header-accountButton" data-link="'.$currentHost.'/account" type="button" class="btn btn-light me-3 data-link" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Account" style="width:60px;"><i class="fas fa-user"></i></button>
+							';
+							// If user has admin privileges, show system settings button
+							if ($user_auth_role == 1) {
+								echo '
+								<button id="header-settingsButton" data-link="'.$currentHost.'/settings" type="button" class="btn btn-light me-3 data-link" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Settings" style="width:60px;"><i class="fas fa-cog"></i></button>
+								';
+							}
+							echo '
+								<button id="header-logoutButton" type="button" class="btn btn-light-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Logout" style="width:60px;"><i class="fas fa-sign-out-alt"></i></button>
+							';
+							break;
 						case 'index':
 							echo '
+								<button id ="header-switchView" type="button" class="btn btn-light me-3 data-link" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Switch View" style="width:60px;"><i class="fas fa-th-large"></i></button>
 								<button id="header-uploadButton" data-link="'.$currentHost.'/upload" type="button" class="btn btn-light me-3 data-link" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Upload" style="width:60px;"><i class="fas fa-upload"></i></button>
 								<button id="header-accountButton" data-link="'.$currentHost.'/account" type="button" class="btn btn-light me-3 data-link" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Account" style="width:60px;"><i class="fas fa-user"></i></button>
 							';
