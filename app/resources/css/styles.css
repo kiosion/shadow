@@ -296,6 +296,8 @@ button:not(.btn-group-child), button:not(.btn-group-child):active, button:not(.b
 	margin-left: auto;
 	margin-right: auto;
 	overflow: hidden;
+	min-width: 400px;
+	width: fit-content;
 }
 .file-card-file>img {
 	max-height: calc(80vh - 70px);
@@ -368,6 +370,26 @@ div.contextMenu {
 .modal-dialog {
 	max-width: calc(100vw - 2rem) !important;
 	max-height: calc(100vh - 2rem) !important;
+}
+/* Search boxes */
+form#searchFilter {
+	min-width: 800px;
+	max-width: 1400px;
+	margin-left: auto;
+	margin-right: auto;
+}
+form#searchFilter {
+	padding-left: 14vw;
+	padding-right: 14vw;
+}
+form#searchFilter>div>input {
+	background-color: var(--background-2);
+	color: var(--white);
+	border: none;
+	border-radius: var(--radius-1);
+}
+form#searchFilter>div>label {
+	color: var(--white);
 }
 /* Uploads table */
 #uploads-table-container {

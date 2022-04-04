@@ -47,7 +47,7 @@ if (!isset($path_arr[1]) || empty($path_arr[1])) {
 $bearer_token = JWT::get_bearer_token();
 
 // App class
-// require_once 'includes/v2/action/app.php';
+require_once 'includes/v2/action/app.php';
 
 // Auth class
 require_once 'includes/v2/class/auth.php';

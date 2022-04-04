@@ -99,7 +99,9 @@ switch ($path_arr[1]) {
 				$order = 'DESC';
 				break;
 		}
-		$arr = User::get_uploads($uid, $start, $limit, $sort, $order);
+		if (isset($_POST['filter'])) $filter = $_POST['filter'];
+		else $filter = '';
+		$arr = User::get_uploads($uid, $start, $limit, $sort, $order, $filter);
 		if ($arr != false) {
 			echo Res::success(200, 'Uploads retrieved', $arr);
 		}
@@ -109,7 +111,9 @@ switch ($path_arr[1]) {
 		break;
 	// Get number of uploads from user
 	case 'get-upload-count':
-		$count = User::get_upload_count($uid);
+		if (isset($_POST['filter'])) $filter = $_POST['filter'];
+		else $filter = '';
+		$count = User::get_upload_count($uid, $filter);
 		if ($count != false) {
 			echo Res::success(200, 'Upload count retrieved', $count);
 		}

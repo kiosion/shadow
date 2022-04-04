@@ -92,6 +92,12 @@ $(document).ready(() => {
 		});
 	});
 
+	// If filter is set, fill the search field
+	if (window.location.search.indexOf('f=') != -1) {
+		let filter = window.location.search.split('f=')[1].split('&')[0];
+		$("#searchFilterInput").val(filter);
+	}
+
 	// Handle login form update on submit
 	$("#loginForm").submit((e) => {
 		e.preventDefault();
@@ -203,9 +209,6 @@ $(document).ready(() => {
 	});
 
 	// Upload table button actions
-	$(".open-file,.fileButtonOpen,.fileButtonDownload").click((e) => {
-		openLink(e, true);
-	});
 	// Open modal on click
 	$(".open-modal").click((e) => {
 		e.preventDefault();
@@ -214,10 +217,9 @@ $(document).ready(() => {
 		$('#modal-fn').text($(e.delegateTarget).attr('data-fn'));
 		$('#file-modal').modal('show');
 	});
-	
-	// $(".item-preview-container").click((e) => {
-	// 	openLink(e, true);
-	// });
+	$(".open-file,.fileButtonOpen,.fileButtonDownload").click((e) => {
+		openLink(e, true);
+	});
 	$(".fileButtonCopy").click((e) => {
 		copyLink(e);
 	});
@@ -292,6 +294,20 @@ $(document).ready(() => {
 	});
 });
 
+// Handle search form
+$(document).on('submit', '#searchFilter', (e) => {
+	e.preventDefault();
+	let form = $(e.delegateTarget);
+	let search = form.find('input').val();
+	if (search == '' || search == ' ') window.location.href = '/home/';
+	else {
+		let query = new URLSearchParams(window.location.search);
+		query.set('f', search);
+		window.location.href = '/home/?' + query.toString();
+	}
+});
+
+// Handle context menu on file cards
 $(document).on('contextmenu', '.file-card-file', (e) => {
 	e.preventDefault();
 	$(".contextMenu_obj").css({

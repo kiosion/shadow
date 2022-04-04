@@ -7,12 +7,15 @@ if (!isset($include)) {
 }
 
 class User {
-	public static function get_uploads($uid, $start, $limit, $sort, $order) {
+	public static function get_uploads($uid, $start, $limit, $sort, $order, $filter) {
 		GLOBAL $DB_PREFIX;
 		if (!isset($uid) || !isset($start) || !isset($limit)) return false;
 		// Set query
 		$table = $DB_PREFIX . 'files';
-		$sql = "SELECT * FROM $table WHERE uid = $uid ORDER BY $sort $order LIMIT $start, $limit";
+		// Clean filter
+		$filter = trim(str_replace('"', '', str_replace("'", '', $filter)));
+		if (!empty($filter)) $sql = "SELECT * FROM $table WHERE uid = $uid AND ((og_name LIKE '%$filter%') OR (ul_name LIKE '%$filter%')) ORDER BY $sort $order LIMIT $start, $limit";
+		else $sql = "SELECT * FROM $table WHERE uid = $uid ORDER BY $sort $order LIMIT $start, $limit";
 		// Get results
 		$res = runQuery($sql);
 		$rows = array();
@@ -31,12 +34,14 @@ class User {
 			return false;
 		}
 	}
-	public static function get_upload_count($uid) {
+	public static function get_upload_count($uid, $filter) {
 		GLOBAL $DB_PREFIX;
 		if (!isset($uid)) return false;
 		// Set query
 		$table = $DB_PREFIX . 'files';
-		$sql = "SELECT COUNT('id') AS count FROM $table WHERE uid = '$uid'";
+		$filter = trim(str_replace('"', '', str_replace("'", '', $filter)));
+		if (!empty($filter)) $sql = "SELECT count('id') AS count FROM $table WHERE uid = '$uid' AND ((og_name LIKE '%$filter%') OR (ul_name LIKE '%$filter%'))";
+		else $sql = "SELECT COUNT('id') AS count FROM $table WHERE uid = '$uid'";
 		// Get results
 		$res = runQuery($sql);
 		// If results are found
