@@ -212,7 +212,7 @@ $(document).ready(() => {
 		$('#modal-fn').text($(e.delegateTarget).attr('data-fn'));
 		$('#file-modal').modal('show');
 	});
-	
+
 	$(".fileButtonVis").click((e) => {
 		let button = $(e.delegateTarget);
 		let i = button.find('i').eq(0);

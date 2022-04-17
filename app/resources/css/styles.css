@@ -495,20 +495,17 @@ form#searchFilter>div>label {
 	max-width: 450px !important;
 }
 /* Settings styles */
-/* Switches */
 .switch {
 	position: relative;
 	display: inline-block;
 	width: 60px;
 	height: 28px;
 }
-/* Hide default HTML checkbox */
 .switch input {
 	opacity: 0;
 	width: 0;
 	height: 0;
 }
-/* Slider */
 .slider {
 	position: absolute;
 	cursor: pointer;
@@ -542,7 +539,6 @@ input:checked + .slider:before {
 	-ms-transform: translateX(32px);
 	transform: translateX(32px);
 }
-/* Rounded sliders */
 .slider.round {
 	border-radius: 34px;
 }

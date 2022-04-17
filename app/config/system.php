@@ -18,7 +18,7 @@ return array(
 	"APP_TIMEZONE" => "UTC",
 	"APP_D_FORMAT" => "Y-m-d",
 	"APP_I_PP" => "20",
-	"APP_IS_INSTALLED" => false,
+	"APP_IS_INSTALLED" => true,
 	"APP_IS_POST_INSTALL" => false,
 	"APP_DB_NAME" => "shadow",
 	"APP_DB_PREFIX" => "",
